@@ -26,6 +26,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import com.mirth.connect.connectors.file.FTPSchemeProperties;
+import com.mirth.connect.connectors.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 
@@ -93,6 +94,8 @@ public class FtpConnection implements FileSystemConnection {
 
     /** The apache commons FTP client instance */
     protected FTPClient client = null;
+    
+    private FileConfiguration fileConfiguration;
 
     public FtpConnection(String host, int port, FileSystemConnectionOptions fileSystemOptions, boolean passive, int timeout) throws Exception {
         this(host, port, fileSystemOptions, passive, timeout, new HaltableFTPClient());
@@ -138,12 +141,21 @@ public class FtpConnection implements FileSystemConnection {
             throw e;
         }
     }
+    
+    @Override
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
+    }
 
     /**
      * This method allows subclasses of FtpConnection to issue additional commands after a
      * connection is established.
      */
     protected void initialize(FTPSchemeProperties schemeProperties) throws Exception {
+        if (fileConfiguration != null) {
+            fileConfiguration.initialize(client);
+        }
+        
         if (schemeProperties != null) {
             List<String> commands = schemeProperties.getInitialCommands();
             if (CollectionUtils.isNotEmpty(commands)) {
@@ -388,6 +400,10 @@ public class FtpConnection implements FileSystemConnection {
 
     @Override
     public void disconnect() {
+        if (fileConfiguration != null) {
+            fileConfiguration.disconnect(client);
+        }
+        
         if (client instanceof HaltableFTPClient) {
             ((HaltableFTPClient) client).closeDataSockets();
         }

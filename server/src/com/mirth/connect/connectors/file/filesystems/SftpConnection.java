@@ -33,6 +33,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.UserInfo;
+import com.mirth.connect.connectors.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.SftpSchemeProperties;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
@@ -106,6 +107,7 @@ public class SftpConnection implements FileSystemConnection {
     private String lastDir = null;
     private Properties configuration;
     private boolean isPasswordAuth = true;
+    private FileConfiguration fileConfiguration;
 
     public SftpConnection(String host, int port, FileSystemConnectionOptions fileSystemOptions, int timeout) throws Exception {
 
@@ -170,6 +172,11 @@ public class SftpConnection implements FileSystemConnection {
         }
     }
 
+    @Override
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
+    }
+    
     @Override
     public List<FileInfo> listFiles(String fromDir, String filenamePattern, boolean isRegex, boolean ignoreDot) throws Exception {
         lastDir = fromDir;

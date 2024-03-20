@@ -30,8 +30,8 @@ import org.apache.logging.log4j.Logger;
 import com.mirth.connect.connectors.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.filesystems.FileSystemConnectionFactory;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.server.channel.Connector;
 import com.mirth.connect.donkey.server.channel.DestinationConnector;
+import com.mirth.connect.donkey.server.channel.IConnector;
 
 public class FileConnector {
     private Logger logger = LogManager.getLogger(this.getClass());
@@ -50,7 +50,7 @@ public class FileConnector {
     private boolean keepConnectionOpen = false;
     private String maxIdleTime;
 
-    public FileConnector(String channelId, ConnectorProperties connectorProperties, Connector connector) {
+    public FileConnector(String channelId, ConnectorProperties connectorProperties, IConnector connector) {
         this.channelId = channelId;
 
         if (connectorProperties instanceof FileReceiverProperties) {

@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.mirth.connect.connectors.file.FileConfiguration;
+
 /**
  * The interface that must be implemented by a file system for it to be usable by the File
  * connector.
@@ -148,4 +150,9 @@ public interface FileSystemConnection {
 
     /** Test if can write to specified directory **/
     public boolean canWrite(String writeDir);
+    
+    /**
+     * Adds some extra methods that extensions can call
+     */
+    public void setFileConfiguration(FileConfiguration fileConfiguration);
 }

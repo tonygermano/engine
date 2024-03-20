@@ -165,6 +165,10 @@ public class FileDispatcher extends DestinationConnector {
 
             ThreadUtils.checkInterruptedStatus();
             fileSystemConnection = fileConnector.getConnection(fileSystemOptions);
+            if (configuration != null) {
+                fileSystemConnection.setFileConfiguration(configuration);
+            }
+            
             if (fileDispatcherProperties.isErrorOnExists() && fileSystemConnection.exists(filename, path)) {
                 throw new IOException("Destination file already exists, will not overwrite.");
             } else if (fileDispatcherProperties.isTemporary()) {

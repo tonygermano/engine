@@ -9,12 +9,18 @@
 
 package com.mirth.connect.connectors.file;
 
+import java.io.IOException;
+
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.server.channel.Connector;
+import com.mirth.connect.donkey.server.channel.IConnector;
 
 public interface FileConfiguration {
 
-    public void configureConnectorDeploy(Connector connector, ConnectorProperties connectorProperties) throws Exception;
+    public void configureConnectorDeploy(IConnector connector, ConnectorProperties connectorProperties) throws Exception;
 
-    public void configureConnectorUndeploy(Connector connector);
+    public void configureConnectorUndeploy(IConnector connector);
+    
+    public void initialize(Object client) throws IOException;
+
+    public void disconnect(Object client);
 }

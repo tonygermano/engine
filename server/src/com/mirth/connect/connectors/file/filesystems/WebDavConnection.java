@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.webdav.lib.WebdavFile;
 import org.apache.webdav.lib.WebdavResource;
 
+import com.mirth.connect.connectors.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 
@@ -86,6 +87,7 @@ public class WebDavConnection implements FileSystemConnection {
     private boolean secure = false;
     private String username = null;
     private String password = null;
+    private FileConfiguration fileConfiguration;
 
     public WebDavConnection(String host, boolean secure, FileSystemConnectionOptions fileSystemOptions) throws Exception {
         this.secure = secure;
@@ -107,6 +109,11 @@ public class WebDavConnection implements FileSystemConnection {
         client = new WebdavResource(url);
     }
 
+    @Override
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
+    }
+    
     @Override
     public List<FileInfo> listFiles(String fromDir, String filenamePattern, boolean isRegex, boolean ignoreDot) throws Exception {
         FilenameFilter filenameFilter;

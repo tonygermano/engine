@@ -150,7 +150,7 @@ public class FileReceiver extends PollConnector {
             URI uri = fileConnector.getEndpointURI(host, connectorProperties.getScheme(), schemeProperties, connectorProperties.isSecure());
 
             fileSystemOptions = new FileSystemConnectionOptions(uri, connectorProperties.isAnonymous(), username, password, schemeProperties);
-            FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+            FileSystemConnection con = getConnection();
             fileConnector.releaseConnection(con, fileSystemOptions);
         } catch (URISyntaxException e1) {
             throw new ConnectorTaskException("Error creating URI.", e1);
@@ -244,6 +244,14 @@ public class FileReceiver extends PollConnector {
         } finally {
             eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getSourceName(), ConnectionStatusEventType.IDLE));
         }
+    }
+    
+    private FileSystemConnection getConnection() throws Exception {
+        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        if (configuration != null) {
+            con.setFileConfiguration(configuration);
+        }
+        return con;
     }
 
     private List<FileInfo> listFilesRecursively(Set<String> visitedDirectories, Stack<String> directoryStack) throws Exception {
@@ -385,7 +393,7 @@ public class FileReceiver extends PollConnector {
 
                     // ast: use the user-selected encoding
                     if (isProcessBatch()) {
-                        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+                        FileSystemConnection con = getConnection();
                         Reader in = null;
                         try {
                             in = new InputStreamReader(con.readFile(file.getName(), file.getParent(), sourceMap), charsetEncoding);
@@ -527,7 +535,7 @@ public class FileReceiver extends PollConnector {
 
     /** Delete a file */
     private boolean deleteFile(String name, String dir, boolean mayNotExist) throws Exception {
-        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        FileSystemConnection con = getConnection();
         try {
             con.delete(name, dir, mayNotExist);
             return true;
@@ -544,7 +552,7 @@ public class FileReceiver extends PollConnector {
     }
 
     private boolean renameFile(String fromName, String fromDir, String toName, String toDir) throws Exception {
-        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        FileSystemConnection con = getConnection();
         try {
 
             con.move(fromName, fromDir, toName, toDir);
@@ -559,7 +567,7 @@ public class FileReceiver extends PollConnector {
 
     // Returns the contents of the file in a byte array.
     private byte[] getBytesFromFile(FileInfo file, Map<String, Object> sourceMap) throws Exception {
-        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        FileSystemConnection con = getConnection();
 
         try {
             InputStream is = null;
@@ -641,7 +649,7 @@ public class FileReceiver extends PollConnector {
      * @throws Exception
      */
     List<FileInfo> listFiles(String fromDir) throws Exception {
-        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        FileSystemConnection con = getConnection();
 
         try {
             List<FileInfo> files = con.listFiles(fromDir, filenamePattern, connectorProperties.isRegex(), connectorProperties.isIgnoreDot());
@@ -667,7 +675,7 @@ public class FileReceiver extends PollConnector {
      * @throws Exception
      */
     List<String> listDirectories(String fromDir) throws Exception {
-        FileSystemConnection con = fileConnector.getConnection(fileSystemOptions);
+        FileSystemConnection con = getConnection();
 
         try {
             return con.listDirectories(fromDir);

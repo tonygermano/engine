@@ -31,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileConnectorException;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.S3SchemeProperties;
@@ -150,6 +151,7 @@ public class S3Connection implements FileSystemConnection {
     }
 
     private Logger logger = LogManager.getLogger(getClass());
+    private FileConfiguration fileConfiguration;
 
     FileSystemConnectionOptions fileSystemOptions;
     S3SchemeProperties schemeProps;
@@ -186,6 +188,11 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
+    @Override
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
+    }
+    
     boolean isSTSEnabled() {
         return schemeProps.isUseTemporaryCredentials() && !fileSystemOptions.isAnonymous();
     }

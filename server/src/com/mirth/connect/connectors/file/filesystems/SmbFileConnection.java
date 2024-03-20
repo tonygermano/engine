@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileConnectorException;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.SmbSchemeProperties;
@@ -112,6 +113,7 @@ public class SmbFileConnection implements FileSystemConnection {
     private NtlmPasswordAuthenticator auth = null;
     private SmbFile share = null;
     private int timeout;
+    private FileConfiguration fileConfiguration;
 
     public SmbFileConnection(String share, FileSystemConnectionOptions fileSystemOptions, int timeout) throws Exception {
         String domainAndUser = fileSystemOptions.getUsername();
@@ -146,6 +148,11 @@ public class SmbFileConnection implements FileSystemConnection {
         this.share = new SmbFile("smb://" + share, baseContext);
         this.share.setConnectTimeout(timeout);
         this.timeout = timeout;
+    }
+    
+    @Override
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.fileConfiguration = fileConfiguration;
     }
     
     protected SmbFile getShare() {

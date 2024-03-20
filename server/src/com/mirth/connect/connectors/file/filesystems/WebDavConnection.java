@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.webdav.lib.WebdavFile;
 import org.apache.webdav.lib.WebdavResource;
 
-import com.mirth.connect.connectors.file.FileConfiguration;
+import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 

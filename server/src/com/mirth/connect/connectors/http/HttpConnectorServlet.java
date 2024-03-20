@@ -18,6 +18,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.lang3.StringUtils;
 
 import com.mirth.connect.client.core.api.MirthApiException;
+import com.mirth.connect.connectors.core.http.HttpConnectorServletInterface;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.RemoteHostConnectorProperties;
 import com.mirth.connect.server.api.MirthServlet;

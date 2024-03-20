@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.http;
+package com.mirth.connect.connectors.core.http;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

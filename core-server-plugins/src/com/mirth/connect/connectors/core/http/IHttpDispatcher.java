@@ -1,4 +1,4 @@
-package com.mirth.connect.connectors.http;
+package com.mirth.connect.connectors.core.http;
 
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;

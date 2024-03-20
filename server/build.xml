@@ -208,7 +208,6 @@
 			<include name="com/mirth/connect/connectors/http/HttpDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/http/HttpStaticResource.class" />
 			<include name="com/mirth/connect/connectors/http/HttpStaticResource$ResourceType.class" />
-			<include name="com/mirth/connect/connectors/http/HttpConnectorServletInterface.class" />
 		</jar>
 		<jar destfile="${connectors.http}/http-server.jar">
 			<fileset dir="${classes}">
@@ -217,7 +216,6 @@
 				<exclude name="com/mirth/connect/connectors/http/HttpDispatcherProperties.class" />
 				<exclude name="com/mirth/connect/connectors/http/HttpStaticResource.class" />
 				<exclude name="com/mirth/connect/connectors/http/HttpStaticResource$ResourceType.class" />
-				<exclude name="com/mirth/connect/connectors/http/HttpConnectorServletInterface.class" />
 			</fileset>
 		</jar>
 

@@ -1,4 +1,4 @@
-package com.mirth.connect.connectors.http;
+package com.mirth.connect.connectors.core.http;
 
 import com.mirth.connect.donkey.server.channel.ISourceConnector;
 

@@ -11,6 +11,7 @@ package com.mirth.connect.connectors.file;
 
 import java.io.IOException;
 
+import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 

@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.mirth.connect.connectors.file.FileConfiguration;
+import com.mirth.connect.connectors.core.file.FileConfiguration;
 
 /**
  * The interface that must be implemented by a file system for it to be usable by the File

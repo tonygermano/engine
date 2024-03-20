@@ -120,7 +120,7 @@ import com.mirth.connect.userutil.MessageParameters;
 import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.HttpUtil;
 
-public class HttpReceiver extends SourceConnector implements BinaryContentTypeResolver {
+public class HttpReceiver extends SourceConnector implements IHttpReceiver, BinaryContentTypeResolver {
     private Logger logger = LogManager.getLogger(this.getClass());
     private ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
     private EventController eventController = ControllerFactory.getFactory().createEventController();

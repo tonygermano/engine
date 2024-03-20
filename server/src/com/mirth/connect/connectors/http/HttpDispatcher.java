@@ -110,7 +110,7 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.ErrorMessageBuilder;
 import com.mirth.connect.util.HttpUtil;
 
-public class HttpDispatcher extends DestinationConnector {
+public class HttpDispatcher extends DestinationConnector implements IHttpDispatcher {
 
     private static final String PROXY_CONTEXT_KEY = "dispatcherProxy";
     private static final Pattern AUTH_HEADER_PATTERN = Pattern.compile("([^\\s=,]+)\\s*=\\s*([^=,;\"\\s]+|\"([^\"]|\\\\[\\s\\S])*(?<!\\\\)\")");
@@ -453,6 +453,7 @@ public class HttpDispatcher extends DestinationConnector {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 
+    @Override
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry() {
         return socketFactoryRegistry;
     }

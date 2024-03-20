@@ -14,6 +14,8 @@
 			<fileset dir="${core.util}/dist" includes="**/*.jar" />
 			<fileset dir="${core.client.base}/lib" includes="**/*.jar" />
 			<fileset dir="${core.client.base}/dist" includes="**/*.jar" />
+			<fileset dir="${core.client.api}/lib" includes="**/*.jar" />
+			<fileset dir="${core.client.api}/dist" includes="**/*.jar" />
 		</path>
 	</target>
 

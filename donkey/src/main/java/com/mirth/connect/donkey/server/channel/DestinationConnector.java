@@ -170,6 +170,11 @@ public abstract class DestinationConnector extends Connector implements Runnable
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
     }
+    
+    @Override
+    public String getConnectorName() {
+        return getDestinationName();
+    }
 
     public boolean isEnabled() {
         return enabled;

@@ -85,6 +85,11 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
+    
+    @Override
+    public String getConnectorName() {
+        return getSourceName();
+    }
 
     public void updateCurrentState(DeployedState currentState) {
         setCurrentState(currentState);

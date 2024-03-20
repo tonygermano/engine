@@ -17,17 +17,17 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
-import com.mirth.connect.donkey.server.channel.Connector;
+import com.mirth.connect.donkey.server.channel.IConnector;
 
 public interface HttpConfiguration {
 
-    public void configureConnectorDeploy(Connector connector) throws Exception;
+    public void configureConnectorDeploy(IConnector connector) throws Exception;
 
-    public void configureConnectorUndeploy(Connector connector);
+    public void configureConnectorUndeploy(IConnector connector);
 
-    public void configureReceiver(HttpReceiver connector) throws Exception;
+    public void configureReceiver(IHttpReceiver connector) throws Exception;
 
-    public void configureDispatcher(HttpDispatcher connector, HttpDispatcherProperties connectorProperties) throws Exception;
+    public void configureDispatcher(IHttpDispatcher connector, HttpDispatcherProperties connectorProperties) throws Exception;
 
     public void configureSocketFactoryRegistry(ConnectorPluginProperties properties, RegistryBuilder<ConnectionSocketFactory> registry) throws Exception;
 

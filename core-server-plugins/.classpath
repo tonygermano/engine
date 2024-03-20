@@ -74,6 +74,10 @@
 	<classpathentry kind="lib" path="/Core-client-base/lib/swagger/ext/reflections-0.9.10.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/velocity-engine-core-2.3.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/velocity-tools-generic-3.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-api"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/jersey/jersey-media-multipart-2.35.jar"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/swagger/swagger-annotations-2.0.10.jar"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/swagger/swagger-core-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-dbutils-1.7.jar"/>
 	<classpathentry kind="lib" path="lib/guice-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/javax/javax.servlet-api-3.1.0.jar"/>

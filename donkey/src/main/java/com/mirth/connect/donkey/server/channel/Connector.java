@@ -18,7 +18,7 @@ import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.message.DataType;
 import com.mirth.connect.donkey.server.ConnectorTaskException;
 
-public abstract class Connector {
+public abstract class Connector implements IConnector {
     protected Channel channel;
 
     private String channelId;
@@ -63,6 +63,7 @@ public abstract class Connector {
         this.channel = channel;
     }
 
+    @Override
     public String getChannelId() {
         return channelId;
     }
@@ -70,7 +71,13 @@ public abstract class Connector {
     public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
+    
+    @Override
+    public String getChannelName() {
+        return channel != null ? channel.getName() : null;
+    }
 
+    @Override
     public int getMetaDataId() {
         return metaDataId;
     }
@@ -103,6 +110,7 @@ public abstract class Connector {
         this.currentState = currentState;
     }
 
+    @Override
     public ConnectorProperties getConnectorProperties() {
         return connectorProperties;
     }

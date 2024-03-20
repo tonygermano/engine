@@ -21,10 +21,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
+import com.mirth.connect.donkey.model.channel.RemoteHostConnectorProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 
-public class HttpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class HttpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, RemoteHostConnectorProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
@@ -130,6 +131,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         socketTimeout = props.getSocketTimeout();
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -338,6 +340,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.charset = charset;
     }
 
+    @Override
     public String getSocketTimeout() {
         return socketTimeout;
     }

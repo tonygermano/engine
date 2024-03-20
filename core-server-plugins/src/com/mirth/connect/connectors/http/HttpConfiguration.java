@@ -17,6 +17,7 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 
 public interface HttpConfiguration {
@@ -27,7 +28,7 @@ public interface HttpConfiguration {
 
     public void configureReceiver(IHttpReceiver connector) throws Exception;
 
-    public void configureDispatcher(IHttpDispatcher connector, HttpDispatcherProperties connectorProperties) throws Exception;
+    public void configureDispatcher(IHttpDispatcher connector, ConnectorProperties connectorProperties) throws Exception;
 
     public void configureSocketFactoryRegistry(ConnectorPluginProperties properties, RegistryBuilder<ConnectionSocketFactory> registry) throws Exception;
 

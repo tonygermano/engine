@@ -24,7 +24,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
-import com.mirth.connect.donkey.server.channel.Connector;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;
@@ -58,7 +58,7 @@ public class DefaultHttpConfiguration implements HttpConfiguration {
     }
 
     @Override
-    public void configureDispatcher(IHttpDispatcher connector, HttpDispatcherProperties connectorProperties) throws Exception {}
+    public void configureDispatcher(IHttpDispatcher connector, ConnectorProperties connectorProperties) throws Exception {}
 
     @Override
     public void configureSocketFactoryRegistry(ConnectorPluginProperties properties, RegistryBuilder<ConnectionSocketFactory> registry) throws Exception {

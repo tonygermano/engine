@@ -16,6 +16,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mirth.connect.connectors.core.tcp.StateAwareServerSocket;
+import com.mirth.connect.connectors.core.tcp.StateAwareSocket;
 import com.mirth.connect.connectors.core.tcp.TcpConfiguration;
 import com.mirth.connect.donkey.server.channel.IConnector;
 

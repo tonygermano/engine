@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.smtp;
+package com.mirth.connect.connectors.core.smtp;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +29,7 @@ import com.mirth.connect.client.core.Operation.ExecuteType;
 import com.mirth.connect.client.core.api.BaseServletInterface;
 import com.mirth.connect.client.core.api.MirthOperation;
 import com.mirth.connect.client.core.api.Param;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @Path("/connectors/smtp")
@@ -60,6 +61,6 @@ public interface SmtpConnectorServletInterface extends BaseServletInterface {
                             @ExampleObject(name = "smtp_dispatcher_properties", ref = "../apiexamples/smtp_dispatcher_properties_json"),
                             @ExampleObject(name = "smtp_dispatcher_properties_ssl", ref = "../apiexamples/smtp_dispatcher_properties_ssl_json"),
                             @ExampleObject(name = "smtp_dispatcher_properties_tls", ref = "../apiexamples/smtp_dispatcher_properties_tls_json") }) })
-            SmtpDispatcherProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 }

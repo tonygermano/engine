@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.ws;
+package com.mirth.connect.connectors.core.ws;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +31,7 @@ import com.mirth.connect.client.core.Operation.ExecuteType;
 import com.mirth.connect.client.core.api.BaseServletInterface;
 import com.mirth.connect.client.core.api.MirthOperation;
 import com.mirth.connect.client.core.api.Param;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @Path("/connectors/ws")
@@ -58,7 +59,7 @@ public interface WebServiceConnectorServletInterface extends BaseServletInterfac
                             @ExampleObject(name = "ws_dispatcher_properties", ref = "../apiexamples/ws_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "ws_dispatcher_properties", ref = "../apiexamples/ws_dispatcher_properties_json") }) })
-            WebServiceDispatcherProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 
     @POST
@@ -230,6 +231,6 @@ public interface WebServiceConnectorServletInterface extends BaseServletInterfac
                             @ExampleObject(name = "ws_dispatcher_properties", ref = "../apiexamples/ws_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "ws_dispatcher_properties", ref = "../apiexamples/ws_dispatcher_properties_json") }) })
-            WebServiceDispatcherProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 }

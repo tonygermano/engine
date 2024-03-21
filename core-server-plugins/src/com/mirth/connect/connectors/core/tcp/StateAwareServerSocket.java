@@ -7,13 +7,14 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.tcp;
+package com.mirth.connect.connectors.core.tcp;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.SocketImpl;
+
 
 /**
  * An extension of ServerSocket that returns a StateAwareSocket from accept().

@@ -73,12 +73,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
 
-import com.ibm.wsdl.extensions.schema.SchemaImpl;
-import com.ibm.wsdl.extensions.schema.SchemaImportImpl;
 import com.mirth.connect.client.core.api.MirthApiException;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.PortInformation;
-import com.mirth.connect.connectors.ws.SchemaType.SchemaTypeElement;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.WebServiceConnectorServletInterface;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
+import com.mirth.connect.donkey.model.channel.ws.WebServiceConnectorProperties;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.util.ConnectorUtil;
 import com.mirth.connect.server.util.TemplateValueReplacer;
@@ -103,9 +104,9 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
     }
 
     @Override
-    public Object cacheWsdlFromUrl(String channelId, String channelName, WebServiceDispatcherProperties properties) {
+    public Object cacheWsdlFromUrl(String channelId, String channelName, ConnectorProperties properties) {
         try {
-            String wsdlUrl = getWsdlUrl(channelId, channelName, properties.getWsdlUrl(), properties.getUsername(), properties.getPassword());
+            String wsdlUrl = getWsdlUrl(channelId, channelName, ((WebServiceConnectorProperties) properties).getWsdlUrl(), ((WebServiceConnectorProperties) properties).getUsername(), ((WebServiceConnectorProperties) properties).getPassword());
             cacheWsdlInterfaces(wsdlUrl, getDefinition(wsdlUrl, properties, channelId));
             return null;
         } catch (Exception e) {
@@ -183,13 +184,13 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
     }
 
     @Override
-    public ConnectionTestResponse testConnection(String channelId, String channelName, WebServiceDispatcherProperties properties) {
+    public ConnectionTestResponse testConnection(String channelId, String channelName, ConnectorProperties properties) {
         try {
             // Test the Location URI first if populated. Otherwise test the WSDL URL
-            if (StringUtils.isNotBlank(properties.getLocationURI())) {
-                return testConnection(channelId, channelName, properties.getLocationURI());
-            } else if (StringUtils.isNotBlank(properties.getWsdlUrl())) {
-                return testConnection(channelId, channelName, properties.getWsdlUrl());
+            if (StringUtils.isNotBlank(((WebServiceConnectorProperties) properties).getLocationURI())) {
+                return testConnection(channelId, channelName, ((WebServiceConnectorProperties) properties).getLocationURI());
+            } else if (StringUtils.isNotBlank(((WebServiceConnectorProperties) properties).getWsdlUrl())) {
+                return testConnection(channelId, channelName, ((WebServiceConnectorProperties) properties).getWsdlUrl());
             } else {
                 throw new Exception("Both WSDL URL and Location URI are blank. At least one must be populated in order to test connection.");
             }
@@ -254,10 +255,10 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
      * Future to execute the request in the background and timeout after 30 seconds if the server
      * could not be contacted.
      */
-    private Definition getDefinition(String wsdlUrl, WebServiceDispatcherProperties props, String channelId) throws Exception {
+    private Definition getDefinition(String wsdlUrl, ConnectorProperties props, String channelId) throws Exception {
         WSDLFactory wsdlFactory = WSDLFactory.newInstance();
         WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-        int timeout = NumberUtils.toInt(props.getSocketTimeout());
+        int timeout = NumberUtils.toInt(((WebServiceConnectorProperties) props).getSocketTimeout());
         return importWsdlInterfaces(wsdlFactory, wsdlUrl, wsdlReader, timeout);
     }
 

@@ -16,6 +16,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
 import com.mirth.connect.client.core.api.MirthApiException;
+import com.mirth.connect.connectors.core.smtp.SmtpConnectorServletInterface;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
+import com.mirth.connect.donkey.model.channel.smtp.SmtpConnectorProperties;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;
@@ -32,18 +35,18 @@ public class SmtpConnectorServlet extends MirthServlet implements SmtpConnectorS
     }
 
     @Override
-    public ConnectionTestResponse sendTestEmail(String channelId, String channelName, SmtpDispatcherProperties properties) {
+    public ConnectionTestResponse sendTestEmail(String channelId, String channelName, ConnectorProperties properties) {
         try {
             Properties props = new Properties();
-            props.put("port", replacer.replaceValues(properties.getSmtpPort(), channelId, channelName));
-            props.put("encryption", properties.getEncryption());
-            props.put("host", replacer.replaceValues(properties.getSmtpHost(), channelId, channelName));
-            props.put("timeout", properties.getTimeout());
-            props.put("authentication", String.valueOf(properties.isAuthentication()));
-            props.put("username", replacer.replaceValues(properties.getUsername(), channelId, channelName));
-            props.put("password", replacer.replaceValues(properties.getPassword(), channelId, channelName));
-            props.put("toAddress", replacer.replaceValues(properties.getTo(), channelId, channelName));
-            props.put("fromAddress", replacer.replaceValues(properties.getFrom(), channelId, channelName));
+            props.put("port", replacer.replaceValues(((SmtpConnectorProperties) properties).getSmtpPort(), channelId, channelName));
+            props.put("encryption", ((SmtpConnectorProperties) properties).getEncryption());
+            props.put("host", replacer.replaceValues(((SmtpConnectorProperties) properties).getSmtpHost(), channelId, channelName));
+            props.put("timeout", ((SmtpConnectorProperties) properties).getTimeout());
+            props.put("authentication", String.valueOf(((SmtpConnectorProperties) properties).isAuthentication()));
+            props.put("username", replacer.replaceValues(((SmtpConnectorProperties) properties).getUsername(), channelId, channelName));
+            props.put("password", replacer.replaceValues(((SmtpConnectorProperties) properties).getPassword(), channelId, channelName));
+            props.put("toAddress", replacer.replaceValues(((SmtpConnectorProperties) properties).getTo(), channelId, channelName));
+            props.put("fromAddress", replacer.replaceValues(((SmtpConnectorProperties) properties).getFrom(), channelId, channelName));
 
             return configurationController.sendTestEmail(props);
         } catch (Exception e) {

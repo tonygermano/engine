@@ -43,6 +43,7 @@ import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ResponseHandler;
 import com.mirth.connect.client.ui.util.PortUsageDialog;
+import com.mirth.connect.connectors.core.tcp.TcpConnectorServletInterface;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.model.Connector.Mode;
 import com.mirth.connect.model.transmission.TransmissionModeProperties;

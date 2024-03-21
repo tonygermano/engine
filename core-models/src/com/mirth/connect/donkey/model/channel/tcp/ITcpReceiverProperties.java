@@ -1,6 +1,8 @@
-package com.mirth.connect.donkey.model.channel;
+package com.mirth.connect.donkey.model.channel.tcp;
 
 import java.util.Set;
+
+import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 
 public interface ITcpReceiverProperties extends TcpConnectorProperties {
 	

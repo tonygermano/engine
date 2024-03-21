@@ -90,6 +90,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcher;
+import com.mirth.connect.connectors.core.ws.WebServiceConfiguration;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -111,7 +113,7 @@ import com.mirth.connect.userutil.AttachmentEntry;
 import com.mirth.connect.util.ErrorMessageBuilder;
 import com.mirth.connect.util.HttpUtil;
 
-public class WebServiceDispatcher extends DestinationConnector {
+public class WebServiceDispatcher extends DestinationConnector implements IWebServiceDispatcher {
 
     // The system property actually ends up being the maximum request count
     private static final int MAX_REDIRECTS = NumberUtils.toInt(System.getProperty("http.maxRedirects"), 20);
@@ -722,6 +724,7 @@ public class WebServiceDispatcher extends DestinationConnector {
         }
     }
 
+    @Override
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry() {
         return socketFactoryRegistry;
     }

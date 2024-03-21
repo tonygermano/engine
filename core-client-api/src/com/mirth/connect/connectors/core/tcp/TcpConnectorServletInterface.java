@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.tcp;
+package com.mirth.connect.connectors.core.tcp;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +29,7 @@ import com.mirth.connect.client.core.Operation.ExecuteType;
 import com.mirth.connect.client.core.api.BaseServletInterface;
 import com.mirth.connect.client.core.api.MirthOperation;
 import com.mirth.connect.client.core.api.Param;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @Path("/connectors/tcp")
@@ -56,6 +57,6 @@ public interface TcpConnectorServletInterface extends BaseServletInterface {
                             @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/tcp_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "tcp_dispatcher_properties", ref = "../apiexamples/tcp_dispatcher_properties_json") }) })
-            TcpDispatcherProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 }

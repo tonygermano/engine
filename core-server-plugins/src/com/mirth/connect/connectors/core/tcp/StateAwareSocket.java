@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.tcp;
+package com.mirth.connect.connectors.core.tcp;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -18,8 +18,6 @@ import java.net.SocketException;
 import java.net.SocketImpl;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.mirth.connect.connectors.core.tcp.StateAwareSocketInterface;
 
 public class StateAwareSocket extends Socket implements StateAwareSocketInterface {
 

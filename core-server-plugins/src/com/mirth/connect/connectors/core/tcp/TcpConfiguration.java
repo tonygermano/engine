@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.tcp;
+package com.mirth.connect.connectors.core.tcp;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,11 +15,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
 
-import com.mirth.connect.donkey.server.channel.Connector;
+import com.mirth.connect.donkey.server.channel.IConnector;
 
 public interface TcpConfiguration {
 
-    public void configureConnectorDeploy(Connector connector) throws Exception;
+    public void configureConnectorDeploy(IConnector connector) throws Exception;
 
     public ServerSocket createServerSocket(int port, int backlog) throws IOException;
 

@@ -19,6 +19,8 @@ import java.net.SocketImpl;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.mirth.connect.connectors.core.tcp.StateAwareSocketInterface;
+
 public class StateAwareSocket extends Socket implements StateAwareSocketInterface {
 
     protected BufferedInputStream bis = null;

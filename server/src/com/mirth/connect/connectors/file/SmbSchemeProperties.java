@@ -3,6 +3,8 @@ package com.mirth.connect.connectors.file;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+
 import jcifs.DialectVersion;
 
 public class SmbSchemeProperties extends SchemeProperties {

@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+
 import software.amazon.awssdk.regions.Region;
 
 public class S3SchemeProperties extends SchemeProperties {

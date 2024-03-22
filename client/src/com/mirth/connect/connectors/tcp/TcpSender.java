@@ -43,6 +43,7 @@ import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ResponseHandler;
 import com.mirth.connect.client.ui.util.PortUsageDialog;
+import com.mirth.connect.connectors.core.tcp.TcpConnectorSettingsPanel;
 import com.mirth.connect.connectors.core.tcp.TcpConnectorServletInterface;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.model.Connector.Mode;
@@ -54,7 +55,7 @@ import com.mirth.connect.util.ConnectionTestResponse;
 
 import net.miginfocom.swing.MigLayout;
 
-public class TcpSender extends ConnectorSettingsPanel implements ActionListener {
+public class TcpSender extends ConnectorSettingsPanel implements ActionListener, TcpConnectorSettingsPanel {
 
     private Logger logger = LogManager.getLogger(this.getClass());
     private FrameBase parent;
@@ -867,6 +868,16 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
 		PortUsageDialog dialog = new PortUsageDialog(parent);
 		
 	}
+	
+	@Override
+	public MirthRadioButton getModeServerRadio() {
+		return modeServerRadio;
+	}
+
+	@Override
+	public MirthRadioButton getModeClientRadio() {
+		return modeClientRadio;
+	}
 
     private JLabel modeLabel;
     public MirthRadioButton modeServerRadio;
@@ -918,4 +929,5 @@ public class TcpSender extends ConnectorSettingsPanel implements ActionListener 
     private JButton testConnection;
     private MirthComboBox transmissionModeComboBox;
     private JLabel transmissionModeLabel;
+
 }

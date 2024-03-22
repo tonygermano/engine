@@ -22,11 +22,12 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.FTPSchemeProperties;
-import com.mirth.connect.connectors.file.FileScheme;
-import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.S3SchemeProperties;
 import com.mirth.connect.connectors.file.SftpSchemeProperties;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
 
 /**
  * A factory to create instances of FileSystemConnection based on the endpoint and connector

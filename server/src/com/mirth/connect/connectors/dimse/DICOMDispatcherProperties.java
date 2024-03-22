@@ -17,10 +17,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
+import com.mirth.connect.donkey.model.channel.dimse.IDICOMDispatcherProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 
-public class DICOMDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class DICOMDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, IDICOMDispatcherProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
@@ -149,6 +150,7 @@ public class DICOMDispatcherProperties extends ConnectorProperties implements De
         localApplicationEntity = props.getLocalApplicationEntity();
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -157,6 +159,7 @@ public class DICOMDispatcherProperties extends ConnectorProperties implements De
         this.host = host;
     }
 
+    @Override
     public String getPort() {
         return port;
     }

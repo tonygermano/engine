@@ -20,12 +20,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.smtp.SmtpConnectorProperties;
+import com.mirth.connect.donkey.model.channel.smtp.ISmtpDispatcherProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;
 
-public class SmtpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, SmtpConnectorProperties {
+public class SmtpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, ISmtpDispatcherProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 

@@ -7,9 +7,11 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import java.net.URI;
+
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 
 public class FileSystemConnectionOptions {
     private URI uri;

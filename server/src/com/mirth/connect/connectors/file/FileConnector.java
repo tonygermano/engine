@@ -27,13 +27,18 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mirth.connect.connectors.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.FileConnectorException;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.IFileConnector;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.filesystems.FileSystemConnectionFactory;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.donkey.server.channel.DestinationConnector;
 import com.mirth.connect.donkey.server.channel.IConnector;
 
-public class FileConnector {
+public class FileConnector implements IFileConnector {
     private Logger logger = LogManager.getLogger(this.getClass());
 
     private Map<String, ObjectPool<FileSystemConnection>> pools = new HashMap<String, ObjectPool<FileSystemConnection>>();
@@ -130,7 +135,8 @@ public class FileConnector {
      * would be omitted and the second directory would be used with the system's root as the base.
      * Thus for connectors using the FILE scheme, we retrieve the path using an alternate method.
      */
-    protected String getPathPart(URI uri) {
+    @Override
+    public String getPathPart(URI uri) {
         if (scheme == FileScheme.FILE) {
             // In //xyz, return xyz.
             return uri.getSchemeSpecificPart().substring(2);
@@ -150,8 +156,8 @@ public class FileConnector {
      * <li>pollingFrequency</li>
      * </ul>
      */
-
-    protected synchronized void doStop() throws FileConnectorException {
+    @Override
+    public synchronized void doStop() throws FileConnectorException {
         if (outputStream != null) {
             try {
                 outputStream.close();
@@ -182,7 +188,8 @@ public class FileConnector {
      *            ??
      * @return The allocated connection.
      */
-    protected FileSystemConnection getConnection(FileSystemConnectionOptions fileSystemOptions) throws Exception {
+    @Override
+    public FileSystemConnection getConnection(FileSystemConnectionOptions fileSystemOptions) throws Exception {
         ObjectPool<FileSystemConnection> pool = getConnectionPool(fileSystemOptions);
         FileSystemConnection con = pool.borrowObject();
         if (!con.isConnected() || !con.isValid()) {
@@ -206,7 +213,8 @@ public class FileConnector {
      *            ??
      * @throws Exception
      */
-    protected void releaseConnection(FileSystemConnection connection, FileSystemConnectionOptions fileSystemOptions) throws Exception {
+    @Override
+    public void releaseConnection(FileSystemConnection connection, FileSystemConnectionOptions fileSystemOptions) throws Exception {
         synchronized (connections) {
             connections.remove(connection);
         }
@@ -221,7 +229,8 @@ public class FileConnector {
     /**
      * Forcibly disconnect all current connections
      */
-    protected void disconnect() {
+    @Override
+    public void disconnect() {
         synchronized (connections) {
             for (FileSystemConnection connection : connections) {
                 connection.disconnect();
@@ -316,6 +325,7 @@ public class FileConnector {
         this.outputStream = outputStream;
     }
 
+    @Override
     public URI getEndpointURI(String host, FileScheme scheme, SchemeProperties schemeProperties, boolean isSecure) throws URISyntaxException {
         StringBuilder sspBuilder = new StringBuilder();
 

@@ -16,11 +16,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
+import com.mirth.connect.donkey.model.channel.file.FileConnectorProperties;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;
 
-public class FileDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class FileDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, FileConnectorProperties {
     public static final String NAME = "File Writer";
 
     private DestinationConnectorProperties destinationConnectorProperties;
@@ -99,6 +102,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         template = props.getTemplate();
     }
 
+    @Override
     public FileScheme getScheme() {
         return scheme;
     }
@@ -115,6 +119,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.schemeProperties = schemeProperties;
     }
 
+    @Override
     public String getHost() {
         return host;
     }

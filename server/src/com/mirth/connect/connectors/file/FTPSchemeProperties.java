@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+
 public class FTPSchemeProperties extends SchemeProperties {
 
     private List<String> initialCommands;

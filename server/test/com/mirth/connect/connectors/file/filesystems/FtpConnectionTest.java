@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.FTPSchemeProperties;
-import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 
 public class FtpConnectionTest {
 

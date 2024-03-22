@@ -74,12 +74,12 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
 
 import com.mirth.connect.client.core.api.MirthApiException;
-import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
 import com.mirth.connect.connectors.core.ws.WebServiceConnectorServletInterface;
-import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.ws.WebServiceConnectorProperties;
+import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap;
+import com.mirth.connect.donkey.model.channel.ws.IWebServiceDispatcherProperties;
+import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.util.ConnectorUtil;
 import com.mirth.connect.server.util.TemplateValueReplacer;
@@ -106,7 +106,7 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
     @Override
     public Object cacheWsdlFromUrl(String channelId, String channelName, ConnectorProperties properties) {
         try {
-            String wsdlUrl = getWsdlUrl(channelId, channelName, ((WebServiceConnectorProperties) properties).getWsdlUrl(), ((WebServiceConnectorProperties) properties).getUsername(), ((WebServiceConnectorProperties) properties).getPassword());
+            String wsdlUrl = getWsdlUrl(channelId, channelName, ((IWebServiceDispatcherProperties) properties).getWsdlUrl(), ((IWebServiceDispatcherProperties) properties).getUsername(), ((IWebServiceDispatcherProperties) properties).getPassword());
             cacheWsdlInterfaces(wsdlUrl, getDefinition(wsdlUrl, properties, channelId));
             return null;
         } catch (Exception e) {
@@ -187,10 +187,10 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
     public ConnectionTestResponse testConnection(String channelId, String channelName, ConnectorProperties properties) {
         try {
             // Test the Location URI first if populated. Otherwise test the WSDL URL
-            if (StringUtils.isNotBlank(((WebServiceConnectorProperties) properties).getLocationURI())) {
-                return testConnection(channelId, channelName, ((WebServiceConnectorProperties) properties).getLocationURI());
-            } else if (StringUtils.isNotBlank(((WebServiceConnectorProperties) properties).getWsdlUrl())) {
-                return testConnection(channelId, channelName, ((WebServiceConnectorProperties) properties).getWsdlUrl());
+            if (StringUtils.isNotBlank(((IWebServiceDispatcherProperties) properties).getLocationURI())) {
+                return testConnection(channelId, channelName, ((IWebServiceDispatcherProperties) properties).getLocationURI());
+            } else if (StringUtils.isNotBlank(((IWebServiceDispatcherProperties) properties).getWsdlUrl())) {
+                return testConnection(channelId, channelName, ((IWebServiceDispatcherProperties) properties).getWsdlUrl());
             } else {
                 throw new Exception("Both WSDL URL and Location URI are blank. At least one must be populated in order to test connection.");
             }
@@ -258,7 +258,7 @@ public class WebServiceConnectorServlet extends MirthServlet implements WebServi
     private Definition getDefinition(String wsdlUrl, ConnectorProperties props, String channelId) throws Exception {
         WSDLFactory wsdlFactory = WSDLFactory.newInstance();
         WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
-        int timeout = NumberUtils.toInt(((WebServiceConnectorProperties) props).getSocketTimeout());
+        int timeout = NumberUtils.toInt(((IWebServiceDispatcherProperties) props).getSocketTimeout());
         return importWsdlInterfaces(wsdlFactory, wsdlUrl, wsdlReader, timeout);
     }
 

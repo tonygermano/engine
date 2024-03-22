@@ -1,10 +1,12 @@
 package com.mirth.connect.donkey.model.channel.ws;
 
-public interface WebServiceConnectorProperties {
+public interface IWebServiceDispatcherProperties {
 	
 	public String getLocationURI();
 	
 	public String getSocketTimeout();
+	
+	public String getSoapAction();
 	
 	public String getWsdlUrl();
 	

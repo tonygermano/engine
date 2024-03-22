@@ -36,8 +36,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.StringEscapeUtils;
 
 import com.mirth.connect.connectors.core.file.FileConfiguration;
-import com.mirth.connect.connectors.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.FileConnectorException;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.IFileConnector;
+import com.mirth.connect.connectors.core.file.IFileReceiver;
+import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
 import com.mirth.connect.donkey.model.message.BatchRawMessage;
@@ -56,7 +61,7 @@ import com.mirth.connect.server.controllers.EventController;
 import com.mirth.connect.server.util.TemplateValueReplacer;
 import com.mirth.connect.util.CharsetUtils;
 
-public class FileReceiver extends PollConnector {
+public class FileReceiver extends PollConnector implements IFileReceiver {
     protected transient Log logger = LogFactory.getLog(getClass());
 
     private String moveToDirectory = null;
@@ -70,7 +75,7 @@ public class FileReceiver extends PollConnector {
     private ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
     private TemplateValueReplacer replacer = new TemplateValueReplacer();
     private FileConfiguration configuration = null;
-    private FileConnector fileConnector = null;
+    private IFileConnector fileConnector = null;
 
     private String originalFilename = null;
 
@@ -691,7 +696,8 @@ public class FileReceiver extends PollConnector {
         finishDispatch(dispatchResult);
     }
 
-    public void setFileConnector(FileConnector fileConnector) {
+    @Override
+    public void setFileConnector(IFileConnector fileConnector) {
         this.fileConnector = fileConnector;
     }
 }

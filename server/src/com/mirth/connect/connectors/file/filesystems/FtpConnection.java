@@ -26,8 +26,10 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import com.mirth.connect.connectors.core.file.FileConfiguration;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.FTPSchemeProperties;
-import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 
 /**

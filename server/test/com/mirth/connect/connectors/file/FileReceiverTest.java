@@ -43,6 +43,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.mirth.connect.connectors.file.filesystems.FileSystemConnectionFactory;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
 import com.mirth.connect.donkey.model.message.Message;
 import com.mirth.connect.donkey.model.message.RawMessage;
 import com.mirth.connect.donkey.model.message.Response;

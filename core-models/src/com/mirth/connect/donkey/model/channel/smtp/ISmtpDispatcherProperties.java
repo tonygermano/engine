@@ -1,6 +1,6 @@
 package com.mirth.connect.donkey.model.channel.smtp;
 
-public interface SmtpConnectorProperties {
+public interface ISmtpDispatcherProperties {
 
 	public String getEncryption();
 	

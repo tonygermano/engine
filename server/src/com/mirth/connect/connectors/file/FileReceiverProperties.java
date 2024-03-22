@@ -18,11 +18,14 @@ import com.mirth.connect.donkey.model.channel.PollConnectorProperties;
 import com.mirth.connect.donkey.model.channel.PollConnectorPropertiesInterface;
 import com.mirth.connect.donkey.model.channel.SourceConnectorProperties;
 import com.mirth.connect.donkey.model.channel.SourceConnectorPropertiesInterface;
+import com.mirth.connect.donkey.model.channel.file.FileConnectorProperties;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;
 
-public class FileReceiverProperties extends ConnectorProperties implements PollConnectorPropertiesInterface, SourceConnectorPropertiesInterface {
+public class FileReceiverProperties extends ConnectorProperties implements PollConnectorPropertiesInterface, SourceConnectorPropertiesInterface, FileConnectorProperties {
 
     public static final String NAME = "File Reader";
 
@@ -98,6 +101,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         charsetEncoding = CharsetUtils.DEFAULT_ENCODING;
     }
 
+    @Override
     public FileScheme getScheme() {
         return scheme;
     }
@@ -114,6 +118,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.schemeProperties = schemeProperties;
     }
 
+    @Override
     public String getHost() {
         return host;
     }

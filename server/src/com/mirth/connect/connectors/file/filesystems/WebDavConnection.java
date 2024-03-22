@@ -25,7 +25,9 @@ import org.apache.webdav.lib.WebdavFile;
 import org.apache.webdav.lib.WebdavResource;
 
 import com.mirth.connect.connectors.core.file.FileConfiguration;
-import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 
 public class WebDavConnection implements FileSystemConnection {

@@ -18,9 +18,12 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.pool2.PooledObject;
 
 import com.mirth.connect.client.core.api.MirthApiException;
-import com.mirth.connect.connectors.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.file.filesystems.FileSystemConnectionFactory;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
+import com.mirth.connect.donkey.model.channel.file.FileScheme;
+import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.util.TemplateValueReplacer;
 import com.mirth.connect.util.ConnectionTestResponse;

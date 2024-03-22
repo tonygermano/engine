@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
-import com.mirth.connect.connectors.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.file.SmbSchemeProperties;
 
 import jcifs.CIFSContext;

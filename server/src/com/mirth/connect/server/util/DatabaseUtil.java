@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.donkey.server.data.DonkeyDaoException;
 
-public class DatabaseUtil {
+public class DatabaseUtil extends AbstractDatabaseUtil {
     private static Logger logger = LogManager.getLogger(DatabaseUtil.class);
 
     public static void executeScript(String script, boolean ignoreErrors) throws Exception {

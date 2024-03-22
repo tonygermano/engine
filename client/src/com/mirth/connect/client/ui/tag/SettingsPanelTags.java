@@ -89,7 +89,7 @@ import com.mirth.connect.client.ui.components.MirthTriStateCheckBox;
 import com.mirth.connect.model.ChannelTag;
 import com.mirth.connect.util.ColorUtil;
 
-public class SettingsPanelTags extends AbstractSettingsPanel {
+public class SettingsPanelTags extends AbstractSettingsPanel implements ISettingsPanelTags {
 
     public static final String TAB_NAME = "Tags";
 
@@ -112,6 +112,7 @@ public class SettingsPanelTags extends AbstractSettingsPanel {
         initLayout();
     }
 
+    @Override
     public Set<ChannelTag> getCachedChannelTags() {
         return cachedChannelTags;
     }
@@ -153,6 +154,7 @@ public class SettingsPanelTags extends AbstractSettingsPanel {
         worker.execute();
     }
 
+    @Override
     public void refresh() {
         try {
             updateTagsTable(getFrame().getClient().getChannelTags(), tagsTable.getSelectedRows(), false);

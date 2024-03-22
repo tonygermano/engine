@@ -4377,6 +4377,7 @@ public class Frame extends FrameBase {
         new QueuingSwingWorker<Void, Void>(task, queue).executeDelegate();
     }
 
+    @Override
     public void doSaveAlerts() {
         if (changesHaveBeenMade()) {
             try {
@@ -5012,6 +5013,7 @@ public class Frame extends FrameBase {
         return metaDataIds;
     }
 
+    @Override
     public void retrieveUsers() throws ClientException {
         users = mirthClient.getAllUsers();
     }

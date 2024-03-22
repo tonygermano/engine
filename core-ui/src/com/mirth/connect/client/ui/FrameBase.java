@@ -29,6 +29,8 @@ import com.mirth.connect.model.User;
 public abstract class FrameBase extends JXFrame {
     
     public Client mirthClient;
+    public ChannelPanelBase channelPanel = null;
+    public List<User> users = null;
     
     public abstract Client getClient();
     
@@ -270,4 +272,6 @@ public abstract class FrameBase extends JXFrame {
     public abstract void doSaveAlerts();
     
     public abstract void retrieveUsers() throws ClientException;
+    
+    public abstract void doLogout();
 }

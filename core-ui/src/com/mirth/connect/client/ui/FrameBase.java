@@ -2,6 +2,7 @@ package com.mirth.connect.client.ui;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import com.mirth.connect.client.core.Client;
 import com.mirth.connect.client.core.ClientException;
 import com.mirth.connect.client.ui.browsers.message.MessageBrowserBase;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
+import com.mirth.connect.model.Channel;
 import com.mirth.connect.model.ChannelTag;
 import com.mirth.connect.model.ConnectorMetaData;
 import com.mirth.connect.model.DashboardStatus;
@@ -29,6 +31,9 @@ import com.mirth.connect.model.User;
 public abstract class FrameBase extends JXFrame {
     
     public Client mirthClient;
+    public ChannelPanelBase channelPanel = null;
+    public List<User> users = null;
+    public CodeTemplatePanelBase codeTemplatePanel = null;
     
     public abstract Client getClient();
     
@@ -54,6 +59,8 @@ public abstract class FrameBase extends JXFrame {
     public abstract ChannelSetupBase getChannelSetup();
     
     public abstract ChannelPanelBase getChannelPanel();
+    
+    public abstract boolean updateChannel(Channel curr, boolean overwriting, Integer userId, Calendar dateStartEdit) throws ClientException;
     
     public abstract MessageBrowserBase getMessageBrowser();
     
@@ -266,4 +273,10 @@ public abstract class FrameBase extends JXFrame {
     public abstract void setPreviousSelectedEncodingForConnector(JComboBox<?> charsetEncodingCombobox, String selectedCharset, boolean allowNone);
     
     public abstract void doShowEvents(String eventNameFilter);
+    
+    public abstract void doSaveAlerts();
+    
+    public abstract void retrieveUsers() throws ClientException;
+    
+    public abstract void doLogout();
 }

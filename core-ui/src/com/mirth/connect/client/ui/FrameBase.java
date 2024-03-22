@@ -266,4 +266,8 @@ public abstract class FrameBase extends JXFrame {
     public abstract void setPreviousSelectedEncodingForConnector(JComboBox<?> charsetEncodingCombobox, String selectedCharset, boolean allowNone);
     
     public abstract void doShowEvents(String eventNameFilter);
+    
+    public abstract void doSaveAlerts();
+    
+    public abstract void retrieveUsers() throws ClientException;
 }

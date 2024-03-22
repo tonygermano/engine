@@ -186,7 +186,6 @@ public class Frame extends FrameBase {
     public boolean multiChannelMessageBrowsingEnabled = false;
     public AlertPanel alertPanel = null;
     public AlertEditPanel alertEditPanel = null;
-    public CodeTemplatePanel codeTemplatePanel = null;
     public GlobalScriptsPanel globalScriptsPanel = null;
     public ExtensionManagerPanel extensionsPanel = null;
     public JXTaskPaneContainer taskPaneContainer;
@@ -1843,6 +1842,7 @@ public class Frame extends FrameBase {
      * @throws ClientException
      */
 
+    @Override
     public boolean updateChannel(Channel curr, boolean overwriting, Integer userId, Calendar dateStartEdit) throws ClientException {
         if (overwriting ? !mirthClient.updateChannel(curr, false, dateStartEdit) : !mirthClient.createChannel(curr)) {
             if (mirthClient.getCurrentUser().getId().equals(userId)) {

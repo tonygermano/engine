@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JPopupMenu;
+
+import org.jdesktop.swingx.JXTaskPane;
+
 import com.mirth.connect.model.Channel;
 import com.mirth.connect.model.ChannelDependency;
 import com.mirth.connect.model.ChannelHeader;
@@ -59,4 +63,7 @@ public abstract class ChannelPanelBase extends AbstractFramePanel {
     public abstract void createNewChannel();
     
     public abstract void clearChannelCache();
+    
+    public JXTaskPane channelTasks;
+    public JPopupMenu channelPopupMenu;
 }

@@ -3843,8 +3843,6 @@ public class ChannelPanel extends ChannelPanelBase {
         private JButton cancelButton;
     }
 
-    public JXTaskPane channelTasks;
-    public JPopupMenu channelPopupMenu;
     public JXTaskPane groupTasks;
     public JPopupMenu groupPopupMenu;
 

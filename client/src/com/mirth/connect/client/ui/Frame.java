@@ -176,7 +176,6 @@ public class Frame extends FrameBase {
 
     private Logger logger = LogManager.getLogger(this.getClass());
     public DashboardPanel dashboardPanel = null;
-    public ChannelPanel channelPanel = null;
     public SettingsPane settingsPane = null;
     public UserPanel userPanel = null;
     public ChannelSetup channelEditPanel = null;
@@ -192,7 +191,6 @@ public class Frame extends FrameBase {
     public ExtensionManagerPanel extensionsPanel = null;
     public JXTaskPaneContainer taskPaneContainer;
     public List<DashboardStatus> status = null;
-    public List<User> users = null;
     public ActionManager manager = ActionManager.getInstance();
     public JPanel contentPanel;
     public BorderLayout borderLayout1 = new BorderLayout();
@@ -337,7 +335,7 @@ public class Frame extends FrameBase {
     }
 
     @Override
-    public ChannelPanel getChannelPanel() {
+    public ChannelPanelBase getChannelPanel() {
         return channelPanel;
     }
     
@@ -2317,6 +2315,7 @@ public class Frame extends FrameBase {
         }
     }
 
+    @Override
     public void doLogout() {
         logout(false);
     }

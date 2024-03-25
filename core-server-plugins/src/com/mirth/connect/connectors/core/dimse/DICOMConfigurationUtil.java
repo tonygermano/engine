@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.dimse;
+package com.mirth.connect.connectors.core.dimse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,14 +15,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dcm4che2.tool.dcmrcv.MirthDcmRcv;
-import org.dcm4che2.tool.dcmsnd.MirthDcmSnd;
 
+import com.mirth.connect.donkey.model.channel.dimse.IDICOMDispatcherProperties;
+import com.mirth.connect.donkey.model.channel.dimse.DICOMConnectorProperties;
+import com.mirth.connect.donkey.server.channel.IConnector;
 import com.mirth.connect.util.MirthSSLUtil;
 
 public class DICOMConfigurationUtil {
 
-    public static void configureDcmRcv(MirthDcmRcv dcmrcv, DICOMReceiver connector, DICOMReceiverProperties connectorProperties, String[] protocols) throws Exception {
+    public static void configureDcmRcv(IMirthDcmRcv dcmrcv, IDICOMReceiver connector, DICOMConnectorProperties connectorProperties, String[] protocols) throws Exception {
         if (!StringUtils.equals(connectorProperties.getTls(), "notls")) {
             if (connectorProperties.getTls().equals("without")) {
                 dcmrcv.setTlsWithoutEncyrption();
@@ -32,27 +33,27 @@ public class DICOMConfigurationUtil {
                 dcmrcv.setTlsAES_128_CBC();
             }
 
-            String trustStore = connector.getReplacer().replaceValues(connectorProperties.getTrustStore(), connector.getChannelId(), connector.getChannel().getName());
+            String trustStore = connector.getReplacer().replaceValues(connectorProperties.getTrustStore(), ((IConnector) connector).getChannelId(), ((IConnector) connector).getChannelName());
             if (StringUtils.isNotBlank(trustStore)) {
                 dcmrcv.setTrustStoreURL(trustStore);
             }
 
-            String trustStorePW = connector.getReplacer().replaceValues(connectorProperties.getTrustStorePW(), connector.getChannelId(), connector.getChannel().getName());
+            String trustStorePW = connector.getReplacer().replaceValues(connectorProperties.getTrustStorePW(), ((IConnector) connector).getChannelId(), ((IConnector) connector).getChannelName());
             if (StringUtils.isNotBlank(trustStorePW)) {
                 dcmrcv.setTrustStorePassword(trustStorePW);
             }
 
-            String keyPW = connector.getReplacer().replaceValues(connectorProperties.getKeyPW(), connector.getChannelId(), connector.getChannel().getName());
+            String keyPW = connector.getReplacer().replaceValues(connectorProperties.getKeyPW(), ((IConnector) connector).getChannelId(), ((IConnector) connector).getChannelName());
             if (StringUtils.isNotBlank(keyPW)) {
                 dcmrcv.setKeyPassword(keyPW);
             }
 
-            String keyStore = connector.getReplacer().replaceValues(connectorProperties.getKeyStore(), connector.getChannelId(), connector.getChannel().getName());
+            String keyStore = connector.getReplacer().replaceValues(connectorProperties.getKeyStore(), ((IConnector) connector).getChannelId(), ((IConnector) connector).getChannelName());
             if (StringUtils.isNotBlank(keyStore)) {
                 dcmrcv.setKeyStoreURL(keyStore);
             }
 
-            String keyStorePW = connector.getReplacer().replaceValues(connectorProperties.getKeyStorePW(), connector.getChannelId(), connector.getChannel().getName());
+            String keyStorePW = connector.getReplacer().replaceValues(connectorProperties.getKeyStorePW(), ((IConnector) connector).getChannelId(), ((IConnector) connector).getChannelName());
             if (StringUtils.isNotBlank(keyStorePW)) {
                 dcmrcv.setKeyStorePassword(keyStorePW);
             }
@@ -79,7 +80,7 @@ public class DICOMConfigurationUtil {
         }
     }
 
-    public static void configureDcmSnd(MirthDcmSnd dcmsnd, DICOMDispatcher connector, DICOMDispatcherProperties connectorProperties, String[] protocols) throws Exception {
+    public static void configureDcmSnd(IMirthDcmSnd dcmsnd, IConnector connector, IDICOMDispatcherProperties connectorProperties, String[] protocols) throws Exception {
         if (connectorProperties.getTls() != null && !connectorProperties.getTls().equals("notls")) {
             if (connectorProperties.getTls().equals("without"))
                 dcmsnd.setTlsWithoutEncyrption();

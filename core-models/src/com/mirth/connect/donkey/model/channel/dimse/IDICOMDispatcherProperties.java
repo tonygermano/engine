@@ -1,6 +1,6 @@
 package com.mirth.connect.donkey.model.channel.dimse;
 
-public interface IDICOMDispatcherProperties {
+public interface IDICOMDispatcherProperties extends DICOMConnectorProperties {
 	
 	public String getHost();
 	

@@ -30,7 +30,7 @@ import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileConnectorException;
 import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
+import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
 
 /**
  * The FileSystemConnection class for local files

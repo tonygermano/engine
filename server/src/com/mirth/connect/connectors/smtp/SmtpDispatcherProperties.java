@@ -17,10 +17,10 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.smtp.ISmtpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.smtp.ISmtpDispatcherProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;

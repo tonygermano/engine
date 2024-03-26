@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.IOException;
 import java.net.Socket;

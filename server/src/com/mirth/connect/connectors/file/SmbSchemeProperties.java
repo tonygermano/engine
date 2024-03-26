@@ -3,7 +3,7 @@ package com.mirth.connect.connectors.file;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 import jcifs.DialectVersion;
 

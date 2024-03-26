@@ -74,12 +74,12 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
 
 import com.mirth.connect.client.core.api.MirthApiException;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcherProperties;
 import com.mirth.connect.connectors.core.ws.WebServiceConnectorServletInterface;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap;
-import com.mirth.connect.donkey.model.channel.ws.IWebServiceDispatcherProperties;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.util.ConnectorUtil;
 import com.mirth.connect.server.util.TemplateValueReplacer;

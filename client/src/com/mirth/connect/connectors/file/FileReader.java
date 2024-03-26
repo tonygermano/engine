@@ -43,9 +43,10 @@ import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.components.MirthVariableList;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ResponseHandler;
+import com.mirth.connect.connectors.core.file.FTPSchemeProperties;
+import com.mirth.connect.connectors.core.file.FileScheme;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.file.FileScheme;
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 import net.miginfocom.swing.MigLayout;

@@ -16,9 +16,9 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.mirth.connect.client.core.api.MirthApiException;
+import com.mirth.connect.connectors.core.tcp.ITcpDispatcherProperties;
 import com.mirth.connect.connectors.core.tcp.TcpConnectorServletInterface;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.tcp.ITcpDispatcherProperties;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.util.ConnectorUtil;
 import com.mirth.connect.server.util.TemplateValueReplacer;

@@ -3,8 +3,8 @@ package com.mirth.connect.connectors.core.file;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.mirth.connect.donkey.model.channel.file.FileScheme;
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.FileScheme;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 
 public interface IFileConnector {

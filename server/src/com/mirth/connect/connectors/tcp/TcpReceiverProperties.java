@@ -15,13 +15,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.tcp.ITcpReceiverProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorPropertiesInterface;
 import com.mirth.connect.donkey.model.channel.SourceConnectorProperties;
 import com.mirth.connect.donkey.model.channel.SourceConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.tcp.ITcpReceiverProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.model.transmission.TransmissionModeProperties;

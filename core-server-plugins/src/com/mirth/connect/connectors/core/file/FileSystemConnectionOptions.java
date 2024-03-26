@@ -11,7 +11,7 @@ package com.mirth.connect.connectors.core.file;
 
 import java.net.URI;
 
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 public class FileSystemConnectionOptions {
     private URI uri;

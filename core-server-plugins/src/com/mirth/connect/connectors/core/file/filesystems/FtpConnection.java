@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -25,12 +25,10 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
+import com.mirth.connect.connectors.core.file.FTPSchemeProperties;
 import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.file.FTPSchemeProperties;
-import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
+import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
 
 /**
  * The FileSystemConnection class for files accessed via FTP.

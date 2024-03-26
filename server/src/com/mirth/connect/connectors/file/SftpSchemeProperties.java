@@ -17,7 +17,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 public class SftpSchemeProperties extends SchemeProperties {
     private boolean passwordAuth;

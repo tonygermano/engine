@@ -11,7 +11,7 @@ package com.mirth.connect.connectors.file;
 
 import com.mirth.connect.client.ui.MirthDialog;
 import com.mirth.connect.client.ui.PlatformUI;
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 public abstract class AdvancedSettingsDialog extends MirthDialog {
 

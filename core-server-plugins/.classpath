@@ -85,5 +85,6 @@
 	<classpathentry kind="lib" path="lib/joda-time-2.9.9.jar"/>
 	<classpathentry kind="lib" path="testlib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="testlib/mockito-core-2.7.9.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-net-3.10.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

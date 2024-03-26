@@ -31,8 +31,8 @@ import com.mirth.connect.client.core.Operation.ExecuteType;
 import com.mirth.connect.client.core.api.BaseServletInterface;
 import com.mirth.connect.client.core.api.MirthOperation;
 import com.mirth.connect.client.core.api.Param;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @Path("/connectors/ws")

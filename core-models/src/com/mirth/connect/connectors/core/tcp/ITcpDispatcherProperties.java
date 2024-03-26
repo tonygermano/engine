@@ -1,4 +1,4 @@
-package com.mirth.connect.donkey.model.channel.tcp;
+package com.mirth.connect.connectors.core.tcp;
 
 public interface ITcpDispatcherProperties extends TcpConnectorProperties {
 

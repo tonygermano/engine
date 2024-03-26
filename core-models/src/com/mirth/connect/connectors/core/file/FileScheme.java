@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.donkey.model.channel.file;
+package com.mirth.connect.connectors.core.file;
 
 public enum FileScheme {
     FILE("file"), FTP("ftp"), SFTP("sftp"), S3("Amazon S3"), SMB("smb"), WEBDAV("webdav");

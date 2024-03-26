@@ -13,12 +13,12 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.dimse.DICOMConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorPropertiesInterface;
 import com.mirth.connect.donkey.model.channel.SourceConnectorProperties;
 import com.mirth.connect.donkey.model.channel.SourceConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.dimse.DICOMConnectorProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 

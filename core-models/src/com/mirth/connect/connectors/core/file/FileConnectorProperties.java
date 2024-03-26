@@ -1,8 +1,10 @@
-package com.mirth.connect.donkey.model.channel.file;
+package com.mirth.connect.connectors.core.file;
 
 public interface FileConnectorProperties {
 
 	public String getHost();
 	
 	public FileScheme getScheme();
+	
+	public SchemeProperties getSchemeProperties();
 }

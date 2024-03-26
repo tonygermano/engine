@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.mirth.connect.connectors.core.file.FTPSchemeProperties;
+import com.mirth.connect.connectors.core.file.FileScheme;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.file.FTPSchemeProperties;
-import com.mirth.connect.donkey.model.channel.file.FileScheme;
 
 public class FileSystemConnectionFactoryTest {
 

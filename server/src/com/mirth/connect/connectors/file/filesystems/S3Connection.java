@@ -36,8 +36,8 @@ import com.mirth.connect.connectors.core.file.FileConnectorException;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
 import com.mirth.connect.connectors.file.S3SchemeProperties;
-import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
 import com.mirth.connect.userutil.MessageHeaders;
 
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;

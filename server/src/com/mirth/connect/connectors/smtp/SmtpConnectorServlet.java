@@ -16,9 +16,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
 import com.mirth.connect.client.core.api.MirthApiException;
+import com.mirth.connect.connectors.core.smtp.ISmtpDispatcherProperties;
 import com.mirth.connect.connectors.core.smtp.SmtpConnectorServletInterface;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.model.channel.smtp.ISmtpDispatcherProperties;
 import com.mirth.connect.server.api.MirthServlet;
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;

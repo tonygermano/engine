@@ -19,13 +19,13 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcherProperties;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap;
-import com.mirth.connect.donkey.model.channel.ws.IWebServiceDispatcherProperties;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.donkey.model.channel.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.DonkeyElement.DonkeyElementException;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;

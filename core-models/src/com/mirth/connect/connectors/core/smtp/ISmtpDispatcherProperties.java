@@ -1,4 +1,4 @@
-package com.mirth.connect.donkey.model.channel.smtp;
+package com.mirth.connect.connectors.core.smtp;
 
 public interface ISmtpDispatcherProperties {
 

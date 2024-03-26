@@ -28,7 +28,7 @@ import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
 import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.file.filters.RegexFilenameFilter;
+import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
 
 public class WebDavConnection implements FileSystemConnection {
     public class WebDavFileInfo implements FileInfo {

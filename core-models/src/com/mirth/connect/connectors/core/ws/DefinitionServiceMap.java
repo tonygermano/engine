@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.donkey.model.channel.ws;
+package com.mirth.connect.connectors.core.ws;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;

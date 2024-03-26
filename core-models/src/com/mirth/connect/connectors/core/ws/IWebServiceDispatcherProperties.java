@@ -1,4 +1,4 @@
-package com.mirth.connect.donkey.model.channel.ws;
+package com.mirth.connect.connectors.core.ws;
 
 public interface IWebServiceDispatcherProperties {
 	

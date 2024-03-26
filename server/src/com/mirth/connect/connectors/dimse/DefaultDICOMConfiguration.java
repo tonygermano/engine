@@ -16,11 +16,11 @@ import org.dcm4che2.net.NetworkConnection;
 
 import com.mirth.connect.connectors.core.dimse.DICOMConfiguration;
 import com.mirth.connect.connectors.core.dimse.DICOMConfigurationUtil;
+import com.mirth.connect.connectors.core.dimse.DICOMConnectorProperties;
+import com.mirth.connect.connectors.core.dimse.IDICOMDispatcherProperties;
 import com.mirth.connect.connectors.core.dimse.IDICOMReceiver;
 import com.mirth.connect.connectors.core.dimse.IMirthDcmRcv;
 import com.mirth.connect.connectors.core.dimse.IMirthDcmSnd;
-import com.mirth.connect.donkey.model.channel.dimse.DICOMConnectorProperties;
-import com.mirth.connect.donkey.model.channel.dimse.IDICOMDispatcherProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;

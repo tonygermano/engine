@@ -13,14 +13,14 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.file.FileConnectorProperties;
+import com.mirth.connect.connectors.core.file.FileScheme;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.PollConnectorProperties;
 import com.mirth.connect.donkey.model.channel.PollConnectorPropertiesInterface;
 import com.mirth.connect.donkey.model.channel.SourceConnectorProperties;
 import com.mirth.connect.donkey.model.channel.SourceConnectorPropertiesInterface;
-import com.mirth.connect.donkey.model.channel.file.FileConnectorProperties;
-import com.mirth.connect.donkey.model.channel.file.FileScheme;
-import com.mirth.connect.donkey.model.channel.file.SchemeProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;
@@ -110,6 +110,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.scheme = scheme;
     }
 
+    @Override
     public SchemeProperties getSchemeProperties() {
         return schemeProperties;
     }

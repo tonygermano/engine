@@ -1,4 +1,4 @@
-package com.mirth.connect.donkey.model.channel.dimse;
+package com.mirth.connect.connectors.core.dimse;
 
 public interface IDICOMDispatcherProperties extends DICOMConnectorProperties {
 	

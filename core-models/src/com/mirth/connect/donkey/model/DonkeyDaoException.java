@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.donkey.server.data;
+package com.mirth.connect.donkey.model;
 
 public class DonkeyDaoException extends RuntimeException {
     public DonkeyDaoException(String message) {

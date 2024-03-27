@@ -369,7 +369,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("sftp")) {
             DonkeyElement schemeProperties = element.addChildElementIfNotExists("schemeProperties");
             if (schemeProperties != null) {
-                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.file.SftpSchemeProperties");
+                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SftpSchemeProperties");
 
                 schemeProperties.addChildElementIfNotExists("passwordAuth", "true");
                 schemeProperties.addChildElementIfNotExists("keyAuth", "false");
@@ -398,7 +398,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
     	if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("smb")) {
             DonkeyElement schemeProperties = element.addChildElementIfNotExists("schemeProperties");
             if (schemeProperties != null) {
-                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.file.SmbSchemeProperties");
+                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SmbSchemeProperties");
                 schemeProperties.addChildElementIfNotExists("smbMinVersion", "SMB1");
                 schemeProperties.addChildElementIfNotExists("smbMaxVersion", "SMB311");
             }

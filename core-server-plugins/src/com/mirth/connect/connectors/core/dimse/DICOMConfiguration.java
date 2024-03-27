@@ -11,8 +11,6 @@ package com.mirth.connect.connectors.core.dimse;
 
 import java.util.Map;
 
-import com.mirth.connect.connectors.core.dimse.DICOMConnectorProperties;
-import com.mirth.connect.connectors.core.dimse.IDICOMDispatcherProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 
 public interface DICOMConfiguration {

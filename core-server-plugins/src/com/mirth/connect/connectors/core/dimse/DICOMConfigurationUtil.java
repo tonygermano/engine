@@ -16,8 +16,6 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.mirth.connect.connectors.core.dimse.DICOMConnectorProperties;
-import com.mirth.connect.connectors.core.dimse.IDICOMDispatcherProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;
 import com.mirth.connect.util.MirthSSLUtil;
 

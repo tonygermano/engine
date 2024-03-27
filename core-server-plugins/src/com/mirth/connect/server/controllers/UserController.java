@@ -20,6 +20,8 @@ import com.mirth.connect.model.LoginStrike;
 import com.mirth.connect.model.User;
 
 public abstract class UserController extends Controller {
+    public static Class<?> DEFAULT_USER_CONTROLLER_CLASS;
+    
     public static UserController getInstance() {
         return ControllerFactory.getFactory().createUserController();
     }

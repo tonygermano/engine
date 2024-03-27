@@ -26,9 +26,9 @@ import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mirth.connect.donkey.server.data.DonkeyDaoException;
+import com.mirth.connect.donkey.model.DonkeyDaoException;
 
-public class DatabaseUtil extends AbstractDatabaseUtil {
+public class DatabaseUtil {
     private static Logger logger = LogManager.getLogger(DatabaseUtil.class);
 
     public static void executeScript(String script, boolean ignoreErrors) throws Exception {
@@ -205,8 +205,9 @@ public class DatabaseUtil extends AbstractDatabaseUtil {
 
     /**
      * Tell whether or not the given table exists in the database
+     * @throws DonkeyException 
      */
-    public static boolean tableExists(Connection connection, String tableName) {
+    public static boolean tableExists(Connection connection, String tableName) throws DonkeyDaoException {
         ResultSet resultSet = null;
 
         try {
@@ -230,8 +231,9 @@ public class DatabaseUtil extends AbstractDatabaseUtil {
 
     /**
      * Tell whether or not the given index exists in the database
+     * @throws DonkeyException 
      */
-    public static boolean indexExists(Connection connection, String tableName, String indexName) {
+    public static boolean indexExists(Connection connection, String tableName, String indexName) throws DonkeyDaoException {
         if (!tableExists(connection, tableName)) {
             return false;
         }

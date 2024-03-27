@@ -11,12 +11,12 @@ package com.mirth.connect.donkey.test.util;
 
 import java.sql.Connection;
 
+import com.mirth.connect.donkey.model.DonkeyDaoException;
 import com.mirth.connect.donkey.model.message.ConnectorMessage;
 import com.mirth.connect.donkey.model.message.MessageContent;
 import com.mirth.connect.donkey.model.message.Status;
 import com.mirth.connect.donkey.server.Donkey;
 import com.mirth.connect.donkey.server.channel.Statistics;
-import com.mirth.connect.donkey.server.data.DonkeyDaoException;
 import com.mirth.connect.donkey.server.data.jdbc.JdbcDao;
 import com.mirth.connect.donkey.server.data.jdbc.PreparedStatementSource;
 import com.mirth.connect.donkey.server.data.jdbc.QuerySource;

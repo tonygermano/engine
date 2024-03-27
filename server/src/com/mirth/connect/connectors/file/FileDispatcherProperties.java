@@ -369,7 +369,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("sftp")) {
             DonkeyElement schemeProperties = element.addChildElementIfNotExists("schemeProperties");
             if (schemeProperties != null) {
-                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SftpSchemeProperties");
+                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.file.SftpSchemeProperties");
 
                 schemeProperties.addChildElementIfNotExists("passwordAuth", "true");
                 schemeProperties.addChildElementIfNotExists("keyAuth", "false");
@@ -398,7 +398,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
     	if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("smb")) {
             DonkeyElement schemeProperties = element.addChildElementIfNotExists("schemeProperties");
             if (schemeProperties != null) {
-                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SmbSchemeProperties");
+                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.file.SmbSchemeProperties");
                 schemeProperties.addChildElementIfNotExists("smbMinVersion", "SMB1");
                 schemeProperties.addChildElementIfNotExists("smbMaxVersion", "SMB311");
             }
@@ -409,6 +409,22 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
     @Override public void migrate3_11_0(DonkeyElement element) {} 
     @Override public void migrate3_11_1(DonkeyElement element) {} 
     @Override public void migrate3_12_0(DonkeyElement element) {}// @formatter:on
+    
+    @Override
+    public void migrate4_6_0(DonkeyElement element) {
+    	// Change fully-qualified names of classes moved to different packages
+    	if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("sftp")) {
+            DonkeyElement schemeProperties = element.getChildElement("schemeProperties");
+            if (schemeProperties != null) {
+                schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SftpSchemeProperties");
+            }
+    	} else if (element.getChildElement("scheme").getTextContent().equalsIgnoreCase("smb")) {
+            DonkeyElement schemeProperties = element.getChildElement("schemeProperties");
+            if (schemeProperties != null) {
+            	schemeProperties.setAttribute("class", "com.mirth.connect.connectors.core.file.SmbSchemeProperties");
+            }
+    	}
+    }
 
     @Override
     public Map<String, Object> getPurgedProperties() {

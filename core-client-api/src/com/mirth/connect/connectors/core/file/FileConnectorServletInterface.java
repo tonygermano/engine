@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +29,7 @@ import com.mirth.connect.client.core.Operation.ExecuteType;
 import com.mirth.connect.client.core.api.BaseServletInterface;
 import com.mirth.connect.client.core.api.MirthOperation;
 import com.mirth.connect.client.core.api.Param;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @Path("/connectors/file")
@@ -56,7 +57,7 @@ public interface FileConnectorServletInterface extends BaseServletInterface {
                             @ExampleObject(name = "file_receiver_properties", ref = "../apiexamples/file_receiver_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "file_receiver_properties", ref = "../apiexamples/file_receiver_properties_json") }) })
-            FileReceiverProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 
     @POST
@@ -76,6 +77,6 @@ public interface FileConnectorServletInterface extends BaseServletInterface {
                             @ExampleObject(name = "file_dispatcher_properties", ref = "../apiexamples/file_dispatcher_properties_xml") }),
                     @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
                             @ExampleObject(name = "file_dispatcher_properties", ref = "../apiexamples/file_dispatcher_properties_json") }) })
-            FileDispatcherProperties properties) throws ClientException;
+            ConnectorProperties properties) throws ClientException;
     // @formatter:on
 }

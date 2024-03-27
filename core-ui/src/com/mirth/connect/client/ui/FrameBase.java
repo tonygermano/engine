@@ -279,4 +279,7 @@ public abstract class FrameBase extends JXFrame {
     public abstract void retrieveUsers() throws ClientException;
     
     public abstract void doLogout();
+    
+    public abstract boolean isLoginPanelVisible();
+    
 }

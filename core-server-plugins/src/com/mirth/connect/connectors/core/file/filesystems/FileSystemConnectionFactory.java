@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,10 +25,8 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import com.mirth.connect.connectors.core.file.FTPSchemeProperties;
 import com.mirth.connect.connectors.core.file.FileScheme;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.core.file.filesystems.FtpConnection;
-import com.mirth.connect.connectors.file.S3SchemeProperties;
-import com.mirth.connect.connectors.file.SftpSchemeProperties;
+import com.mirth.connect.connectors.core.file.S3SchemeProperties;
+import com.mirth.connect.connectors.core.file.SftpSchemeProperties;
 
 /**
  * A factory to create instances of FileSystemConnection based on the endpoint and connector

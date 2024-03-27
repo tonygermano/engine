@@ -5212,4 +5212,9 @@ public class Frame extends FrameBase {
             }
         }
     }
+    
+    @Override
+    public boolean isLoginPanelVisible() {
+    	return LoginPanel.getInstance().isVisible();
+    }
 }

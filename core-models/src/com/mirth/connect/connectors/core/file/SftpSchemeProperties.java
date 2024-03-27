@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,8 +16,6 @@ import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-
-import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 public class SftpSchemeProperties extends SchemeProperties {
     private boolean passwordAuth;

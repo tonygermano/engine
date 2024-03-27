@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +38,8 @@ import org.apache.logging.log4j.Logger;
 import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileConnectorException;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.file.SmbSchemeProperties;
-import com.mirth.connect.connectors.file.filters.SmbFilenameWildcardFilter;
+import com.mirth.connect.connectors.core.file.SmbSchemeProperties;
+import com.mirth.connect.connectors.core.file.filters.SmbFilenameWildcardFilter;
 
 /**
  * The SmbFileSystemConnection class for networked files
@@ -157,7 +155,7 @@ public class SmbFileConnection implements FileSystemConnection {
         this.fileConfiguration = fileConfiguration;
     }
     
-    protected SmbFile getShare() {
+    public SmbFile getShare() {
         return share;
     }
     
@@ -165,7 +163,7 @@ public class SmbFileConnection implements FileSystemConnection {
         this.share = share;
     }
 
-    protected String getPath(String dir, String name) {
+    public String getPath(String dir, String name) {
     	if (dir == null) {
     		dir = "";
     	}
@@ -194,7 +192,7 @@ public class SmbFileConnection implements FileSystemConnection {
         }
     }
     
-    protected SmbFile getSmbFile(SmbFile share, String name) throws Exception {
+    public SmbFile getSmbFile(SmbFile share, String name) throws Exception {
         CIFSContext context = share.getContext();
         SmbFile smbFile = new SmbFile(name, context);
         smbFile.setConnectTimeout(timeout);

@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -26,8 +26,6 @@ import org.apache.webdav.lib.WebdavResource;
 
 import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
 
 public class WebDavConnection implements FileSystemConnection {

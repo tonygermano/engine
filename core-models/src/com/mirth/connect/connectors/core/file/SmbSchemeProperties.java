@@ -1,9 +1,8 @@
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 import jcifs.DialectVersion;
 

@@ -13,8 +13,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import com.mirth.connect.connectors.core.file.FileConnectorProperties;
 import com.mirth.connect.connectors.core.file.FileScheme;
+import com.mirth.connect.connectors.core.file.IFileDispatcherProperties;
 import com.mirth.connect.connectors.core.file.SchemeProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
@@ -23,7 +23,7 @@ import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.util.CharsetUtils;
 
-public class FileDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, FileConnectorProperties {
+public class FileDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, IFileDispatcherProperties {
     public static final String NAME = "File Writer";
 
     private DestinationConnectorProperties destinationConnectorProperties;
@@ -137,6 +137,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.outputPattern = outputPattern;
     }
 
+    @Override
     public boolean isAnonymous() {
         return anonymous;
     }
@@ -145,6 +146,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.anonymous = anonymous;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -153,6 +155,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -161,6 +164,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.password = password;
     }
 
+    @Override
     public String getTimeout() {
         return timeout;
     }
@@ -169,6 +173,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.timeout = timeout;
     }
 
+    @Override
     public boolean isKeepConnectionOpen() {
         return keepConnectionOpen;
     }
@@ -177,6 +182,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.keepConnectionOpen = keepConnectionOpen;
     }
 
+    @Override
     public String getMaxIdleTime() {
         return maxIdleTime;
     }
@@ -185,6 +191,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.maxIdleTime = maxIdleTime;
     }
 
+    @Override
     public boolean isSecure() {
         return secure;
     }
@@ -193,6 +200,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.secure = secure;
     }
 
+    @Override
     public boolean isPassive() {
         return passive;
     }
@@ -201,6 +209,7 @@ public class FileDispatcherProperties extends ConnectorProperties implements Des
         this.passive = passive;
     }
 
+    @Override
     public boolean isValidateConnection() {
         return validateConnection;
     }

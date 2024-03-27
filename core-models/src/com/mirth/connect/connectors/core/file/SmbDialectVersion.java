@@ -1,4 +1,4 @@
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 public class SmbDialectVersion {
 	private String version;

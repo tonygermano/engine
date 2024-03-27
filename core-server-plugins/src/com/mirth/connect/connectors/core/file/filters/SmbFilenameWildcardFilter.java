@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filters;
+package com.mirth.connect.connectors.core.file.filters;
 
 import java.util.regex.Pattern;
 

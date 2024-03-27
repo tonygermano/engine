@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
-
-import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 import software.amazon.awssdk.regions.Region;
 

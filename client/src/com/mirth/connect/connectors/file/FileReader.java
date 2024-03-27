@@ -44,8 +44,12 @@ import com.mirth.connect.client.ui.components.MirthVariableList;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ResponseHandler;
 import com.mirth.connect.connectors.core.file.FTPSchemeProperties;
+import com.mirth.connect.connectors.core.file.FileConnectorServletInterface;
 import com.mirth.connect.connectors.core.file.FileScheme;
+import com.mirth.connect.connectors.core.file.S3SchemeProperties;
 import com.mirth.connect.connectors.core.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SftpSchemeProperties;
+import com.mirth.connect.connectors.core.file.SmbSchemeProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.util.ConnectionTestResponse;
 

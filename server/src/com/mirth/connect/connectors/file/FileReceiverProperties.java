@@ -160,6 +160,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.ignoreDot = ignoreDot;
     }
 
+    @Override
     public boolean isAnonymous() {
         return anonymous;
     }
@@ -168,6 +169,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.anonymous = anonymous;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -176,6 +178,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -184,6 +187,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.password = password;
     }
 
+    @Override
     public String getTimeout() {
         return timeout;
     }
@@ -192,6 +196,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.timeout = timeout;
     }
 
+    @Override
     public boolean isSecure() {
         return secure;
     }
@@ -200,6 +205,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.secure = secure;
     }
 
+    @Override
     public boolean isPassive() {
         return passive;
     }
@@ -208,6 +214,7 @@ public class FileReceiverProperties extends ConnectorProperties implements PollC
         this.passive = passive;
     }
 
+    @Override
     public boolean isValidateConnection() {
         return validateConnection;
     }

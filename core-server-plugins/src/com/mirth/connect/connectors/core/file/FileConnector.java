@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file;
+package com.mirth.connect.connectors.core.file;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,16 +27,11 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mirth.connect.connectors.core.file.FileConnectorException;
-import com.mirth.connect.connectors.core.file.FileScheme;
-import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.IFileConnector;
-import com.mirth.connect.connectors.core.file.SchemeProperties;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
-import com.mirth.connect.connectors.file.filesystems.FileSystemConnectionFactory;
+import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnectionFactory;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
-import com.mirth.connect.donkey.server.channel.DestinationConnector;
 import com.mirth.connect.donkey.server.channel.IConnector;
+import com.mirth.connect.donkey.server.channel.IDestinationConnector;
 
 public class FileConnector implements IFileConnector {
     private Logger logger = LogManager.getLogger(this.getClass());
@@ -58,27 +53,24 @@ public class FileConnector implements IFileConnector {
     public FileConnector(String channelId, ConnectorProperties connectorProperties, IConnector connector) {
         this.channelId = channelId;
 
-        if (connectorProperties instanceof FileReceiverProperties) {
-            FileReceiverProperties fileReceiverProperties = (FileReceiverProperties) connectorProperties;
-            this.scheme = fileReceiverProperties.getScheme();
-            this.timeout = fileReceiverProperties.getTimeout();
-            this.passive = fileReceiverProperties.isPassive();
-            this.secure = fileReceiverProperties.isSecure();
-            this.validateConnection = fileReceiverProperties.isValidateConnection();
-        } else if (connectorProperties instanceof FileDispatcherProperties) {
-            FileDispatcherProperties fileDispatcherProperties = (FileDispatcherProperties) connectorProperties;
-            this.scheme = fileDispatcherProperties.getScheme();
-            this.timeout = fileDispatcherProperties.getTimeout();
-            this.passive = fileDispatcherProperties.isPassive();
-            this.secure = fileDispatcherProperties.isSecure();
-            this.validateConnection = fileDispatcherProperties.isValidateConnection();
-            this.keepConnectionOpen = fileDispatcherProperties.isKeepConnectionOpen();
+        if (connectorProperties instanceof FileConnectorProperties) {
+            FileConnectorProperties fileConnectorProperties = (FileConnectorProperties) connectorProperties;
+            this.scheme = fileConnectorProperties.getScheme();
+            this.timeout = fileConnectorProperties.getTimeout();
+            this.passive = fileConnectorProperties.isPassive();
+            this.secure = fileConnectorProperties.isSecure();
+            this.validateConnection = fileConnectorProperties.isValidateConnection();
+        }
+        
+        if (connectorProperties instanceof IFileDispatcherProperties) {
+        	IFileDispatcherProperties fileDispatcherProperties = (IFileDispatcherProperties) connectorProperties;
+        	this.keepConnectionOpen = fileDispatcherProperties.isKeepConnectionOpen();
             this.maxIdleTime = fileDispatcherProperties.getMaxIdleTime();
         }
 
-        if (connector instanceof DestinationConnector) {
+        if (connector instanceof IDestinationConnector) {
             // Set the max total to at least the default value
-            maxTotalConnections = Math.max(GenericObjectPoolConfig.DEFAULT_MAX_TOTAL, ((DestinationConnector) connector).getPotentialThreadCount());
+            maxTotalConnections = Math.max(GenericObjectPoolConfig.DEFAULT_MAX_TOTAL, ((IDestinationConnector) connector).getPotentialThreadCount());
         }
     }
 
@@ -249,7 +241,8 @@ public class FileConnector implements IFileConnector {
      *            ??
      * @throws Exception
      */
-    protected void destroyConnection(FileSystemConnection connection, FileSystemConnectionOptions fileSystemOptions) throws Exception {
+    @Override
+    public void destroyConnection(FileSystemConnection connection, FileSystemConnectionOptions fileSystemOptions) throws Exception {
         if (connection != null) {
             ObjectPool<FileSystemConnection> pool = getConnectionPool(fileSystemOptions);
             pool.invalidateObject(connection);

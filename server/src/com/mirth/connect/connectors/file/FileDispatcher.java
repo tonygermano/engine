@@ -22,7 +22,11 @@ import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileConnectorException;
 import com.mirth.connect.connectors.core.file.FileScheme;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
+import com.mirth.connect.connectors.core.file.IFileConnector;
+import com.mirth.connect.connectors.core.file.IFileDispatcher;
+import com.mirth.connect.connectors.core.file.S3SchemeProperties;
 import com.mirth.connect.connectors.core.file.SchemeProperties;
+import com.mirth.connect.connectors.core.file.SftpSchemeProperties;
 import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
@@ -42,10 +46,10 @@ import com.mirth.connect.server.util.TemplateValueReplacer;
 import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.ErrorMessageBuilder;
 
-public class FileDispatcher extends DestinationConnector {
+public class FileDispatcher extends DestinationConnector implements IFileDispatcher {
     private Logger logger = LogManager.getLogger(this.getClass());
     private FileDispatcherProperties connectorProperties;
-    private FileConnector fileConnector;
+    private IFileConnector fileConnector;
     private String charsetEncoding;
 
     private EventController eventController = ControllerFactory.getFactory().createEventController();
@@ -217,7 +221,8 @@ public class FileDispatcher extends DestinationConnector {
         return new Response(responseStatus, responseData, responseStatusMessage, responseError);
     }
 
-    public void setFileConnector(FileConnector fileConnector) {
+    @Override
+    public void setFileConnector(IFileConnector fileConnector) {
         this.fileConnector = fileConnector;
     }
 }

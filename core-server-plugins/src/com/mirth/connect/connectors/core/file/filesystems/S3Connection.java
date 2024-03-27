@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.BufferedInputStream;
 import java.io.FilenameFilter;
@@ -34,10 +34,8 @@ import org.apache.logging.log4j.Logger;
 import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileConnectorException;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.S3SchemeProperties;
 import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
-import com.mirth.connect.connectors.file.S3SchemeProperties;
 import com.mirth.connect.userutil.MessageHeaders;
 
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
@@ -156,10 +154,10 @@ public class S3Connection implements FileSystemConnection {
     private FileConfiguration fileConfiguration;
 
     FileSystemConnectionOptions fileSystemOptions;
-    S3SchemeProperties schemeProps;
+    public S3SchemeProperties schemeProps;
     S3ClientBuilder clientBuilder;
-    S3Client client;
-    StsClient sts;
+    public S3Client client;
+    public StsClient sts;
     int stsDuration;
 
     public S3Connection(FileSystemConnectionOptions fileSystemOptions, int timeout) throws Exception {
@@ -195,7 +193,7 @@ public class S3Connection implements FileSystemConnection {
         this.fileConfiguration = fileConfiguration;
     }
     
-    boolean isSTSEnabled() {
+    public boolean isSTSEnabled() {
         return schemeProps.isUseTemporaryCredentials() && !fileSystemOptions.isAnonymous();
     }
 
@@ -204,7 +202,7 @@ public class S3Connection implements FileSystemConnection {
         return ApacheHttpClient.builder().connectionTimeout(timeoutDuration).socketTimeout(timeoutDuration);
     }
 
-    AwsCredentialsProvider createCredentialsProvider(FileSystemConnectionOptions fileSystemOptions) {
+    public AwsCredentialsProvider createCredentialsProvider(FileSystemConnectionOptions fileSystemOptions) {
         S3SchemeProperties schemeProps = (S3SchemeProperties) fileSystemOptions.getSchemeProperties();
 
         if (fileSystemOptions.isAnonymous()) {
@@ -216,7 +214,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    S3Client getClient() {
+    public S3Client getClient() {
         if (isSTSEnabled() && client == null) {
             GetSessionTokenRequest getSessionTokenRequest = GetSessionTokenRequest.builder().durationSeconds(stsDuration).build();
             clientBuilder.credentialsProvider(StsGetSessionTokenCredentialsProvider.builder().stsClient(sts).refreshRequest(getSessionTokenRequest).build());
@@ -227,7 +225,7 @@ public class S3Connection implements FileSystemConnection {
         return client;
     }
 
-    Pair<String, String> getBucketNameAndPrefix(String fromDir) {
+    public Pair<String, String> getBucketNameAndPrefix(String fromDir) {
         String bucketName = null;
         String prefix = null;
 
@@ -250,7 +248,7 @@ public class S3Connection implements FileSystemConnection {
         return new ImmutablePair<String, String>(bucketName, prefix);
     }
 
-    String normalizeKey(String key, boolean leadingDelimiter, boolean trailingDelimiter) {
+    public String normalizeKey(String key, boolean leadingDelimiter, boolean trailingDelimiter) {
         if (key != null) {
             if (leadingDelimiter) {
                 if (!StringUtils.startsWith(key, DELIMITER)) {
@@ -276,11 +274,11 @@ public class S3Connection implements FileSystemConnection {
         return key;
     }
 
-    ListObjectsV2Request.Builder createListRequest(String bucketName, String prefix) {
+    public ListObjectsV2Request.Builder createListRequest(String bucketName, String prefix) {
         return ListObjectsV2Request.builder().bucket(bucketName).prefix(prefix).delimiter(DELIMITER);
     }
 
-    Map<String, String> getCustomHeaders() {
+    public Map<String, String> getCustomHeaders() {
         Map<String, String> headers = new HashMap<String, String>();
 
         if (MapUtils.isNotEmpty(schemeProps.getCustomHeaders())) {
@@ -294,13 +292,13 @@ public class S3Connection implements FileSystemConnection {
         return headers;
     }
 
-    void addMetadataIfNotNull(Map<String, Object> map, String key, Object value) {
+    public void addMetadataIfNotNull(Map<String, Object> map, String key, Object value) {
         if (map != null && value != null) {
             map.put(key, value);
         }
     }
 
-    void populateObjectMetadata(Map<String, Object> map, Map<String, List<String>> objectMetadata) {
+    public void populateObjectMetadata(Map<String, Object> map, Map<String, List<String>> objectMetadata) {
         if (map != null) {
             map.put("s3Metadata", new MessageHeaders(objectMetadata));
         }
@@ -320,7 +318,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    List<FileInfo> doListFiles(String fromDir, String filenamePattern, boolean isRegex, boolean ignoreDot) throws Exception {
+    public List<FileInfo> doListFiles(String fromDir, String filenamePattern, boolean isRegex, boolean ignoreDot) throws Exception {
         String filePrefix = null;
 
         FilenameFilter filenameFilter;
@@ -384,7 +382,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    List<String> doListDirectories(String fromDir) throws Exception {
+    public List<String> doListDirectories(String fromDir) throws Exception {
         List<String> directories = new ArrayList<String>();
         S3Client client = getClient();
 
@@ -418,7 +416,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    boolean doExists(String file, String path) throws Exception {
+    public boolean doExists(String file, String path) throws Exception {
         S3Client client = getClient();
 
         Pair<String, String> bucketNameAndPrefix = getBucketNameAndPrefix(path);
@@ -448,7 +446,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    InputStream doReadFile(String file, String fromDir, Map<String, Object> sourceMap) throws Exception {
+    public InputStream doReadFile(String file, String fromDir, Map<String, Object> sourceMap) throws Exception {
         S3Client client = getClient();
 
         Pair<String, String> bucketNameAndPrefix = getBucketNameAndPrefix(fromDir);
@@ -488,7 +486,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    void doWriteFile(String file, String toDir, boolean append, InputStream message, long contentLength, Map<String, Object> connectorMap) throws Exception {
+    public void doWriteFile(String file, String toDir, boolean append, InputStream message, long contentLength, Map<String, Object> connectorMap) throws Exception {
         S3Client client = getClient();
 
         Pair<String, String> bucketNameAndPrefix = getBucketNameAndPrefix(toDir);
@@ -523,7 +521,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    void doDelete(String file, String fromDir, boolean mayNotExist) throws Exception {
+    public void doDelete(String file, String fromDir, boolean mayNotExist) throws Exception {
         S3Client client = getClient();
 
         Pair<String, String> bucketNameAndPrefix = getBucketNameAndPrefix(fromDir);
@@ -554,7 +552,7 @@ public class S3Connection implements FileSystemConnection {
         }
     }
 
-    void doMove(String fromName, String fromDir, String toName, String toDir) throws Exception {
+    public void doMove(String fromName, String fromDir, String toName, String toDir) throws Exception {
         S3Client client = getClient();
 
         Pair<String, String> fromBucketNameAndPrefix = getBucketNameAndPrefix(fromDir);
@@ -699,7 +697,7 @@ public class S3Connection implements FileSystemConnection {
         return canRead(writeDir);
     }
 
-    void handleException(AwsServiceException e) throws AwsServiceException {
+    public void handleException(AwsServiceException e) throws AwsServiceException {
         if (isSTSEnabled() && e.awsErrorDetails() != null && StringUtils.equals(e.awsErrorDetails().errorCode(), "ExpiredToken")) {
             if (client != null) {
                 client.close();

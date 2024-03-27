@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.file.filesystems;
+package com.mirth.connect.connectors.core.file.filesystems;
 
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -35,10 +35,8 @@ import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.UserInfo;
 import com.mirth.connect.connectors.core.file.FileConfiguration;
 import com.mirth.connect.connectors.core.file.FileSystemConnectionOptions;
-import com.mirth.connect.connectors.core.file.filesystems.FileInfo;
-import com.mirth.connect.connectors.core.file.filesystems.FileSystemConnection;
+import com.mirth.connect.connectors.core.file.SftpSchemeProperties;
 import com.mirth.connect.connectors.core.file.filters.RegexFilenameFilter;
-import com.mirth.connect.connectors.file.SftpSchemeProperties;
 
 public class SftpConnection implements FileSystemConnection {
 

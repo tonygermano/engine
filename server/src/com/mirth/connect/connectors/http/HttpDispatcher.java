@@ -90,6 +90,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.http.HttpConfiguration;
+import com.mirth.connect.connectors.core.http.IHttpDispatcher;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -110,7 +112,7 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.ErrorMessageBuilder;
 import com.mirth.connect.util.HttpUtil;
 
-public class HttpDispatcher extends DestinationConnector {
+public class HttpDispatcher extends DestinationConnector implements IHttpDispatcher {
 
     private static final String PROXY_CONTEXT_KEY = "dispatcherProxy";
     private static final Pattern AUTH_HEADER_PATTERN = Pattern.compile("([^\\s=,]+)\\s*=\\s*([^=,;\"\\s]+|\"([^\"]|\\\\[\\s\\S])*(?<!\\\\)\")");
@@ -453,6 +455,7 @@ public class HttpDispatcher extends DestinationConnector {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 
+    @Override
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry() {
         return socketFactoryRegistry;
     }

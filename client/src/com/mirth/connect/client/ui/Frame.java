@@ -176,7 +176,6 @@ public class Frame extends FrameBase {
 
     private Logger logger = LogManager.getLogger(this.getClass());
     public DashboardPanel dashboardPanel = null;
-    public ChannelPanel channelPanel = null;
     public SettingsPane settingsPane = null;
     public UserPanel userPanel = null;
     public ChannelSetup channelEditPanel = null;
@@ -187,12 +186,10 @@ public class Frame extends FrameBase {
     public boolean multiChannelMessageBrowsingEnabled = false;
     public AlertPanel alertPanel = null;
     public AlertEditPanel alertEditPanel = null;
-    public CodeTemplatePanel codeTemplatePanel = null;
     public GlobalScriptsPanel globalScriptsPanel = null;
     public ExtensionManagerPanel extensionsPanel = null;
     public JXTaskPaneContainer taskPaneContainer;
     public List<DashboardStatus> status = null;
-    public List<User> users = null;
     public ActionManager manager = ActionManager.getInstance();
     public JPanel contentPanel;
     public BorderLayout borderLayout1 = new BorderLayout();
@@ -337,7 +334,7 @@ public class Frame extends FrameBase {
     }
 
     @Override
-    public ChannelPanel getChannelPanel() {
+    public ChannelPanelBase getChannelPanel() {
         return channelPanel;
     }
     
@@ -1845,6 +1842,7 @@ public class Frame extends FrameBase {
      * @throws ClientException
      */
 
+    @Override
     public boolean updateChannel(Channel curr, boolean overwriting, Integer userId, Calendar dateStartEdit) throws ClientException {
         if (overwriting ? !mirthClient.updateChannel(curr, false, dateStartEdit) : !mirthClient.createChannel(curr)) {
             if (mirthClient.getCurrentUser().getId().equals(userId)) {
@@ -2317,6 +2315,7 @@ public class Frame extends FrameBase {
         }
     }
 
+    @Override
     public void doLogout() {
         logout(false);
     }
@@ -4377,6 +4376,7 @@ public class Frame extends FrameBase {
         new QueuingSwingWorker<Void, Void>(task, queue).executeDelegate();
     }
 
+    @Override
     public void doSaveAlerts() {
         if (changesHaveBeenMade()) {
             try {
@@ -5012,6 +5012,7 @@ public class Frame extends FrameBase {
         return metaDataIds;
     }
 
+    @Override
     public void retrieveUsers() throws ClientException {
         users = mirthClient.getAllUsers();
     }
@@ -5210,5 +5211,10 @@ public class Frame extends FrameBase {
                 }
             }
         }
+    }
+    
+    @Override
+    public boolean isLoginPanelVisible() {
+    	return LoginPanel.getInstance().isVisible();
     }
 }

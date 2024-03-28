@@ -121,9 +121,6 @@ import net.miginfocom.swing.MigLayout;
 
 public class CodeTemplatePanel extends CodeTemplatePanelBase {
 
-    public static final String OPTION_ONLY_SINGLE_CODE_TEMPLATES = "onlySingleCodeTemplates";
-    public static final String OPTION_ONLY_SINGLE_LIBRARIES = "onlySingleLibraries";
-
     public static final int TEMPLATE_NAME_COLUMN = 0;
     public static final int TEMPLATE_ID_COLUMN = 1;
     public static final int TEMPLATE_TYPE_COLUMN = 2;
@@ -284,6 +281,7 @@ public class CodeTemplatePanel extends CodeTemplatePanelBase {
         return promptSave(false);
     }
 
+    @Override
     public boolean promptSave(boolean force) {
         stopTableEditing();
         int option;
@@ -337,6 +335,7 @@ public class CodeTemplatePanel extends CodeTemplatePanelBase {
         return codeTemplates;
     }
 
+    @Override
     public String getCurrentSelectedId() {
         int selectedRow = templateTreeTable.getSelectedRow();
         if (selectedRow >= 0) {
@@ -349,10 +348,12 @@ public class CodeTemplatePanel extends CodeTemplatePanelBase {
         return null;
     }
 
+    @Override
     public void doRefreshCodeTemplates() {
         doRefreshCodeTemplates(true);
     }
 
+    @Override
     public void doRefreshCodeTemplates(boolean showMessageOnForbidden) {
         doRefreshCodeTemplates(null, showMessageOnForbidden);
     }
@@ -643,6 +644,7 @@ public class CodeTemplatePanel extends CodeTemplatePanelBase {
         }
     }
 
+    @Override
     public CodeTemplateLibrarySaveResult attemptUpdate(Map<String, CodeTemplateLibrary> libraries, Map<String, CodeTemplateLibrary> removedLibraries, Map<String, CodeTemplate> updatedCodeTemplates, Map<String, CodeTemplate> removedCodeTemplates, boolean override, TreeTableNode selectedNode, Set<String> expandedLibraryIds) {
         CodeTemplateLibrarySaveResult updateSummary = null;
         boolean tryAgain = false;

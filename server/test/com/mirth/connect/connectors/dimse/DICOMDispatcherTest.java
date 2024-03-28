@@ -18,6 +18,7 @@ import org.dcm4che2.tool.dcmsnd.MirthDcmSnd;
 import org.dcm4che2.util.StringUtils;
 import org.junit.Test;
 
+import com.mirth.connect.connectors.core.dimse.DICOMConfiguration;
 import com.mirth.connect.connectors.dimse.DICOMDispatcher.CommandDataDimseRSPHandler;
 import com.mirth.connect.donkey.model.message.ConnectorMessage;
 import com.mirth.connect.donkey.model.message.Response;

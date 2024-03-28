@@ -9,8 +9,8 @@
 
 package com.mirth.connect.plugins.httpauth.oauth2;
 
+import com.mirth.connect.connectors.core.http.HttpConfiguration;
 import com.mirth.connect.connectors.http.DefaultHttpConfiguration;
-import com.mirth.connect.connectors.http.HttpConfiguration;
 import com.mirth.connect.donkey.server.channel.Connector;
 import com.mirth.connect.plugins.httpauth.Authenticator;
 import com.mirth.connect.plugins.httpauth.AuthenticatorProvider;

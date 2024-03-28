@@ -34,6 +34,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mirth.connect.connectors.core.ws.IWebServiceReceiver;
+import com.mirth.connect.connectors.core.ws.WebServiceConfiguration;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -68,7 +71,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
 import com.sun.net.httpserver.HttpServer;
 
-public class WebServiceReceiver extends SourceConnector {
+public class WebServiceReceiver extends SourceConnector implements IWebServiceReceiver {
     // This determines how many client requests can queue up while waiting for the server socket to accept
     private static final int DEFAULT_BACKLOG = 256;
 
@@ -336,6 +339,7 @@ public class WebServiceReceiver extends SourceConnector {
         return dispatchResult;
     }
 
+    @Override
     public void setServer(HttpServer server) {
         this.server = server;
     }

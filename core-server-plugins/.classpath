@@ -74,9 +74,32 @@
 	<classpathentry kind="lib" path="/Core-client-base/lib/swagger/ext/reflections-0.9.10.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/velocity-engine-core-2.3.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/velocity-tools-generic-3.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-api"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/jersey/jersey-media-multipart-2.35.jar"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/swagger/swagger-annotations-2.0.10.jar"/>
+	<classpathentry kind="lib" path="/Core-client-api/lib/swagger/swagger-core-2.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-dbutils-1.7.jar"/>
 	<classpathentry kind="lib" path="lib/guice-4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/javax/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/mybatis-3.5.15.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.9.9.jar"/>
 	<classpathentry kind="lib" path="testlib/junit-4.8.1.jar"/>
+	<classpathentry kind="lib" path="testlib/mockito-core-2.7.9.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-net-3.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/aws/auth-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/aws-core-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/http-client-spi-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/regions-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/s3-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/sts-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/apache-client-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/sdk-core-2.15.28.jar"/>
+	<classpathentry kind="lib" path="lib/aws/utils-2.15.28.jar"/>
+	<classpathentry kind="lib" path="/Core-models/lib/extensions/file/jcifs-ng-2.1.8.jar"/>
+	<classpathentry kind="lib" path="lib/extensions/file/webdavclient4j-core-0.92.jar"/>
+	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/extensions/ws/wsdl4j-1.6.2-fixed.jar"/>
+	<classpathentry kind="lib" path="lib/javax/jaxws/ext/javax.xml.soap-api-1.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

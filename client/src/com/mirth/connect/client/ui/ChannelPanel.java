@@ -334,6 +334,7 @@ public class ChannelPanel extends ChannelPanelBase {
         }
     }
 
+    @Override
     public void closePopupWindow() {
         tagField.closePopupWindow();
     }
@@ -1097,6 +1098,7 @@ public class ChannelPanel extends ChannelPanelBase {
         new ChannelWizard();
     }
 
+    @Override
     public void createNewChannel() {
         if (isSaveEnabled() && !promptSave(true)) {
             return;
@@ -1134,6 +1136,7 @@ public class ChannelPanel extends ChannelPanelBase {
         parent.setupChannel(channel, selectedGroupIds.size() == 1 ? selectedGroupIds.iterator().next() : null);
     }
 
+    @Override
     public void addChannelToGroup(String channelId, String groupId) {
         Set<ChannelGroup> channelGroups = new HashSet<ChannelGroup>();
 
@@ -1682,6 +1685,7 @@ public class ChannelPanel extends ChannelPanelBase {
         }
     }
 
+    @Override
     public boolean doExportChannel() {
         if (isSaveEnabled() && !promptSave(true)) {
             return false;
@@ -2518,6 +2522,7 @@ public class ChannelPanel extends ChannelPanelBase {
         parent.setVisibleTasks(groupTasks, groupPopupMenu, 1, TASK_GROUP_DELETE_GROUP, visible);
     }
 
+    @Override
     public void updateChannelStatuses(List<ChannelSummary> changedChannels) {
         for (ChannelSummary channelSummary : changedChannels) {
             String channelId = channelSummary.getChannelId();
@@ -2557,6 +2562,7 @@ public class ChannelPanel extends ChannelPanelBase {
         }
     }
 
+    @Override
     public void updateDefaultChannelGroup(List<DashboardStatus> statuses) {
         if (statuses != null && this.groupStatuses != null) {
             // Build up a map by the channel ID for convenience
@@ -2647,6 +2653,7 @@ public class ChannelPanel extends ChannelPanelBase {
         }
     }
 
+    @Override
     public void clearChannelCache() {
         channelStatuses = new LinkedHashMap<String, ChannelStatus>();
         groupStatuses = new LinkedHashMap<String, ChannelGroupStatus>();
@@ -2730,6 +2737,7 @@ public class ChannelPanel extends ChannelPanelBase {
         }
     }
 
+    @Override
     public void initPanelPlugins() {
         loadPanelPlugins();
         switchBottomPane();
@@ -2997,6 +3005,7 @@ public class ChannelPanel extends ChannelPanelBase {
         return false;
     }
 
+    @Override
     public List<Channel> getSelectedChannels() {
         List<Channel> selectedChannels = new ArrayList<Channel>();
 
@@ -3834,8 +3843,6 @@ public class ChannelPanel extends ChannelPanelBase {
         private JButton cancelButton;
     }
 
-    public JXTaskPane channelTasks;
-    public JPopupMenu channelPopupMenu;
     public JXTaskPane groupTasks;
     public JPopupMenu groupPopupMenu;
 

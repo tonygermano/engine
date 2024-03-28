@@ -56,7 +56,7 @@ import com.mirth.connect.donkey.util.MessageMaps;
 import com.mirth.connect.donkey.util.Serializer;
 import com.mirth.connect.donkey.util.ThreadUtils;
 
-public abstract class DestinationConnector extends Connector implements Runnable {
+public abstract class DestinationConnector extends Connector implements Runnable, IDestinationConnector {
  
     private final static String QUEUED_RESPONSE = "Message queued successfully";
 
@@ -101,6 +101,7 @@ public abstract class DestinationConnector extends Connector implements Runnable
      * matter. If queuing is set to On Failure, then both main processing threads and queue threads
      * need to be taken into account.
      */
+    @Override
     public int getPotentialThreadCount() {
         int maxProcessingThreads = ((SourceConnectorPropertiesInterface) getChannel().getSourceConnector().getConnectorProperties()).getSourceConnectorProperties().getProcessingThreads();
         int potentialThreadCount;
@@ -169,6 +170,11 @@ public abstract class DestinationConnector extends Connector implements Runnable
 
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
+    }
+    
+    @Override
+    public String getConnectorName() {
+        return getDestinationName();
     }
 
     public boolean isEnabled() {

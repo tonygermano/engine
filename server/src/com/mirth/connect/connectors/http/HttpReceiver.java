@@ -79,6 +79,8 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.security.Constraint;
 
+import com.mirth.connect.connectors.core.http.HttpConfiguration;
+import com.mirth.connect.connectors.core.http.IHttpReceiver;
 import com.mirth.connect.connectors.http.HttpStaticResource.ResourceType;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
@@ -120,7 +122,7 @@ import com.mirth.connect.userutil.MessageParameters;
 import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.HttpUtil;
 
-public class HttpReceiver extends SourceConnector implements BinaryContentTypeResolver {
+public class HttpReceiver extends SourceConnector implements IHttpReceiver, BinaryContentTypeResolver {
     private Logger logger = LogManager.getLogger(this.getClass());
     private ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
     private EventController eventController = ControllerFactory.getFactory().createEventController();

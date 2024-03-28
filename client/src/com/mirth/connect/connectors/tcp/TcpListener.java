@@ -36,6 +36,7 @@ import com.mirth.connect.client.ui.components.MirthFieldConstraints;
 import com.mirth.connect.client.ui.components.MirthRadioButton;
 import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
+import com.mirth.connect.connectors.core.tcp.TcpConnectorSettingsPanel;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.model.Connector.Mode;
@@ -48,7 +49,7 @@ import com.mirth.connect.plugins.TransmissionModePlugin;
 
 import net.miginfocom.swing.MigLayout;
 
-public class TcpListener extends ConnectorSettingsPanel implements ActionListener {
+public class TcpListener extends ConnectorSettingsPanel implements ActionListener, TcpConnectorSettingsPanel {
 
     public static final String NEW_CONNECTION_PLUGIN_PROPS = "tcpListenerNewConnectionPluginProperties";
 
@@ -697,6 +698,16 @@ public class TcpListener extends ConnectorSettingsPanel implements ActionListene
             responseConnectorPropertiesPanel.setLayoutComponentsEnabled(true);
         }
     }
+    
+	@Override
+	public MirthRadioButton getModeServerRadio() {
+		return modeServerRadio;
+	}
+
+	@Override
+	public MirthRadioButton getModeClientRadio() {
+		return modeClientRadio;
+	}
 
     private JLabel transmissionModeLabel;
     private MirthComboBox<String> transmissionModeComboBox;

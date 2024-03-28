@@ -53,6 +53,8 @@ import com.mirth.connect.client.ui.TextFieldCellEditor;
 import com.mirth.connect.client.ui.UIConstants;
 import com.mirth.connect.client.ui.components.MirthFieldConstraints;
 import com.mirth.connect.client.ui.components.MirthTable;
+import com.mirth.connect.connectors.core.file.S3SchemeProperties;
+import com.mirth.connect.connectors.core.file.SchemeProperties;
 
 import software.amazon.awssdk.regions.Region;
 

@@ -43,6 +43,7 @@ import org.apache.commons.math3.util.Precision;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.donkey.model.DonkeyDaoException;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
@@ -75,7 +76,6 @@ import com.mirth.connect.donkey.server.channel.StorageSettings;
 import com.mirth.connect.donkey.server.channel.components.ResponseTransformer;
 import com.mirth.connect.donkey.server.controllers.ChannelController;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
-import com.mirth.connect.donkey.server.data.DonkeyDaoException;
 import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
 import com.mirth.connect.donkey.server.data.buffered.BufferedDaoFactory;
 import com.mirth.connect.donkey.server.data.passthru.PassthruDaoFactory;

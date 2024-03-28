@@ -116,6 +116,8 @@ import com.mirth.connect.model.converters.DocumentSerializer;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.plugins.directoryresource.DirectoryResourceProperties;
 import com.mirth.connect.server.ExtensionLoader;
+import com.mirth.connect.server.alert.Alert;
+import com.mirth.connect.server.alert.action.UserProtocol;
 import com.mirth.connect.server.mybatis.KeyValuePair;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.server.util.DatabaseUtil;
@@ -226,6 +228,8 @@ public class DefaultConfigurationController extends ConfigurationController {
         InputStream versionPropertiesStream = null;
 
         try {
+            initializeCoreClasses();
+            
             // Delimiter parsing disabled by default so getString() returns the whole property, even if there are commas
             mirthConfigBuilder = PropertiesConfigurationUtil.createBuilder(new File(ClassPathResource.getResourceURI("mirth.properties")));
             mirthConfig = mirthConfigBuilder.getConfiguration();
@@ -1621,6 +1625,11 @@ public class DefaultConfigurationController extends ConfigurationController {
         } catch (Exception e) {
             throw new ControllerException(e);
         }
+    }
+    
+    private void initializeCoreClasses() {
+        Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
+        DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
     }
 
     @Override

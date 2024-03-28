@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.tcp.ITcpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
@@ -24,7 +25,7 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.TcpUtil;
 
 @SuppressWarnings("serial")
-public class TcpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class TcpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, ITcpDispatcherProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
@@ -109,6 +110,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.transmissionModeProperties = transmissionModeProperties;
     }
     
+    @Override
     public boolean isServerMode() {
         return serverMode;
     }
@@ -117,6 +119,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.serverMode = serverMode;
     }
 
+    @Override
     public String getRemoteAddress() {
         return remoteAddress;
     }
@@ -125,6 +128,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.remoteAddress = remoteAddress;
     }
 
+    @Override
     public String getRemotePort() {
         return remotePort;
     }
@@ -133,6 +137,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.remotePort = remotePort;
     }
 
+    @Override
     public boolean isOverrideLocalBinding() {
         return overrideLocalBinding;
     }
@@ -141,6 +146,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.overrideLocalBinding = overrideLocalBinding;
     }
 
+    @Override
     public String getLocalAddress() {
         return localAddress;
     }
@@ -149,6 +155,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.localAddress = localAddress;
     }
 
+    @Override
     public String getLocalPort() {
         return localPort;
     }
@@ -197,6 +204,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.checkRemoteHost = checkRemoteHost;
     }
 
+    @Override
     public String getResponseTimeout() {
         return responseTimeout;
     }

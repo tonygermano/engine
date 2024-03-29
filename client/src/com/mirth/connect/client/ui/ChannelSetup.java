@@ -2571,14 +2571,6 @@ public class ChannelSetup extends ChannelSetupBase {
         channelView.addTab("Scripts", scriptsPanel);
         add(channelView, "grow, h 600, w 600");
         
-        if (parent.getPluginListeners().size() > 0) {
-        	PluginListener listener = (PluginListener) parent.getPluginListeners().get("MessageGenerator");
-            if (listener != null) {
-	        	MessageTemplatePanel mp = this.transformerPane.templatePanel.getMessageTemplatePanel();
-	        	listener.addButtonToParent(mp.getInboundTemplatePanel(), "", 22);
-	        	listener.addButtonToParent(mp.getOutboundTemplatePanel(), "", 22);
-            }
-        }
     }
 
     private void scriptsComponentShown(ComponentEvent evt) {

@@ -37,15 +37,10 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
-    private Map<String, ActionListener> pluginListeners = new ConcurrentHashMap<String, ActionListener>();
-
-    public void addPluginListener(String key, ActionListener listener) {
-    	this.pluginListeners.put(key, listener);
-    }
     
-    public Map<String, ActionListener> getPluginListeners() {
-    	return this.pluginListeners;
-    }
+    public abstract TemplatePanelBase getInboundTemplatePanel();
+    
+    public abstract TemplatePanelBase getOutboundTemplatePanel();
     
     public abstract MirthDialog getEditMessageDialog();
     

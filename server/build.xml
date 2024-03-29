@@ -1041,20 +1041,20 @@
 		<!-- sign jars for webstart -->
 		<echo message="[Thread Count: ${signjar_thread_count}] Signing jars for Java Web Start" />
 		<property file="${keystore_property_file}" />
-		
+		<!--
 		<for param="jarFile" parallel="true" threadCount="${signjar_thread_count}">
 			<fileset dir="${setup.client.lib}" includes="**/*.jar" />
 			<fileset dir="${setup.extensions}" includes="**/*.jar" />
 			<sequential>
 				<retry retrycount="5" retrydelay="1000">
 					<signjar jar="@{jarFile}" alias="${key.alias}" keystore="${key.keystore}" storepass="${key.storepass}" keypass="${key.keypass}" storetype="${key.storetype}" tsaurl="http://sha256timestamp.ws.symantec.com/sha256/timestamp" digestalg="SHA-256">
-						<!-- http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7127374 -->
+						 http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7127374 
 						<sysproperty key="jsse.enableSNIExtension" value="false" />
 						<sysproperty key="https.protocols" value="TLSv1.2,TLSv1.1" />
 					</signjar>
 				</retry>
 			</sequential>
-		</for>
+		</for>-->
 	</target>
 
 	<target name="create-extension-zips" depends="create-setup">

@@ -267,6 +267,5 @@
 	<classpathentry kind="lib" path="testlib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="testlib/mockito-core-2.7.9.jar"/>
 	<classpathentry kind="lib" path="testlib/objenesis-2.5.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/connect-plugin-message-generator"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

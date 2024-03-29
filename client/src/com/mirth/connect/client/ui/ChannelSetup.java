@@ -93,6 +93,7 @@ import com.mirth.connect.client.ui.components.tag.FilterCompletion;
 import com.mirth.connect.client.ui.components.tag.MirthTagField;
 import com.mirth.connect.client.ui.components.tag.SearchFilterListener;
 import com.mirth.connect.client.ui.components.tag.TagFilterCompletion;
+import com.mirth.connect.client.ui.editors.MessageTemplatePanel;
 import com.mirth.connect.client.ui.editors.filter.FilterPane;
 import com.mirth.connect.client.ui.editors.transformer.TransformerPane;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorPanel;
@@ -2480,8 +2481,7 @@ public class ChannelSetup extends ChannelSetupBase {
     }
 
     private void initLayout() {
-        setLayout(new MigLayout("insets 0, novisualpadding, hidemode 3, fill"));
-
+        setLayout(new MigLayout("insets 0, novisualpadding, hidemode 3, fill"));       
         channelPropertiesPanel.setLayout(new MigLayout("insets 0 10 10 10, novisualpadding, hidemode 3, fill, gap 6", "[]12[]12[][grow]"));
         channelPropertiesPanel.add(nameLabel, "right");
         channelPropertiesPanel.add(nameField, "w 185!");
@@ -2570,6 +2570,15 @@ public class ChannelSetup extends ChannelSetupBase {
         channelView.addTab("Destinations", destinationsPanel);
         channelView.addTab("Scripts", scriptsPanel);
         add(channelView, "grow, h 600, w 600");
+        
+        if (parent.getPluginListeners().size() > 0) {
+        	PluginListener listener = (PluginListener) parent.getPluginListeners().get("MessageGenerator");
+            if (listener != null) {
+	        	MessageTemplatePanel mp = this.transformerPane.templatePanel.getMessageTemplatePanel();
+	        	listener.addButtonToParent(mp.getInboundTemplatePanel(), "", 22);
+	        	listener.addButtonToParent(mp.getOutboundTemplatePanel(), "", 22);
+            }
+        }
     }
 
     private void scriptsComponentShown(ComponentEvent evt) {

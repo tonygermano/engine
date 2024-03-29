@@ -172,7 +172,7 @@ import javafx.application.Platform;
 /**
  * The main content frame for the Mirth Client Application. Extends JXFrame and sets up all content.
  */
-public class Frame extends FrameBase {
+public class Frame extends FrameBase{
 
     private Logger logger = LogManager.getLogger(this.getClass());
     public DashboardPanel dashboardPanel = null;
@@ -5217,4 +5217,22 @@ public class Frame extends FrameBase {
     public boolean isLoginPanelVisible() {
     	return LoginPanel.getInstance().isVisible();
     }
+    
+    @Override
+    public boolean isEditMessageDialogReady() { 
+    	
+    	if ((channelEditPanel == null) || 
+		    (channelEditPanel.transformerPane == null) || 
+		    (channelEditPanel.transformerPane.templatePanel == null) ||
+		    (editMessageDialog == null)) {
+    		return false;
+    	} else 
+    		return true;
+    }
+
+	@Override
+	public EditMessageDialog getEditMessageDialog() {
+		// TODO Auto-generated method stub
+		return editMessageDialog;
+	};
 }

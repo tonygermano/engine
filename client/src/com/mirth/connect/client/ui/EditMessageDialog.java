@@ -56,9 +56,11 @@ import com.mirth.connect.client.ui.components.ItemSelectionTable;
 import com.mirth.connect.client.ui.components.ItemSelectionTableModel;
 import com.mirth.connect.client.ui.components.MirthSyntaxTextArea;
 import com.mirth.connect.client.ui.components.MirthTable;
+import com.mirth.connect.client.ui.editors.MessageTemplatePanel;
 import com.mirth.connect.donkey.model.message.RawMessage;
 
-public class EditMessageDialog extends MirthDialog implements DropTargetListener {
+@SuppressWarnings("serial")
+public class EditMessageDialog extends MirthDialog implements DropTargetListener, IMessageTypeable {
 
     private Frame parent;
     private String channelId;

@@ -1,10 +1,13 @@
 package com.mirth.connect.client.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -34,6 +37,17 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
+    private Map<String, ActionListener> pluginListeners = new ConcurrentHashMap<String, ActionListener>();
+
+    public void addPluginListener(String key, ActionListener listener) {
+    	this.pluginListeners.put(key, listener);
+    }
+    
+    public Map<String, ActionListener> getPluginListeners() {
+    	return this.pluginListeners;
+    }
+    
+    public abstract MirthDialog getEditMessageDialog();
     
     public abstract Client getClient();
     
@@ -281,5 +295,10 @@ public abstract class FrameBase extends JXFrame {
     public abstract void doLogout();
     
     public abstract boolean isLoginPanelVisible();
+
+	public boolean isEditMessageDialogReady() {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
 }

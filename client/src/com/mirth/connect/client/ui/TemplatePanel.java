@@ -456,8 +456,6 @@ public class TemplatePanel extends TemplatePanelBase implements DropTargetListen
 
     @Override
 	public void setMessage(String message, String dataType) {
-		// TODO Auto-generated method stub
 		setMessage(message);
-		//setDataType(dataType);
 	}
 }

@@ -5226,25 +5226,23 @@ public class Frame extends FrameBase{
 		    (channelEditPanel.transformerPane.templatePanel == null) ||
 		    (editMessageDialog == null)) {
     		return false;
-    	} else 
+    	} else {
     		return true;
+    	}
     }
 
 	@Override
 	public EditMessageDialog getEditMessageDialog() {
-		// TODO Auto-generated method stub
 		return editMessageDialog;
 	}
 
 	@Override
 	public TemplatePanelBase getInboundTemplatePanel() {
-		// TODO Auto-generated method stub
 		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getInboundTemplatePanel();
 	}
 
 	@Override
 	public TemplatePanelBase getOutboundTemplatePanel() {
-		// TODO Auto-generated method stub
 		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getOutboundTemplatePanel();
 	};
 }

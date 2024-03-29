@@ -38,10 +38,6 @@ public abstract class FrameBase extends JXFrame {
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
     
-    public abstract TemplatePanelBase getInboundTemplatePanel();
-    
-    public abstract TemplatePanelBase getOutboundTemplatePanel();
-    
     public abstract MirthDialog getEditMessageDialog();
     
     public abstract Client getClient();
@@ -292,8 +288,11 @@ public abstract class FrameBase extends JXFrame {
     public abstract boolean isLoginPanelVisible();
 
 	public boolean isEditMessageDialogReady() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+	
+    public abstract TemplatePanelBase getInboundTemplatePanel();
+    
+    public abstract TemplatePanelBase getOutboundTemplatePanel();
     
 }

@@ -40,7 +40,7 @@ import com.mirth.connect.client.ui.editors.DataTypePropertiesDialog;
 import com.mirth.connect.model.datatype.DataTypeProperties;
 import com.mirth.connect.plugins.DataTypeClientPlugin;
 
-public class TemplatePanel extends javax.swing.JPanel implements DropTargetListener {
+public class TemplatePanel extends TemplatePanelBase implements DropTargetListener {
     public final String DEFAULT_TEXT = "Paste a sample message here.";
 
     private static final String MESSAGE_TEMPLATES_BOLD = "<html><b>Message Templates</b></html>";
@@ -260,6 +260,7 @@ public class TemplatePanel extends javax.swing.JPanel implements DropTargetListe
         pasteBox.setDocument(hl7Document);
     }
 
+    @Override
     public String getDataType() {
         return (String) dataTypeComboBox.getSelectedItem();
     }
@@ -452,4 +453,9 @@ public class TemplatePanel extends javax.swing.JPanel implements DropTargetListe
     private com.mirth.connect.client.ui.components.MirthSyntaxTextArea pasteBox;
     private javax.swing.JButton properties;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+	public void setMessage(String message, String dataType) {
+		setMessage(message);
+	}
 }

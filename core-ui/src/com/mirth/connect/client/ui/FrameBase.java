@@ -1,10 +1,13 @@
 package com.mirth.connect.client.ui;
 
 import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -34,6 +37,8 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
+    
+    public abstract MirthDialog getEditMessageDialog();
     
     public abstract Client getClient();
     
@@ -281,5 +286,13 @@ public abstract class FrameBase extends JXFrame {
     public abstract void doLogout();
     
     public abstract boolean isLoginPanelVisible();
+
+	public boolean isEditMessageDialogReady() {
+		return false;
+	}
+	
+    public abstract TemplatePanelBase getInboundTemplatePanel();
+    
+    public abstract TemplatePanelBase getOutboundTemplatePanel();
     
 }

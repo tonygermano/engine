@@ -2481,7 +2481,7 @@ public class ChannelSetup extends ChannelSetupBase {
 
     private void initLayout() {
         setLayout(new MigLayout("insets 0, novisualpadding, hidemode 3, fill"));
-
+        
         channelPropertiesPanel.setLayout(new MigLayout("insets 0 10 10 10, novisualpadding, hidemode 3, fill, gap 6", "[]12[]12[][grow]"));
         channelPropertiesPanel.add(nameLabel, "right");
         channelPropertiesPanel.add(nameField, "w 185!");
@@ -2569,7 +2569,7 @@ public class ChannelSetup extends ChannelSetupBase {
         channelView.addTab("Source", sourcePanel);
         channelView.addTab("Destinations", destinationsPanel);
         channelView.addTab("Scripts", scriptsPanel);
-        add(channelView, "grow, h 600, w 600");
+        add(channelView, "grow, h 600, w 600");        
     }
 
     private void scriptsComponentShown(ComponentEvent evt) {

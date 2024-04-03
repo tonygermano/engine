@@ -86,6 +86,7 @@
 			<attribute name="javadoc_location" value="http://www.jarvana.com/jarvana/view/org/swinglabs/swingx-core/1.6.2-2/swingx-core-1.6.2-2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Core-ui/lib/language_support.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-plugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
@@ -114,7 +115,6 @@
 	<classpathentry kind="lib" path="lib/jcifs-ng-2.1.8.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-util-9.4.53.v20231009.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/language_support.jar"/>
 	<classpathentry kind="lib" path="lib/libphonenumber-8.12.50.jar"/>
 	<classpathentry kind="lib" path="lib/mimepull-1.9.15.jar"/>
 	<classpathentry kind="lib" path="lib/openjfx.jar"/>

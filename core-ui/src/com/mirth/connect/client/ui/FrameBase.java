@@ -31,6 +31,7 @@ import com.mirth.connect.model.DashboardStatus;
 import com.mirth.connect.model.PluginMetaData;
 import com.mirth.connect.model.User;
 
+@SuppressWarnings("serial")
 public abstract class FrameBase extends JXFrame {
     
     public Client mirthClient;
@@ -294,5 +295,7 @@ public abstract class FrameBase extends JXFrame {
     public abstract TemplatePanelBase getInboundTemplatePanel();
     
     public abstract TemplatePanelBase getOutboundTemplatePanel();
+    
+    public abstract void setupUIManager();
     
 }

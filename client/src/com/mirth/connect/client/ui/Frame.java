@@ -5244,5 +5244,11 @@ public class Frame extends FrameBase{
 	@Override
 	public TemplatePanelBase getOutboundTemplatePanel() {
 		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getOutboundTemplatePanel();
+	}
+
+	@Override
+	public void setupUIManager() {
+		// TODO Auto-generated method stub
+		Mirth.initUIManager();
 	};
 }

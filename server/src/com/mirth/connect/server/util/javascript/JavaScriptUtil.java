@@ -894,6 +894,7 @@ public class JavaScriptUtil implements IJavaScriptUtil {
 	    }
     }
     
+    @Override
     public IMirthContextFactory doGenerateContextFactory(boolean debug, Set<String> libraryResourceIds, String channelId, String scriptId, String script, ContextType contextType) throws ConnectorTaskException {
     	return JavaScriptUtil.generateContextFactory(debug, libraryResourceIds, channelId, scriptId, script, contextType);
     }

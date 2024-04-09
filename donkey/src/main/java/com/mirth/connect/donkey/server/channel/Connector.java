@@ -55,6 +55,7 @@ public abstract class Connector implements IConnector {
 
     }
 
+    @Override
     public Channel getChannel() {
         return channel;
     }

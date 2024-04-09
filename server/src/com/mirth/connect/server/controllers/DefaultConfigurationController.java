@@ -74,7 +74,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -125,6 +124,9 @@ import com.mirth.connect.server.util.PasswordRequirementsChecker;
 import com.mirth.connect.server.util.ResourceUtil;
 import com.mirth.connect.server.util.SqlConfig;
 import com.mirth.connect.server.util.StatementLock;
+import com.mirth.connect.server.util.javascript.JavaScriptCoreUtil;
+import com.mirth.connect.server.util.javascript.JavaScriptScopeUtil;
+import com.mirth.connect.server.util.javascript.JavaScriptUtil;
 import com.mirth.connect.util.ChannelDependencyException;
 import com.mirth.connect.util.ChannelDependencyGraph;
 import com.mirth.connect.util.ConfigurationProperty;
@@ -1630,6 +1632,8 @@ public class DefaultConfigurationController extends ConfigurationController {
     private void initializeCoreClasses() {
         Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
         DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
+        JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
+        JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
     }
 
     @Override

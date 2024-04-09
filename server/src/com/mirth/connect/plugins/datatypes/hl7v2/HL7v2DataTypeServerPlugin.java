@@ -11,7 +11,7 @@ package com.mirth.connect.plugins.datatypes.hl7v2;
 
 import java.io.InputStream;
 
-import com.mirth.connect.donkey.model.channel.ISourceConnector;
+import com.mirth.connect.donkey.server.channel.ISourceConnector;
 import com.mirth.connect.donkey.model.message.AutoResponder;
 import com.mirth.connect.donkey.model.message.ResponseValidator;
 import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;

@@ -15,61 +15,62 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 
-import com.mirth.connect.donkey.server.channel.Connector;
-import com.mirth.connect.donkey.server.channel.DestinationConnector;
-import com.mirth.connect.donkey.server.channel.SourceConnector;
+import com.mirth.connect.donkey.server.channel.IConnector;
+import com.mirth.connect.donkey.server.channel.IDestinationConnector;
+import com.mirth.connect.donkey.server.channel.ISourceConnector;
 import com.mirth.connect.donkey.util.ThreadUtils;
 
 public abstract class JavaScriptTask<T> implements Callable<T> {
 
     private Logger logger = LogManager.getLogger(JavaScriptTask.class);
-    private MirthContextFactory contextFactory;
+    private ContextFactory contextFactory;
     private String threadName;
     private Context context;
     private boolean contextCreated = false;
 
-    public JavaScriptTask(MirthContextFactory contextFactory, String name) {
+    public JavaScriptTask(ContextFactory contextFactory, String name) {
         this(contextFactory, name, null, null);
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, String name, String channelId, String channelName) {
+    public JavaScriptTask(ContextFactory contextFactory, String name, String channelId, String channelName) {
         this(contextFactory, name, channelId, channelName, null, null);
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, SourceConnector sourceConnector) {
+    public JavaScriptTask(ContextFactory contextFactory, ISourceConnector sourceConnector) {
         this(contextFactory, sourceConnector.getConnectorProperties().getName(), sourceConnector);
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, String name, SourceConnector sourceConnector) {
-        this(contextFactory, name, sourceConnector.getChannelId(), sourceConnector.getChannel().getName(), sourceConnector.getMetaDataId(), null);
+    public JavaScriptTask(ContextFactory contextFactory, String name, ISourceConnector sourceConnector) {
+        this(contextFactory, name, sourceConnector.getChannelId(), sourceConnector.getChannelName(), sourceConnector.getMetaDataId(), null);
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, DestinationConnector destinationConnector) {
-        this(contextFactory, destinationConnector.getConnectorProperties().getName(), destinationConnector.getChannelId(), destinationConnector.getChannel().getName(), destinationConnector.getMetaDataId(), destinationConnector.getDestinationName());
+    public JavaScriptTask(ContextFactory contextFactory, IDestinationConnector destinationConnector) {
+        this(contextFactory, destinationConnector.getConnectorProperties().getName(), destinationConnector.getChannelId(), destinationConnector.getChannelName(), destinationConnector.getMetaDataId(), destinationConnector.getConnectorName());
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, Connector connector) {
+    public JavaScriptTask(ContextFactory contextFactory, IConnector connector) {
         this(contextFactory, connector.getConnectorProperties().getName(), connector);
     }
 
-    public JavaScriptTask(MirthContextFactory contextFactory, String name, Connector connector) {
+    public JavaScriptTask(ContextFactory contextFactory, String name, IConnector connector) {
         this(contextFactory);
-        if (connector instanceof SourceConnector) {
-            init(name, connector.getChannelId(), connector.getChannel().getName(), connector.getMetaDataId(), null);
+        if (connector instanceof ISourceConnector) {
+            init(name, connector.getChannelId(), connector.getChannelName(), connector.getMetaDataId(), null);
         } else {
-            init(name, connector.getChannelId(), connector.getChannel().getName(), connector.getMetaDataId(), ((DestinationConnector) connector).getDestinationName());
+            init(name, connector.getChannelId(), connector.getChannelName(), connector.getMetaDataId(), connector.getConnectorName());
         }
     }
 
-    private JavaScriptTask(MirthContextFactory contextFactory, String name, String channelId, String channelName, Integer metaDataId, String destinationName) {
+    private JavaScriptTask(ContextFactory contextFactory, String name, String channelId, String channelName, Integer metaDataId, String destinationName) {
         this(contextFactory);
         init(name, channelId, channelName, metaDataId, destinationName);
     }
 
-    private JavaScriptTask(MirthContextFactory contextFactory) {
+    private JavaScriptTask(ContextFactory contextFactory) {
         this.contextFactory = contextFactory;
     }
 
@@ -92,15 +93,15 @@ public abstract class JavaScriptTask<T> implements Callable<T> {
         threadName = builder.toString();
     }
 
-    public MirthContextFactory getContextFactory() {
+    public ContextFactory getContextFactory() {
         return contextFactory;
     }
 
-    public void setContextFactory(MirthContextFactory contextFactory) {
+    public void setContextFactory(ContextFactory contextFactory) {
         this.contextFactory = contextFactory;
     }
 
-    protected Context getContext() {
+    public Context getContext() {
         return context;
     }
 
@@ -125,7 +126,7 @@ public abstract class JavaScriptTask<T> implements Callable<T> {
             synchronized (this) {
                 ThreadUtils.checkInterruptedStatus();
                 context = Context.getCurrentContext();
-                currentThread.setContextClassLoader(contextFactory.getApplicationClassLoader());
+                currentThread.setContextClassLoader(((ContextFactory) contextFactory).getApplicationClassLoader());
                 logger.debug(StringUtils.defaultString(StringUtils.trimToNull(getClass().getSimpleName()), getClass().getName()) + " using context factory: " + contextFactory.hashCode());
 
                 /*
@@ -134,7 +135,7 @@ public abstract class JavaScriptTask<T> implements Callable<T> {
                  */
                 if (context == null) {
                     contextCreated = true;
-                    context = JavaScriptScopeUtil.getContext(contextFactory);
+                    context = JavaScriptCoreUtil.getContext(contextFactory);
                 }
 
                 if (context instanceof MirthContext) {

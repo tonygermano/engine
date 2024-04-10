@@ -1,12 +1,13 @@
 package com.mirth.connect.server.message;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mozilla.javascript.ContextFactory;
 import org.mozilla.javascript.tools.debugger.MirthMain;
 
 import com.mirth.connect.donkey.server.ConnectorTaskException;
 import com.mirth.connect.donkey.server.DeployException;
 import com.mirth.connect.donkey.server.UndeployException;
-import com.mirth.connect.donkey.server.channel.SourceConnector;
+import com.mirth.connect.donkey.server.channel.ISourceConnector;
 import com.mirth.connect.donkey.server.message.batch.BatchAdaptorFactory;
 import com.mirth.connect.model.codetemplates.ContextType;
 import com.mirth.connect.model.datatype.BatchProperties;
@@ -15,8 +16,8 @@ import com.mirth.connect.server.MirthScopeProvider;
 import com.mirth.connect.server.controllers.ContextFactoryController;
 import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.server.controllers.ScriptController;
-import com.mirth.connect.server.util.javascript.JavaScriptUtil;
-import com.mirth.connect.server.util.javascript.MirthContextFactory;
+import com.mirth.connect.server.util.javascript.IMirthContextFactory;
+import com.mirth.connect.server.util.javascript.JavaScriptCoreUtil;
 
 public abstract class DebuggableBatchAdaptorFactory extends BatchAdaptorFactory {
     protected ContextFactoryController contextFactoryController = getContextFactoryController();
@@ -29,7 +30,7 @@ public abstract class DebuggableBatchAdaptorFactory extends BatchAdaptorFactory 
     protected boolean ignoreBreakpoints = false;
     private volatile String contextFactoryId;
 
-    public DebuggableBatchAdaptorFactory(SourceConnector sourceConnector, SerializerProperties serializerProperties) {
+    public DebuggableBatchAdaptorFactory(ISourceConnector sourceConnector, SerializerProperties serializerProperties) {
         super(sourceConnector);
         batchProperties = serializerProperties.getBatchProperties();
     }
@@ -61,18 +62,18 @@ public abstract class DebuggableBatchAdaptorFactory extends BatchAdaptorFactory 
     @Override
     public void onDeploy() throws DeployException {
         String batchScript = batchProperties.getBatchScript();
-        debug = ((SourceConnector) sourceConnector).getChannel().getDebugOptions() != null && ((SourceConnector) sourceConnector).getChannel().getDebugOptions().isAttachmentBatchScripts() == true;
+        debug = sourceConnector.getChannel().getDebugOptions() != null && sourceConnector.getChannel().getDebugOptions().isAttachmentBatchScripts() == true;
         
         if (StringUtils.isNotEmpty(batchScript)) {
-            batchScriptId = ScriptController.getScriptId(ScriptController.BATCH_SCRIPT_KEY, ((SourceConnector) sourceConnector).getChannelId());
+            batchScriptId = ScriptController.getScriptId(ScriptController.BATCH_SCRIPT_KEY, sourceConnector.getChannelId());
             try {
-                MirthContextFactory contextFactory = generateContextFactory(debug, batchScript);
+                IMirthContextFactory contextFactory = generateContextFactory(debug, batchScript);
                 setContextFactoryId(contextFactory.getId());
                 if (debug) {
                     setDebugger(getDebugger(contextFactory, false));
                 }
             } catch (Exception e) {
-                throw new DeployException("Error compiling " + ((SourceConnector) sourceConnector).getConnectorProperties().getName() + " script " + batchScriptId + ".", e);
+                throw new DeployException("Error compiling " + sourceConnector.getConnectorProperties().getName() + " script " + batchScriptId + ".", e);
             }
         }
     }
@@ -80,7 +81,7 @@ public abstract class DebuggableBatchAdaptorFactory extends BatchAdaptorFactory 
     @Override
     public void onUndeploy() throws UndeployException {
         if (debug && debugger != null) {
-            contextFactoryController.removeDebugContextFactory(((SourceConnector) sourceConnector).getChannel().getResourceIds(), ((SourceConnector) sourceConnector).getChannelId(), batchScriptId);
+            contextFactoryController.removeDebugContextFactory(sourceConnector.getChannel().getResourceIds(), sourceConnector.getChannelId(), batchScriptId);
             debugger.dispose();
             debugger = null;
         }
@@ -108,12 +109,12 @@ public abstract class DebuggableBatchAdaptorFactory extends BatchAdaptorFactory 
         return ControllerFactory.getFactory().createContextFactoryController();
     }
     
-    protected MirthMain getDebugger(MirthContextFactory contextFactory, boolean showDebugger) {
-        return MirthMain.mirthMainEmbedded(contextFactory, scopeProvider, ((SourceConnector) sourceConnector).getChannel().getName() + "-" + ((SourceConnector) sourceConnector).getChannelId(), batchScriptId, showDebugger);
+    protected MirthMain getDebugger(IMirthContextFactory contextFactory, boolean showDebugger) {
+        return MirthMain.mirthMainEmbedded((ContextFactory) contextFactory, scopeProvider, sourceConnector.getChannelName() + "-" + sourceConnector.getChannelId(), batchScriptId, showDebugger);
     }
     
-    protected MirthContextFactory generateContextFactory(boolean debug, String script) throws ConnectorTaskException {
-        return JavaScriptUtil.generateContextFactory(debug, ((SourceConnector) sourceConnector).getChannel().getResourceIds(), ((SourceConnector) sourceConnector).getChannelId(), batchScriptId, script, ContextType.CHANNEL_BATCH);
+    protected IMirthContextFactory generateContextFactory(boolean debug, String script) throws ConnectorTaskException {
+        return JavaScriptCoreUtil.generateContextFactory(debug, sourceConnector.getChannel().getResourceIds(), sourceConnector.getChannelId(), batchScriptId, script, ContextType.CHANNEL_BATCH);
     }
     
 }

@@ -26,7 +26,7 @@ import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.server.util.ChildFirstURLClassLoader;
 
-public class MirthContextFactory extends ContextFactory {
+public class MirthContextFactory extends ContextFactory implements IMirthContextFactory {
 
     private String id;
     private URL[] urls;
@@ -102,6 +102,7 @@ public class MirthContextFactory extends ContextFactory {
         serializer.processAnnotations(ObjectXMLSerializer.getExtraAnnotatedClasses());
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -121,6 +122,7 @@ public class MirthContextFactory extends ContextFactory {
         return isolatedClassLoader;
     }
 
+    @Override
     public ScriptableObject getSealedSharedScope() {
         return sealedSharedScope;
     }

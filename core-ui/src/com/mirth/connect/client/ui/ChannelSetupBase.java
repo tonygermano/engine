@@ -25,9 +25,11 @@ public abstract class ChannelSetupBase extends JPanel {
     public abstract VariableList getDestinationVariableList();
     
     public abstract void decorateConnectorType(ConnectorTypeDecoration connectorTypeDecoration, boolean isDestination);
-    
+
+    public abstract JPanel getSourceConnectorPanel();
+
     public abstract void saveSourcePanel();
-    
+
     public abstract void saveDestinationPanel();
     
     public abstract MessageStorageMode getMessageStorageMode();

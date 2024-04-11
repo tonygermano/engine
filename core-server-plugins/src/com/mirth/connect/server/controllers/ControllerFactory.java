@@ -24,8 +24,8 @@ public abstract class ControllerFactory {
                 String factoryClassName = System.getProperty(FACTORY_SYSTEM_PROPERTY, "com.mirth.connect.server.controllers.DefaultControllerFactory");
                 try {
                     factory = (ControllerFactory) Class.forName(factoryClassName).newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Throwable t) {
+                    t.printStackTrace();
                     factory = new DummyControllerFactory();
                 }
             }

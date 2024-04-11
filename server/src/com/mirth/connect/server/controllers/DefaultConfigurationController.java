@@ -117,6 +117,8 @@ import com.mirth.connect.plugins.directoryresource.DirectoryResourceProperties;
 import com.mirth.connect.server.ExtensionLoader;
 import com.mirth.connect.server.alert.Alert;
 import com.mirth.connect.server.alert.action.UserProtocol;
+import com.mirth.connect.server.extprops.ExtensionStatusFile;
+import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.mybatis.KeyValuePair;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.server.util.DatabaseUtil;
@@ -1634,6 +1636,7 @@ public class DefaultConfigurationController extends ConfigurationController {
         DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
         JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
+        ExtensionStatuses.DEFAULT_EXTENSION_STATUS_PROVIDER = ExtensionStatusFile.class;
     }
 
     @Override

@@ -19,6 +19,8 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 
 public class ExtensionStatuses implements ExtensionStatusInterface {
+    
+    public static Class<?> DEFAULT_EXTENSION_STATUS_PROVIDER;
 
     private static ExtensionStatuses instance = null;
 
@@ -71,7 +73,13 @@ public class ExtensionStatuses implements ExtensionStatusInterface {
         }
 
         if (provider == null) {
-            provider = new ExtensionStatusFile(mirthProperties);
+            if (DEFAULT_EXTENSION_STATUS_PROVIDER != null) {
+                try {
+                    provider = (ExtensionStatusProvider) DEFAULT_EXTENSION_STATUS_PROVIDER.getConstructor(Properties.class).newInstance(mirthProperties);
+                } catch (Throwable t) {
+                    logger.error("Unable to instantiate provider class: " + DEFAULT_EXTENSION_STATUS_PROVIDER, t);
+                }
+            }
         }
     }
 

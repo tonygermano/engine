@@ -997,6 +997,11 @@
 		<!-- create the dbconf jar -->
 		<jar destfile="${setup.server.lib}/${dbconf.jar}" basedir="${dbconf}" />
 
+		<!-- copy classes needed by the launcher JAR -->
+		<copy todir="${classes}">
+			<fileset dir="${core.server.plugins}/classes" includes="com/mirth/connect/server/extprops/**"/>
+		</copy>
+
 		<!-- create the mirth-launcher jar -->
 		<jar destfile="${setup}/${mirth-launcher.jar}" basedir="${classes}">
 			<include name="com/mirth/connect/server/launcher/**" />

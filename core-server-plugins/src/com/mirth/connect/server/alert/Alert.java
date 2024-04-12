@@ -21,6 +21,8 @@ import com.mirth.connect.server.controllers.ConfigurationController;
 public class Alert {
 
     public static Class<?> USER_PROTOCOL_CLASS;
+    public static Class<?> EXTENSION_LOADER_CLASS;
+   
     
     private AlertModel model;
     private Long enabledDateTime;

@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,7 @@ import com.mirth.connect.model.alert.AlertStatus;
 
 import net.miginfocom.swing.MigLayout;
 
+@SuppressWarnings("serial")
 public class DefaultAlertPanel extends AlertPanel {
 
     private Frame parent;
@@ -249,8 +251,8 @@ public class DefaultAlertPanel extends AlertPanel {
     }
 
     @Override
-    public Map<String, String> getAlertNames() {
-        Map<String, String> alertNames = new HashMap<String, String>();
+    public HashMap<String, String> getAlertNames() {
+        HashMap<String, String> alertNames = new HashMap<String, String>();
         for (int i = 0; i < alertTable.getRowCount(); i++) {
             String alertId = (String) alertTable.getModel().getValueAt(i, alertTable.getColumnModelIndex(ID_COLUMN_NAME));
             String alertName = (String) alertTable.getModel().getValueAt(i, alertTable.getColumnModelIndex(NAME_COLUMN_NAME));

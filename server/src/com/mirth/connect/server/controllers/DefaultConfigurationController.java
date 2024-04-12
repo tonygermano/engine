@@ -1630,6 +1630,7 @@ public class DefaultConfigurationController extends ConfigurationController {
     private void initializeCoreClasses() {
         Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
         DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
+        Alert.EXTENSION_LOADER_CLASS = ExtensionLoader.class;
     }
 
     @Override

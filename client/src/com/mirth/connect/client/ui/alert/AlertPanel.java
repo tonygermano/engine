@@ -9,15 +9,14 @@
 
 package com.mirth.connect.client.ui.alert;
 
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 import java.util.Set;
-
-import javax.swing.JPanel;
 
 import com.mirth.connect.model.alert.AlertStatus;
 
-public abstract class AlertPanel extends JPanel {
+@SuppressWarnings("serial")
+public abstract class AlertPanel extends AlertPanelBase {
 
     public abstract void updateAlertTable(List<AlertStatus> alertStatusList);
 

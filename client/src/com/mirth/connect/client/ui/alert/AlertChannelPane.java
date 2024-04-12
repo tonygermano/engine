@@ -30,7 +30,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -56,7 +55,8 @@ import com.mirth.connect.model.alert.AlertChannels;
 
 import net.miginfocom.swing.MigLayout;
 
-public class AlertChannelPane extends JPanel {
+@SuppressWarnings("serial")
+public class AlertChannelPane extends AlertChannelPaneBase {
 
     public AlertChannelPane() {
         initComponents();
@@ -170,10 +170,12 @@ public class AlertChannelPane extends JPanel {
         channelTreeTable.repaint();
     }
 
+    @Override
     public AlertChannels getChannels() {
         return ((ChannelTreeTableModel) channelTreeTable.getTreeTableModel()).getAlertChannels();
     }
 
+    @Override
     public void setChannels(AlertChannels alertChannels, boolean includeConnectors) {
         if (((Frame) PlatformUI.MIRTH_FRAME).channelPanel.getCachedChannelStatuses() != null) {
             TreeMap<String, Channel> channelMap = new TreeMap<String, Channel>(String.CASE_INSENSITIVE_ORDER);

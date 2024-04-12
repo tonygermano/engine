@@ -108,8 +108,10 @@ import com.mirth.connect.client.core.UnauthorizedException;
 import com.mirth.connect.client.core.Version;
 import com.mirth.connect.client.core.VersionMismatchException;
 import com.mirth.connect.client.ui.DashboardPanel.TableState;
+import com.mirth.connect.client.ui.alert.AlertChannelPane;
 import com.mirth.connect.client.ui.alert.AlertEditPanel;
-import com.mirth.connect.client.ui.alert.AlertPanel;
+import com.mirth.connect.client.ui.alert.AlertActionPane;
+import com.mirth.connect.client.ui.alert.AlertPanelBase;
 import com.mirth.connect.client.ui.alert.DefaultAlertEditPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertPanel;
 import com.mirth.connect.client.ui.browsers.event.EventBrowser;
@@ -184,7 +186,7 @@ public class Frame extends FrameBase{
     public MessageBrowser messageBrowser = null;
     public MessageBrowser enhancedMessageBrowser = null;
     public boolean multiChannelMessageBrowsingEnabled = false;
-    public AlertPanel alertPanel = null;
+    public AlertPanelBase alertPanel = null;
     public AlertEditPanel alertEditPanel = null;
     public GlobalScriptsPanel globalScriptsPanel = null;
     public ExtensionManagerPanel extensionsPanel = null;
@@ -255,6 +257,7 @@ public class Frame extends FrameBase{
 
     public Frame() {
         Platform.setImplicitExit(false);
+        ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
 
         // Load RSyntaxTextArea language support
         LanguageSupportFactory.get().addLanguageSupport(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT, MirthJavaScriptLanguageSupport.class.getName());
@@ -4647,6 +4650,7 @@ public class Frame extends FrameBase{
         }
     }
 
+    @Override
     public void importAlert(String alertXML, boolean showAlerts) {
         ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
         List<AlertModel> alertList;
@@ -5248,7 +5252,76 @@ public class Frame extends FrameBase{
 
 	@Override
 	public void setupUIManager() {
-		// TODO Auto-generated method stub
 		Mirth.initUIManager();
+	}
+
+	@Override
+	public void setAlertPanel(AlertPanelBase panel) {
+		this.alertPanel = panel;
+	}
+
+	@Override
+	public void setAlertEditPanel(AlertEditPanel alertEditPanel) {
+		this.alertEditPanel = alertEditPanel;
+		
+	}
+
+	@Override
+	public AlertPanelBase getAlertPanel() {
+		return this.alertPanel;
+	}
+	
+	@Override
+	public AlertEditPanel getAlertEditPanel() {
+		return this.alertEditPanel;
+	}
+
+	@Override
+	public JXTaskPane getAlertEditTasks() {
+		return this.alertEditTasks;
+		
+	}
+
+	@Override
+	public JPopupMenu getAlertPopupMenu() {
+		return this.alertPopupMenu;
+		
+	}
+	
+	@Override
+	public JPopupMenu getAlertEditPopupMenu() {
+		return this.alertEditPopupMenu;
+		
+	}
+
+	@Override
+	public AlertChannelPane getNewAlertChannelPaneBase() {
+		return new AlertChannelPane();
+		
+	}
+
+	@Override
+	public AlertActionPane getNewAlertActionPane() {
+		return new AlertActionPane();
 	};
+	
+	@Override
+	public void refreshAlerts() {
+		this.doRefreshAlerts();
+	}
+	
+	@Override
+	public void deleteAlert() {
+		this.doDeleteAlert();
+	}
+	
+	@Override
+	public void editAlert() {
+		this.doEditAlert();
+	}
+	
+	@Override
+	public JXTaskPane getAlertTasks() {
+		return this.alertTasks;
+	}
 }

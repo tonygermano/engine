@@ -206,6 +206,11 @@ public class ChannelSetup extends ChannelSetupBase {
         return destinationVariableList;
     }
 
+    @Override
+    public ConnectorPanel getSourceConnectorPanel() {
+        return sourceConnectorPanel;
+    }
+
     public void closePopupWindow() {
         tagsField.closePopupWindow();
     }

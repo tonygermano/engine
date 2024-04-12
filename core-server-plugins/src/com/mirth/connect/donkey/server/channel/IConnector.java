@@ -3,6 +3,8 @@ package com.mirth.connect.donkey.server.channel;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 
 public interface IConnector {
+	
+	public IChannel getChannel();
 
     public String getChannelId();
     
@@ -13,4 +15,5 @@ public interface IConnector {
     public int getMetaDataId();
     
     public ConnectorProperties getConnectorProperties();
+    
 }

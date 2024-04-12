@@ -34,13 +34,13 @@ public class DashboardTableNode extends AbstractDashboardTableNode {
     private Map<String, AbstractDashboardTableNode> channelNodes = new HashMap<String, AbstractDashboardTableNode>();
 
     public DashboardTableNode(ChannelGroupStatus groupStatus) {
-        row = new Object[DashboardPanel.getNumberOfDefaultColumns() + LoadedExtensions.getInstance().getDashboardColumnPlugins().size()];
+        row = new Object[DashboardPanelBase.getNumberOfDefaultColumns() + LoadedExtensions.getInstance().getDashboardColumnPlugins().size()];
         setGroupStatus(groupStatus);
     }
 
     public DashboardTableNode(String channelId, DashboardStatus dashboardStatus) {
         this.channelId = channelId;
-        row = new Object[DashboardPanel.getNumberOfDefaultColumns() + LoadedExtensions.getInstance().getDashboardColumnPlugins().size()];
+        row = new Object[DashboardPanelBase.getNumberOfDefaultColumns() + LoadedExtensions.getInstance().getDashboardColumnPlugins().size()];
 
         // The children of these nodes should not be sortable. Only the root node will be sortable
         setSortable(false);
@@ -77,7 +77,7 @@ public class DashboardTableNode extends AbstractDashboardTableNode {
         int colOffset = i;
         row[i++] = new CellData(null, null);
 
-        i += (DashboardPanel.getNumberOfDefaultColumns() - 1);
+        i += (DashboardPanelBase.getNumberOfDefaultColumns() - 1);
 
         for (DashboardColumnPlugin plugin : LoadedExtensions.getInstance().getDashboardColumnPlugins().values()) {
             if (!plugin.isDisplayFirst()) {
@@ -203,7 +203,7 @@ public class DashboardTableNode extends AbstractDashboardTableNode {
         int colOffset = i;
         row[i++] = new CellData(null, null);
 
-        i += (DashboardPanel.getNumberOfDefaultColumns() - 1);
+        i += (DashboardPanelBase.getNumberOfDefaultColumns() - 1);
 
         for (DashboardColumnPlugin plugin : LoadedExtensions.getInstance().getDashboardColumnPlugins().values()) {
             if (!plugin.isDisplayFirst()) {

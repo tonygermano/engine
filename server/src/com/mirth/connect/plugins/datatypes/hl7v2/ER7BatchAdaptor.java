@@ -176,7 +176,7 @@ public class ER7BatchAdaptor extends DebuggableBatchAdaptor {
             try {
                 final String batchScriptId = ScriptController.getScriptId(ScriptController.BATCH_SCRIPT_KEY, ((SourceConnector) sourceConnector).getChannelId());
                 final Boolean debug = ((DebuggableBatchAdaptorFactory) getFactory()).isDebug();
-                MirthContextFactory contextFactory = getContextFactoryAndRecompile(contextFactoryController, debug, batchScriptId, batchProperties.getBatchScript());
+                MirthContextFactory contextFactory = (MirthContextFactory) getContextFactoryAndRecompile(contextFactoryController, debug, batchScriptId, batchProperties.getBatchScript());
                 
                 triggerDebug(debug);
 

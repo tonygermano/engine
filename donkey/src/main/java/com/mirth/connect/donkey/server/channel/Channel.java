@@ -142,6 +142,7 @@ public class Channel implements IChannel, Runnable {
 
     private Logger logger = LogManager.getLogger(getClass());
 
+    @Override
     public DebugOptions getDebugOptions() {
         return debugOptions;
     }
@@ -198,6 +199,7 @@ public class Channel implements IChannel, Runnable {
         this.deployDate = deployedDate;
     }
 
+    @Override
     public Set<String> getResourceIds() {
         return resourceIds;
     }

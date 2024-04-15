@@ -94,6 +94,7 @@ import com.mirth.commons.encryption.KeyEncryptor;
 import com.mirth.commons.encryption.Output;
 import com.mirth.connect.client.core.ControllerException;
 import com.mirth.connect.donkey.model.DatabaseConstants;
+import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
 import com.mirth.connect.donkey.server.data.DonkeyStatisticsUpdater;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.model.Channel;
@@ -113,6 +114,9 @@ import com.mirth.connect.model.ServerSettings;
 import com.mirth.connect.model.UpdateSettings;
 import com.mirth.connect.model.converters.DocumentSerializer;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
+import com.mirth.connect.model.transmission.batch.DefaultBatchStreamReader;
+import com.mirth.connect.plugins.BasicModeProvider;
+import com.mirth.connect.plugins.TransmissionModeProvider;
 import com.mirth.connect.plugins.directoryresource.DirectoryResourceProperties;
 import com.mirth.connect.server.ExtensionLoader;
 import com.mirth.connect.server.alert.Alert;
@@ -1637,6 +1641,8 @@ public class DefaultConfigurationController extends ConfigurationController {
         JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
         ExtensionStatuses.DEFAULT_EXTENSION_STATUS_PROVIDER = ExtensionStatusFile.class;
+        TransmissionModeProvider.BASIC_MODE_PROVIDER = BasicModeProvider.class;
+        BatchStreamReader.DEFAULT_BATCH_STREAM_READER = DefaultBatchStreamReader.class;
     }
 
     @Override

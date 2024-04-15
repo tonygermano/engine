@@ -44,14 +44,54 @@ import com.mirth.connect.donkey.server.message.batch.SimpleResponseHandler;
 /**
  * The base class for all source connectors.
  */
-public abstract class SourceConnector extends Connector implements ISourceConnector {
+public class SourceConnector extends Connector implements ISourceConnector {
 
+	private SourceConnectorPlugin connectorPlugin;
     private boolean respondAfterProcessing = true;
     private MetaDataReplacer metaDataReplacer;
     private BatchAdaptorFactory batchAdaptorFactory;
     private String sourceName = "Source";
 
     private Logger logger = LogManager.getLogger(getClass());
+    
+    public void initialize(SourceConnectorPlugin connectorPlugin) {
+    	this.connectorPlugin = connectorPlugin;
+    }
+    
+    @Override
+    public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	}
+    }
+    
+    @Override
+    public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	}
+    }
+
+    @Override
+    public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) { 
+    		connectorPlugin.onStart();
+    	}
+    }
+
+    @Override
+    public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	}
+    }
+
+    @Override
+    public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	}
+    }
 
     public boolean isRespondAfterProcessing() {
         return respondAfterProcessing;
@@ -77,6 +117,7 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
         this.batchAdaptorFactory = batchAdaptorFactory;
     }
 
+    @Override
     public String getSourceName() {
         return sourceName;
     }
@@ -95,6 +136,7 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
         channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), sourceName, DeployedStateEventType.getTypeFromDeployedState(currentState)));
     }
 
+    @Override
     public boolean isProcessBatch() {
         return batchAdaptorFactory != null;
     }
@@ -173,6 +215,7 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
      * @return The MessageResponse, containing the message id and a response if one was received
      * @throws ChannelException
      */
+    @Override
     public DispatchResult dispatchRawMessage(RawMessage rawMessage) throws ChannelException {
         return dispatchRawMessage(rawMessage, false);
     }
@@ -199,6 +242,7 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
         return channel.dispatchRawMessage(rawMessage, false);
     }
 
+    @Override
     public Boolean dispatchBatchMessage(BatchRawMessage batchRawMessage, ResponseHandler responseHandler) throws BatchMessageException {
         return dispatchBatchMessage(batchRawMessage, responseHandler, null);
     }
@@ -304,7 +348,11 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
      * 
      * @throws ChannelException
      */
-    public abstract void handleRecoveredResponse(DispatchResult dispatchResult);
+    public void handleRecoveredResponse(DispatchResult dispatchResult) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.handleRecoveredResponse(dispatchResult);
+    	}
+    }
 
     /**
      * Finish a message dispatch
@@ -316,6 +364,7 @@ public abstract class SourceConnector extends Connector implements ISourceConnec
      * @param responseError
      *            An error message if an error occurred when attempting to send a response
      */
+    @Override
     public void finishDispatch(DispatchResult dispatchResult) {
         if (dispatchResult == null) {
             return;

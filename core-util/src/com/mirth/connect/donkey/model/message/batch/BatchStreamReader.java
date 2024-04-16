@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.util.List;
 
 public abstract class BatchStreamReader {
+	
+	public static Class<?> DEFAULT_BATCH_STREAM_READER;
 
     protected InputStream inputStream;
     protected byte[] endOfMessageBytes;

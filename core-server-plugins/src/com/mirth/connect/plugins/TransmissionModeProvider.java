@@ -17,6 +17,8 @@ import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
 import com.mirth.connect.model.transmission.TransmissionModeProperties;
 
 public abstract class TransmissionModeProvider implements ServerPlugin {
+	
+	public static Class<?> BASIC_MODE_PROVIDER;
 
     public abstract StreamHandler getStreamHandler(InputStream inputStream, OutputStream outputStream, BatchStreamReader batchStreamReader, TransmissionModeProperties transmissionModeProperties);
 

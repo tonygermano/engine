@@ -56,10 +56,11 @@ import com.mirth.connect.donkey.util.MessageMaps;
 import com.mirth.connect.donkey.util.Serializer;
 import com.mirth.connect.donkey.util.ThreadUtils;
 
-public abstract class DestinationConnector extends Connector implements Runnable, IDestinationConnector {
+public class DestinationConnector extends Connector implements Runnable, IDestinationConnector {
  
     private final static String QUEUED_RESPONSE = "Message queued successfully";
 
+    private DestinationConnectorPlugin connectorPlugin;
     private Integer orderId;
     private Map<Long, DestinationQueueThread> queueThreads = new ConcurrentHashMap<Long, DestinationQueueThread>();
     private Deque<Long> processingThreadIdStack;
@@ -77,10 +78,58 @@ public abstract class DestinationConnector extends Connector implements Runnable
     private StorageSettings storageSettings = new StorageSettings();
     private DonkeyDaoFactory daoFactory;
     private Logger logger = LogManager.getLogger(getClass());
+    
+    public void initialize(DestinationConnectorPlugin connectorPlugin) {
+    	this.connectorPlugin = connectorPlugin;
+    }
 
-    public abstract void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message);
+    public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.replaceConnectorProperties(connectorProperties, message);
+    	}
+    }
 
-    public abstract Response send(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException;
+    public Response send(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.send(connectorProperties, message);
+    	}
+    	return null;
+    }
+    
+    @Override
+    public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	}
+    }
+    
+    @Override
+    public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	}
+    }
+
+    @Override
+    public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	}
+    }
+
+    @Override
+    public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	}
+    }
+
+    @Override
+    public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	}
+    }
 
     public DestinationQueue getQueue() {
         return queue;
@@ -164,6 +213,7 @@ public abstract class DestinationConnector extends Connector implements Runnable
         processingThreadIdStack.push(threadId);
     }
 
+    @Override
     public String getDestinationName() {
         return destinationName;
     }
@@ -272,7 +322,8 @@ public abstract class DestinationConnector extends Connector implements Runnable
         return isQueueEnabled() && destinationConnectorProperties.isRegenerateTemplate() && destinationConnectorProperties.isIncludeFilterTransformer();
     }
 
-    protected AttachmentHandlerProvider getAttachmentHandlerProvider() {
+    @Override
+    public AttachmentHandlerProvider getAttachmentHandlerProvider() {
         return channel.getAttachmentHandlerProvider();
     }
 

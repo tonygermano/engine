@@ -19,6 +19,8 @@ import javax.swing.event.DocumentListener;
 import com.mirth.connect.model.transmission.TransmissionModeProperties;
 
 public abstract class TransmissionModeClientProvider implements DocumentListener, ActionListener {
+	
+	public static Class<?> BASIC_MODE_CLIENT_PROVIDER_CLASS;
 
     public static final String CHANGE_SAMPLE_LABEL_COMMAND = "changesamplelabel";
     public static final String CHANGE_SAMPLE_VALUE_COMMAND = "changesamplevalue";

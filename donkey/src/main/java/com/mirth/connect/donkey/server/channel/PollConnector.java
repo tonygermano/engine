@@ -86,7 +86,7 @@ public class PollConnector extends SourceConnector {
         return terminated.get();
     }
 
-    public void poll() throws InterruptedException {
+    protected void poll() throws InterruptedException {
     	if (connectorPlugin != null) {
     		connectorPlugin.poll();
     	}

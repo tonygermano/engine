@@ -132,7 +132,7 @@ public class DatabaseReceiver extends PollConnector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void poll() throws InterruptedException {
+    protected void poll() throws InterruptedException {
         eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getSourceName(), ConnectionStatusEventType.POLLING));
         Object result = null;
 

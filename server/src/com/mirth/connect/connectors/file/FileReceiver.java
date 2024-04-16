@@ -185,7 +185,7 @@ public class FileReceiver extends PollConnector implements IFileReceiver {
     }
 
     @Override
-    protected void poll() {
+    public void poll() {
         eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getSourceName(), ConnectionStatusEventType.POLLING));
         try {
             String channelId = getChannelId();

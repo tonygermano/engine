@@ -78,6 +78,8 @@ import com.mirth.connect.donkey.server.channel.DestinationConnectorPlugin;
 import com.mirth.connect.donkey.server.channel.DispatchResult;
 import com.mirth.connect.donkey.server.channel.FilterTransformerExecutor;
 import com.mirth.connect.donkey.server.channel.MetaDataReplacer;
+import com.mirth.connect.donkey.server.channel.PollConnector;
+import com.mirth.connect.donkey.server.channel.PollSourceConnectorPlugin;
 import com.mirth.connect.donkey.server.channel.ResponseSelector;
 import com.mirth.connect.donkey.server.channel.ResponseTransformerExecutor;
 import com.mirth.connect.donkey.server.channel.SourceConnector;
@@ -1380,10 +1382,19 @@ public class DonkeyEngineController implements EngineController {
         
         SourceConnector sourceConnector = null;
         Object sourceConn = Class.forName(connectorMetaData.getServerClassName()).newInstance();
+        
         if (sourceConn instanceof SourceConnector) {
         	sourceConnector = (SourceConnector) sourceConn;
         } else if (sourceConn instanceof SourceConnectorPlugin) {
-        	sourceConnector = new SourceConnector();
+        	
+        	if (!StringUtils.isEmpty(connectorMetaData.getServerBaseClassName())) {
+        		sourceConnector = (SourceConnector) Class.forName(connectorMetaData.getServerBaseClassName()).newInstance();
+        	} else if (sourceConn instanceof PollSourceConnectorPlugin) {
+        		sourceConnector = new PollConnector();
+        	} else {
+        		sourceConnector = new SourceConnector();
+        	}
+
             SourceConnectorPlugin sourceConnectorPlugin = (SourceConnectorPlugin) sourceConn;
             sourceConnector.initialize(sourceConnectorPlugin);
             sourceConnectorPlugin.initialize(sourceConnector);
@@ -1552,10 +1563,17 @@ public class DonkeyEngineController implements EngineController {
         
         DestinationConnector destinationConnector = null;
         Object destinationConn = Class.forName(className).newInstance();
+        
         if (destinationConn instanceof DestinationConnector) {
         	destinationConnector = (DestinationConnector) destinationConn;
         } else {
-        	destinationConnector = new DestinationConnector();
+        	
+        	if (!StringUtils.isEmpty(connectorMetaData.getServerBaseClassName())) {
+        		destinationConnector = (DestinationConnector) Class.forName(connectorMetaData.getServerBaseClassName()).newInstance();
+        	} else {
+        		destinationConnector = new DestinationConnector();
+        	}
+
             DestinationConnectorPlugin destinationConnectorPlugin = (DestinationConnectorPlugin) destinationConn;
             destinationConnector.initialize(destinationConnectorPlugin);
             destinationConnectorPlugin.initialize(destinationConnector);

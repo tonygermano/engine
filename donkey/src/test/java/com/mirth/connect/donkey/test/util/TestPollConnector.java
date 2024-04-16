@@ -36,7 +36,7 @@ public class TestPollConnector extends PollConnector {
     public void onHalt() throws ConnectorTaskException {}
 
     @Override
-    protected void poll() {
+    public void poll() {
         DispatchResult dispatchResult = null;
 
         try {

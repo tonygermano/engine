@@ -42,7 +42,6 @@ import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.util.PropertiesConfigurationUtil;
 
 public class ExtensionLoader{
-	
     @Inject
     private static ExtensionLoader instance = new ExtensionLoader();
 
@@ -50,7 +49,6 @@ public class ExtensionLoader{
         return instance;
     }
     
-
     private Map<String, ConnectorMetaData> connectorMetaDataMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();

@@ -27,7 +27,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import net.miginfocom.swing.MigLayout;

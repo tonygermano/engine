@@ -11,23 +11,13 @@ package com.mirth.connect.server.alert;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.mirth.connect.model.alert.AlertActionGroup;
 import com.mirth.connect.model.alert.AlertModel;
 import com.mirth.connect.model.alert.AlertStatus;
-import com.mirth.connect.server.controllers.ControllerFactory;
-import com.mirth.connect.server.controllers.EventController;
 import com.mirth.connect.server.event.EventListener;
 
 public abstract class AlertWorkerBase extends EventListener implements AlertActionAcceptor {
-	protected Map<String, Alert> enabledAlerts = new ConcurrentHashMap<String, Alert>();
-    protected ExecutorService actionExecutor = new ThreadPoolExecutor(0, 1, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-    protected EventController eventController = ControllerFactory.getFactory().createEventController();
 
     public abstract void enableAlert(AlertModel alertModel);
 

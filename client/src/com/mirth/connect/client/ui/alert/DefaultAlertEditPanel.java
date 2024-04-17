@@ -35,6 +35,7 @@ import com.mirth.connect.model.alert.AlertTrigger;
 import com.mirth.connect.model.alert.ChannelTrigger;
 import com.mirth.connect.model.alert.DefaultTrigger;
 
+@SuppressWarnings("serial")
 public class DefaultAlertEditPanel extends AlertEditPanel {
 
     private Frame parent;

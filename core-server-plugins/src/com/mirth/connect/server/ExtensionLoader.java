@@ -41,7 +41,7 @@ import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.util.PropertiesConfigurationUtil;
 
-public class ExtensionLoader implements IExtensionLoader {
+public class ExtensionLoader{
 	
     @Inject
     private static ExtensionLoader instance = new ExtensionLoader();
@@ -58,10 +58,6 @@ public class ExtensionLoader implements IExtensionLoader {
     private boolean loadedExtensions = false;
     private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
-
-    public ExtensionLoader() {
-    	instance = this;
-    }
 
     public Map<String, ConnectorMetaData> getConnectorMetaData() {
         loadExtensions();

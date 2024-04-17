@@ -45,6 +45,9 @@ public abstract class AlertWorker extends AlertWorkerBase {
     private static final String DEFAULT_SUBJECT = "Mirth Connect Alert";
 
     protected Logger logger = LogManager.getLogger(this.getClass());
+    protected ExecutorService actionExecutor = new ThreadPoolExecutor(0, 1, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+    protected Map<String, Alert> enabledAlerts = new ConcurrentHashMap<String, Alert>();
+    protected EventController eventController = ControllerFactory.getFactory().createEventController();
     
     protected ExtensionController extensionController = ControllerFactory.getFactory().createExtensionController();
 

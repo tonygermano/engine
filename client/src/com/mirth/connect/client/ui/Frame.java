@@ -111,7 +111,7 @@ import com.mirth.connect.client.ui.DashboardPanel.TableState;
 import com.mirth.connect.client.ui.alert.AlertChannelPane;
 import com.mirth.connect.client.ui.alert.AlertEditPanel;
 import com.mirth.connect.client.ui.alert.AlertActionPane;
-import com.mirth.connect.client.ui.alert.AlertPanelBase;
+import com.mirth.connect.client.ui.alert.AlertPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertEditPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertPanel;
 import com.mirth.connect.client.ui.browsers.event.EventBrowser;
@@ -186,7 +186,7 @@ public class Frame extends FrameBase{
     public MessageBrowser messageBrowser = null;
     public MessageBrowser enhancedMessageBrowser = null;
     public boolean multiChannelMessageBrowsingEnabled = false;
-    public AlertPanelBase alertPanel = null;
+    public AlertPanel alertPanel = null;
     public AlertEditPanel alertEditPanel = null;
     public GlobalScriptsPanel globalScriptsPanel = null;
     public ExtensionManagerPanel extensionsPanel = null;
@@ -5256,7 +5256,7 @@ public class Frame extends FrameBase{
 	}
 
 	@Override
-	public void setAlertPanel(AlertPanelBase panel) {
+	public void setAlertPanel(AlertPanel panel) {
 		this.alertPanel = panel;
 	}
 
@@ -5267,7 +5267,7 @@ public class Frame extends FrameBase{
 	}
 
 	@Override
-	public AlertPanelBase getAlertPanel() {
+	public AlertPanel getAlertPanel() {
 		return this.alertPanel;
 	}
 	

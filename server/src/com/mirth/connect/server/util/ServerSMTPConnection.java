@@ -13,12 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
-
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.util.MirthSSLUtil;
 
-public class ServerSMTPConnection {
+public class ServerSMTPConnection implements IServerSMTPConnection{
     private String host;
     private String port;
     private boolean useAuthentication;
@@ -107,7 +106,7 @@ public class ServerSMTPConnection {
         this.socketTimeout = socketTimeout;
     }
 
-    public void send(String toList, String ccList, String from, String subject, String body, String charset) throws EmailException {
+    public void send(String toList, String ccList, String from, String subject, String body, String charset) throws Exception {
         Email email = new SimpleEmail();
 
         // Set the charset if it was specified. Otherwise use the system's default.
@@ -132,30 +131,35 @@ public class ServerSMTPConnection {
 
         // These have to be set after the authenticator, so that a new mail session isn't created
         ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
-        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.protocols", StringUtils.join(MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols()), ' '));
-        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.ciphersuites", StringUtils.join(MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites()), ' '));
-
-        for (String to : StringUtils.split(toList, ",")) {
-            email.addTo(to);
+        try {
+	        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.protocols", StringUtils.join(MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols()), ' '));
+	        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.ciphersuites", StringUtils.join(MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites()), ' '));
+	
+	        for (String to : StringUtils.split(toList, ",")) {
+	            email.addTo(to);
+	        }
+	
+	        if (StringUtils.isNotEmpty(ccList)) {
+	            for (String cc : StringUtils.split(ccList, ",")) {
+	                email.addCc(cc);
+	            }
+	        }
+	
+	        email.setFrom(from);
+	        email.setSubject(subject);
+	        email.setMsg(body);
+	        email.send();
+        } catch (EmailException f) {
+        	throw new Exception(f);
         }
-
-        if (StringUtils.isNotEmpty(ccList)) {
-            for (String cc : StringUtils.split(ccList, ",")) {
-                email.addCc(cc);
-            }
-        }
-
-        email.setFrom(from);
-        email.setSubject(subject);
-        email.setMsg(body);
-        email.send();
     }
 
-    public void send(String toList, String ccList, String from, String subject, String body) throws EmailException {
+    public void send(String toList, String ccList, String from, String subject, String body) throws Exception {
         send(toList, ccList, from, subject, body, null);
     }
 
-    public void send(String toList, String ccList, String subject, String body) throws EmailException {
+    public void send(String toList, String ccList, String subject, String body) throws Exception {
         send(toList, ccList, from, subject, body);
     }
+
 }

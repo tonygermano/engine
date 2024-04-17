@@ -9,25 +9,25 @@
 
 package com.mirth.connect.client.ui.alert;
 
-import java.util.Set;
 import java.util.Map;
+
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
 import com.mirth.connect.model.alert.AlertStatus;
 
 @SuppressWarnings("serial")
-public abstract class AlertPanelBase extends JPanel{
+public abstract class AlertPanel extends JPanel{
 
-	public abstract Map<String, String> getAlertNames();
+    public abstract void updateAlertTable(List<AlertStatus> alertStatusList);
 
-	public abstract void updateAlertTable(List<AlertStatus> alertStatusList);
+    public abstract Map<String, String> getAlertNames();
 
-	public abstract void setSelectedAlertIds(List<String> selectedAlertIds);
+    public abstract List<String> getSelectedAlertIds();
 
-	public abstract List<String> getSelectedAlertIds();
+    public abstract void setSelectedAlertIds(List<String> alertIds);
 
-	public abstract void updateAlertDetails(Set<String> hashSet);
-
+    public abstract void updateAlertDetails(Set<String> alertIds);
 }

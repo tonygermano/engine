@@ -251,8 +251,8 @@ public class DefaultAlertPanel extends AlertPanel {
     }
 
     @Override
-    public HashMap<String, String> getAlertNames() {
-        HashMap<String, String> alertNames = new HashMap<String, String>();
+    public Map<String, String> getAlertNames() {
+        Map<String, String> alertNames = new HashMap<String, String>();
         for (int i = 0; i < alertTable.getRowCount(); i++) {
             String alertId = (String) alertTable.getModel().getValueAt(i, alertTable.getColumnModelIndex(ID_COLUMN_NAME));
             String alertName = (String) alertTable.getModel().getValueAt(i, alertTable.getColumnModelIndex(NAME_COLUMN_NAME));

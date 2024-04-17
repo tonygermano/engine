@@ -260,7 +260,7 @@ public class DICOMDispatcherTest {
         }
 
         @Override
-        protected AttachmentHandlerProvider getAttachmentHandlerProvider() {
+        public AttachmentHandlerProvider getAttachmentHandlerProvider() {
             return new TestAttachmentHandlerProvider(null);
         }
     }

@@ -157,8 +157,10 @@ import com.mirth.connect.model.alert.AlertModel;
 import com.mirth.connect.model.alert.AlertStatus;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.model.filters.MessageFilter;
+import com.mirth.connect.plugins.BasicModeClientProvider;
 import com.mirth.connect.plugins.DashboardColumnPlugin;
 import com.mirth.connect.plugins.DataTypeClientPlugin;
+import com.mirth.connect.plugins.TransmissionModeClientProvider;
 import com.mirth.connect.util.ChannelDependencyException;
 import com.mirth.connect.util.ChannelDependencyGraph;
 import com.mirth.connect.util.CharsetUtils;
@@ -257,7 +259,8 @@ public class Frame extends FrameBase{
 
     public Frame() {
         Platform.setImplicitExit(false);
-        ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
+
+        initializeCoreClasses();
 
         // Load RSyntaxTextArea language support
         LanguageSupportFactory.get().addLanguageSupport(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT, MirthJavaScriptLanguageSupport.class.getName());
@@ -324,6 +327,11 @@ public class Frame extends FrameBase{
             }
         };
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(keyEventDispatcher);
+    }
+    
+    private void initializeCoreClasses() {
+    	TransmissionModeClientProvider.BASIC_MODE_CLIENT_PROVIDER_CLASS = BasicModeClientProvider.class;
+        ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
     }
 
     @Override

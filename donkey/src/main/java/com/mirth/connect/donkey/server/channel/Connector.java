@@ -87,6 +87,7 @@ public abstract class Connector implements IConnector {
         this.metaDataId = metaDataId;
     }
 
+    @Override
     public DataType getInboundDataType() {
         return inboundDataType;
     }
@@ -103,6 +104,7 @@ public abstract class Connector implements IConnector {
         this.outboundDataType = outboundDataType;
     }
 
+    @Override
     public DeployedState getCurrentState() {
         return currentState;
     }

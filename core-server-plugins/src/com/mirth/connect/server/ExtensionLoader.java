@@ -57,6 +57,8 @@ public class ExtensionLoader{
     private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
 
+    private ExtensionLoader() {}
+    
     public Map<String, ConnectorMetaData> getConnectorMetaData() {
         loadExtensions();
         return connectorMetaDataMap;

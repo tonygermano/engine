@@ -45,6 +45,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
@@ -53,6 +54,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return port;
     }
 
+    @Override
     public void setPort(String port) {
         this.port = port;
     }
@@ -61,6 +63,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return useAuthentication;
     }
 
+    @Override
     public void setUseAuthentication(boolean useAuthentication) {
         this.useAuthentication = useAuthentication;
     }
@@ -69,6 +72,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return secure;
     }
 
+    @Override
     public void setSecure(String secure) {
         this.secure = secure;
     }
@@ -77,6 +81,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
@@ -85,6 +90,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -93,6 +99,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return from;
     }
 
+    @Override
     public void setFrom(String from) {
         this.from = from;
     }
@@ -101,6 +108,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         return socketTimeout;
     }
 
+    @Override
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
@@ -153,6 +161,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         send(toList, ccList, from, subject, body, null);
     }
 
+    @Override
     public void send(String toList, String ccList, String subject, String body) throws Exception {
         send(toList, ccList, from, subject, body);
     }

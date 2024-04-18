@@ -61,7 +61,7 @@ import com.mirth.connect.model.alert.AlertAction;
 import com.mirth.connect.model.alert.AlertActionGroup;
 
 @SuppressWarnings("serial")
-public class AlertActionPane extends AlertActionPaneBase implements IAlertActionPane {
+public class AlertActionPane extends AlertActionPaneBase {
 
     private static final int PROTOCOL_COLUMN_INDEX = 0;
     private static final int RECIPIENT_COLUMN_INDEX = 1;

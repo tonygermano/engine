@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import com.mirth.connect.model.alert.AlertActionGroup;
 
 @SuppressWarnings("serial")
-public abstract class AlertActionPaneBase extends JPanel implements IAlertActionPane{
+public abstract class AlertActionPaneBase extends JPanel{
 	
 	public abstract void setActionGroup(AlertActionGroup actionGroupTableModel, Map<String, Map<String, String>> protocolOptions);
 	

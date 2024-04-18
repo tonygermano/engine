@@ -131,27 +131,25 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
 
         // These have to be set after the authenticator, so that a new mail session isn't created
         ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
-        try {
-	        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.protocols", StringUtils.join(MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols()), ' '));
-	        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.ciphersuites", StringUtils.join(MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites()), ' '));
-	
-	        for (String to : StringUtils.split(toList, ",")) {
-	            email.addTo(to);
-	        }
-	
-	        if (StringUtils.isNotEmpty(ccList)) {
-	            for (String cc : StringUtils.split(ccList, ",")) {
-	                email.addCc(cc);
-	            }
-	        }
-	
-	        email.setFrom(from);
-	        email.setSubject(subject);
-	        email.setMsg(body);
-	        email.send();
-        } catch (EmailException f) {
-        	throw new Exception(f);
+        
+        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.protocols", StringUtils.join(MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols()), ' '));
+        email.getMailSession().getProperties().setProperty("mail.smtp.ssl.ciphersuites", StringUtils.join(MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites()), ' '));
+
+        for (String to : StringUtils.split(toList, ",")) {
+            email.addTo(to);
         }
+
+        if (StringUtils.isNotEmpty(ccList)) {
+            for (String cc : StringUtils.split(ccList, ",")) {
+                email.addCc(cc);
+            }
+        }
+
+        email.setFrom(from);
+        email.setSubject(subject);
+        email.setMsg(body);
+        email.send();
+       
     }
 
     public void send(String toList, String ccList, String from, String subject, String body) throws Exception {

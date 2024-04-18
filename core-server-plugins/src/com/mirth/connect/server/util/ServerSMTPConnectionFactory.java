@@ -33,9 +33,6 @@ public class ServerSMTPConnectionFactory {
             connection.setPassword( replacer.replaceValues(settings.getSmtpPassword()));
             connection.setSecure(settings.getSmtpSecure());
             return connection;
-            //return new IServerSMTPConnection(replacer.replaceValues(settings.getSmtpHost()), replacer.replaceValues(settings.getSmtpPort()),
-            //Integer.parseInt(replacer.replaceValues(settings.getSmtpTimeout())), settings.getSmtpAuth(), settings.getSmtpSecure(), 
-            //replacer.replaceValues(settings.getSmtpUsername()), replacer.replaceValues(settings.getSmtpPassword()), replacer.replaceValues(settings.getSmtpFrom()));
         } catch (Exception e) {
             if (e instanceof ControllerException) {
                 throw (ControllerException) e;

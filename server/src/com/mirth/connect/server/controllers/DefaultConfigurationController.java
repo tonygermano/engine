@@ -226,8 +226,7 @@ public class DefaultConfigurationController extends ConfigurationController {
                     try {
                         instance.getClass().getMethod("initialize").invoke(instance);
                     } catch (Exception e) {
-                        LogManager.getLogger(DefaultConfigurationController.class)
-                                .error("Error calling initialize method in DefaultConfigurationController", e);
+                        LogManager.getLogger(DefaultConfigurationController.class).error("Error calling initialize method in DefaultConfigurationController", e);
                     }
                 }
             }
@@ -637,8 +636,7 @@ public class DefaultConfigurationController extends ConfigurationController {
     }
 
     /**
-     * Takes a String and returns a Boolean Object. "1" = true "0" = false null or
-     * not a number =
+     * Takes a String and returns a Boolean Object. "1" = true "0" = false null or not a number =
      * defaultValue
      * 
      * @param str
@@ -875,8 +873,7 @@ public class DefaultConfigurationController extends ConfigurationController {
         }
 
         serverConfiguration.setPluginProperties(pluginProperties);
-        serverConfiguration.setResourceProperties(
-                ObjectXMLSerializer.getInstance().deserialize(getResources(), ResourcePropertiesList.class));
+        serverConfiguration.setResourceProperties(ObjectXMLSerializer.getInstance().deserialize(getResources(), ResourcePropertiesList.class));
         serverConfiguration.setChannelDependencies(getChannelDependencies());
 
         serverConfiguration.setConfigurationMap(getConfigurationProperties());
@@ -1166,8 +1163,7 @@ public class DefaultConfigurationController extends ConfigurationController {
             return;
         }
 
-        saveProperty(PROPERTIES_CORE, PROPERTIES_DEPENDENCIES,
-                ObjectXMLSerializer.getInstance().serialize(dependencies));
+        saveProperty(PROPERTIES_CORE, PROPERTIES_DEPENDENCIES, ObjectXMLSerializer.getInstance().serialize(dependencies));
     }
 
     @Override
@@ -1306,8 +1302,7 @@ public class DefaultConfigurationController extends ConfigurationController {
     @Override
     public void initializeDatabaseSettings() {
         try {
-            databaseConfig = new DatabaseSettings(ConfigurationConverter.getProperties(mirthConfig),
-                    ObjectXMLSerializer.getInstance());
+            databaseConfig = new DatabaseSettings(ConfigurationConverter.getProperties(mirthConfig), ObjectXMLSerializer.getInstance());
 
             // dir.base is not included in mirth.properties, so set it manually
             databaseConfig.setDirBase(getBaseDir());
@@ -1316,8 +1311,7 @@ public class DefaultConfigurationController extends ConfigurationController {
             String readOnlyPassword = databaseConfig.getDatabaseReadOnlyPassword();
 
             if (StringUtils.isNotEmpty(password) || StringUtils.isNotEmpty(readOnlyPassword)) {
-                ConfigurationController configurationController = ControllerFactory.getFactory()
-                        .createConfigurationController();
+                ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
                 EncryptionSettings encryptionSettings = configurationController.getEncryptionSettings();
                 Encryptor encryptor = configurationController.getEncryptor();
 

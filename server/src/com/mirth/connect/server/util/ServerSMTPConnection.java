@@ -11,7 +11,6 @@ package com.mirth.connect.server.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import com.mirth.connect.server.controllers.ConfigurationController;
 import com.mirth.connect.server.controllers.ControllerFactory;
@@ -131,7 +130,6 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
 
         // These have to be set after the authenticator, so that a new mail session isn't created
         ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
-        
         email.getMailSession().getProperties().setProperty("mail.smtp.ssl.protocols", StringUtils.join(MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols()), ' '));
         email.getMailSession().getProperties().setProperty("mail.smtp.ssl.ciphersuites", StringUtils.join(MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites()), ' '));
 
@@ -148,8 +146,7 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
         email.setFrom(from);
         email.setSubject(subject);
         email.setMsg(body);
-        email.send();
-       
+        email.send(); 
     }
 
     public void send(String toList, String ccList, String from, String subject, String body) throws Exception {
@@ -159,5 +156,4 @@ public class ServerSMTPConnection implements IServerSMTPConnection{
     public void send(String toList, String ccList, String subject, String body) throws Exception {
         send(toList, ccList, from, subject, body);
     }
-
 }

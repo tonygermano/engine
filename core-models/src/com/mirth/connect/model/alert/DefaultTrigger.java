@@ -20,6 +20,7 @@ import com.mirth.connect.donkey.util.migration.Migratable;
 import com.mirth.connect.donkey.util.purge.Purgable;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+@SuppressWarnings("serial")
 @XStreamAlias("defaultTrigger")
 public class DefaultTrigger extends ChannelTrigger implements AlertTrigger, Migratable, Purgable {
 

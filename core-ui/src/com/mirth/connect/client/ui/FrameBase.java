@@ -1,13 +1,10 @@
 package com.mirth.connect.client.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -22,6 +19,10 @@ import org.syntax.jedit.JEditTextArea;
 
 import com.mirth.connect.client.core.Client;
 import com.mirth.connect.client.core.ClientException;
+import com.mirth.connect.client.ui.alert.AlertActionPaneBase;
+import com.mirth.connect.client.ui.alert.AlertChannelPaneBase;
+import com.mirth.connect.client.ui.alert.AlertEditPanel;
+import com.mirth.connect.client.ui.alert.AlertPanel;
 import com.mirth.connect.client.ui.browsers.message.MessageBrowserBase;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
 import com.mirth.connect.model.Channel;
@@ -38,6 +39,7 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
+    public static Class<?> ALERT_ACTION_PANE_CLASS;
     
     public abstract MirthDialog getEditMessageDialog();
     
@@ -297,5 +299,33 @@ public abstract class FrameBase extends JXFrame {
     public abstract TemplatePanelBase getOutboundTemplatePanel();
     
     public abstract void setupUIManager();
+    
+    public abstract void setAlertPanel(AlertPanel panel);
+    
+    public abstract void setAlertEditPanel(AlertEditPanel setAlertEditPanel);
+    
+    public abstract AlertPanel getAlertPanel();
+    
+    public abstract AlertEditPanel getAlertEditPanel();
+    
+    public abstract JXTaskPane getAlertTasks();
+    
+    public abstract JXTaskPane getAlertEditTasks();
+    
+    public abstract JPopupMenu getAlertPopupMenu();
+    
+    public abstract JPopupMenu getAlertEditPopupMenu();
+    
+    public abstract AlertChannelPaneBase getNewAlertChannelPaneBase();
+    
+    public abstract AlertActionPaneBase getNewAlertActionPane();
+    
+    public abstract void refreshAlerts();
+    
+    public abstract void deleteAlert();
+    
+    public abstract void editAlert();
+    
+    public abstract void importAlert(String alertString, boolean showAlerts);
     
 }

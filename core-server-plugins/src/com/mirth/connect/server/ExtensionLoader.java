@@ -41,14 +41,14 @@ import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.util.PropertiesConfigurationUtil;
 
-public class ExtensionLoader {
+public class ExtensionLoader{
     @Inject
     private static ExtensionLoader instance = new ExtensionLoader();
 
     public static ExtensionLoader getInstance() {
         return instance;
     }
-
+    
     private Map<String, ConnectorMetaData> connectorMetaDataMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
@@ -58,7 +58,7 @@ public class ExtensionLoader {
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
 
     private ExtensionLoader() {}
-
+    
     public Map<String, ConnectorMetaData> getConnectorMetaData() {
         loadExtensions();
         return connectorMetaDataMap;

@@ -1638,7 +1638,7 @@ public class DefaultConfigurationController extends ConfigurationController {
 
     private void initializeCoreClasses() {
         Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
-        DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
+        UserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
         JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
         ExtensionStatuses.DEFAULT_EXTENSION_STATUS_PROVIDER = ExtensionStatusFile.class;

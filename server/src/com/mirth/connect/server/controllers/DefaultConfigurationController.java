@@ -121,6 +121,7 @@ import com.mirth.connect.server.extprops.ExtensionStatusFile;
 import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.mybatis.KeyValuePair;
 import com.mirth.connect.server.tools.ClassPathResource;
+import com.mirth.connect.server.userutil.FileUtil;
 import com.mirth.connect.server.util.DatabaseUtil;
 import com.mirth.connect.server.util.PasswordRequirementsChecker;
 import com.mirth.connect.server.util.ResourceUtil;
@@ -133,6 +134,7 @@ import com.mirth.connect.util.ChannelDependencyException;
 import com.mirth.connect.util.ChannelDependencyGraph;
 import com.mirth.connect.util.ConfigurationProperty;
 import com.mirth.connect.util.ConnectionTestResponse;
+import com.mirth.connect.util.FilenameUtils;
 import com.mirth.connect.util.JavaScriptSharedUtil;
 import com.mirth.connect.util.MigrationUtil;
 import com.mirth.connect.util.MirthSSLUtil;
@@ -1634,6 +1636,7 @@ public class DefaultConfigurationController extends ConfigurationController {
     private void initializeCoreClasses() {
         Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
         DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
+        FilenameUtils.FILE_UTIL_CLASS = FileUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
         ExtensionStatuses.DEFAULT_EXTENSION_STATUS_PROVIDER = ExtensionStatusFile.class;

@@ -19,7 +19,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import com.mirth.connect.client.ui.UIConstants;
 import com.mirth.connect.model.codetemplates.ContextType;
 
-public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConstants {
+public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConstants, IMirthRTextScrollPane {
 
     private MirthRSyntaxTextArea textArea;
 
@@ -43,10 +43,12 @@ public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConst
         getGutter().setBackground(UIConstants.COMBO_BOX_BACKGROUND);
     }
 
+    @Override
     public MirthRSyntaxTextArea getTextArea() {
         return textArea;
     }
 
+    @Override
     public void setContextType(ContextType contextType) {
         textArea.setContextType(contextType);
     }
@@ -83,6 +85,7 @@ public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConst
         textArea.setCaretPosition(position);
     }
 
+    @Override
     public void setSyntaxEditingStyle(String styleKey) {
         textArea.setSyntaxEditingStyle(styleKey);
     }
@@ -109,5 +112,9 @@ public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConst
         if (textArea != null) {
             textArea.setBackground(bg);
         }
+    }
+
+    @Override
+    public void setEditable(boolean b) {
     }
 }

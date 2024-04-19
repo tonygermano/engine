@@ -38,6 +38,7 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
+    public static Class<?> MIRTH_R_TEXT_SCROLL_PANE;
     
     public abstract MirthDialog getEditMessageDialog();
     

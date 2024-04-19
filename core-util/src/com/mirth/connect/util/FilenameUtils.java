@@ -14,8 +14,6 @@ import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 
 public class FilenameUtils {
-    public static Class<?> FILE_UTIL_CLASS;
-    
     public static String getAbsolutePath(File baseDir, String path) {
         path = StringUtils.trim(path);
         File file = new File(path);

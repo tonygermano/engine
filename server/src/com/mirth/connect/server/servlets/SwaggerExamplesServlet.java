@@ -29,7 +29,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import com.mirth.conect.server.servlets.ISwaggerExamplesServlet;
 import com.mirth.connect.client.core.Version;
 import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
 import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;

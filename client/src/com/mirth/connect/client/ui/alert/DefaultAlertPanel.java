@@ -47,6 +47,7 @@ import com.mirth.connect.model.alert.AlertStatus;
 
 import net.miginfocom.swing.MigLayout;
 
+@SuppressWarnings("serial")
 public class DefaultAlertPanel extends AlertPanel {
 
     private Frame parent;

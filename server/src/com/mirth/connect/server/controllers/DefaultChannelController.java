@@ -31,6 +31,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.ControllerException;
+import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
+import com.mirth.connect.connectors.http.HttpReceiverProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
 import com.mirth.connect.donkey.model.channel.Ports;
@@ -1119,6 +1121,11 @@ public class DefaultChannelController extends ChannelController {
             logger.error("getting ports in use: " + ex.toString());
             return null;
         }
+    }
+    
+    @Override
+    public IHttpReceiverProperties createHttpReceiverProperties() {
+    	return new HttpReceiverProperties();
     }
     
 }

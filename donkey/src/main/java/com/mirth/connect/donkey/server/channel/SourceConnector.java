@@ -46,7 +46,7 @@ import com.mirth.connect.donkey.server.message.batch.SimpleResponseHandler;
  */
 public class SourceConnector extends Connector implements ISourceConnector {
 
-	private SourceConnectorPlugin connectorPlugin;
+	protected SourceConnectorPlugin connectorPlugin;
     private boolean respondAfterProcessing = true;
     private MetaDataReplacer metaDataReplacer;
     private BatchAdaptorFactory batchAdaptorFactory;

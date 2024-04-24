@@ -80,8 +80,9 @@ import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.security.Constraint;
 
 import com.mirth.connect.connectors.core.http.HttpConfiguration;
+import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.connectors.core.http.IHttpReceiver;
-import com.mirth.connect.connectors.http.HttpStaticResource.ResourceType;
+import com.mirth.connect.connectors.core.http.HttpStaticResource.ResourceType;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -139,7 +140,16 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
-        if (getConnectorProperties().isXmlBody() && isProcessBatch()) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	} else {
+	        doOnDeploy();
+    	}
+    }
+    
+    @Override
+    public void doOnDeploy() throws ConnectorTaskException {
+    	if (getConnectorProperties().isXmlBody() && isProcessBatch()) {
             throw new ConnectorTaskException("Batch processing is not supported for Xml Body.");
         }
 
@@ -189,7 +199,16 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public void onUndeploy() throws ConnectorTaskException {
-        if (authenticatorProvider != null) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	} else {
+	        doOnUndeploy();
+    	}
+    }
+    
+    @Override
+    public void doOnUndeploy() throws ConnectorTaskException {
+    	if (authenticatorProvider != null) {
             authenticatorProvider.shutdown();
         }
 
@@ -198,7 +217,16 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public void onStart() throws ConnectorTaskException {
-        String channelId = getChannelId();
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	} else {
+    		doOnStart();
+    	}
+    }
+    
+    @Override
+    public void doOnStart() throws ConnectorTaskException {
+    	String channelId = getChannelId();
         String channelName = getChannel().getName();
         host = replacer.replaceValues(getConnectorProperties().getListenerConnectorProperties().getHost(), channelId, channelName);
         port = NumberUtils.toInt(replacer.replaceValues(getConnectorProperties().getListenerConnectorProperties().getPort(), channelId, channelName));
@@ -304,9 +332,18 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             throw new ConnectorTaskException("Failed to start HTTP Listener", e);
         }
     }
-
+    
     @Override
     public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	} else {
+    		doOnStop();
+    	}
+    }
+
+    @Override
+    public void doOnStop() throws ConnectorTaskException {
         ConnectorTaskException firstCause = null;
 
         if (server != null) {
@@ -322,10 +359,19 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             throw firstCause;
         }
     }
-
+    
     @Override
     public void onHalt() throws ConnectorTaskException {
-        onStop();
+        if (connectorPlugin != null) {
+        	connectorPlugin.onHalt();
+        } else {
+        	doOnHalt();
+        }
+    }
+
+    @Override
+    public void doOnHalt() throws ConnectorTaskException {
+        doOnStop();
     }
 
     @Override
@@ -809,7 +855,16 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public void handleRecoveredResponse(DispatchResult dispatchResult) {
-        finishDispatch(dispatchResult);
+    	if (connectorPlugin != null) {
+    		connectorPlugin.handleRecoveredResponse(dispatchResult);
+    	} else {
+    		doHandleRecoveredResponse(dispatchResult);
+    	}
+    }
+    
+    @Override
+    public void doHandleRecoveredResponse(DispatchResult dispatchResult) {
+    	finishDispatch(dispatchResult);
     }
 
     public Server getServer() {

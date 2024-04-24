@@ -60,7 +60,7 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
  
     private final static String QUEUED_RESPONSE = "Message queued successfully";
 
-    private DestinationConnectorPlugin connectorPlugin;
+    protected DestinationConnectorPlugin connectorPlugin;
     private Integer orderId;
     private Map<Long, DestinationQueueThread> queueThreads = new ConcurrentHashMap<Long, DestinationQueueThread>();
     private Deque<Long> processingThreadIdStack;

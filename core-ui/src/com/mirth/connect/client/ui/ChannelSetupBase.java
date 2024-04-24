@@ -6,11 +6,16 @@ import javax.swing.JPanel;
 
 import com.mirth.connect.client.ui.editors.BaseEditorPaneBase;
 import com.mirth.connect.model.Channel;
+import com.mirth.connect.model.Filter;
 import com.mirth.connect.model.MessageStorageMode;
+import com.mirth.connect.model.Rule;
 import com.mirth.connect.model.Step;
 import com.mirth.connect.model.Transformer;
 
 public abstract class ChannelSetupBase extends JPanel {
+    public Channel currentChannel;
+    public BaseEditorPaneBase<Filter, Rule> filterPane;
+    public BaseEditorPaneBase<Transformer, Step> transformerPane;
 
     public abstract int getDefaultQueueBufferSize();
     

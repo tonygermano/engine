@@ -39,6 +39,7 @@ public abstract class FrameBase extends JXFrame {
     public ChannelPanelBase channelPanel = null;
     public List<User> users = null;
     public CodeTemplatePanelBase codeTemplatePanel = null;
+    public ChannelSetupBase channelEditPanel = null;
     public static Class<?> ALERT_ACTION_PANE_CLASS;
     
     public abstract MirthDialog getEditMessageDialog();

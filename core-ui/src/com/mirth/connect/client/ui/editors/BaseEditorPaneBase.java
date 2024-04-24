@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
+import com.mirth.connect.model.Connector;
 import com.mirth.connect.model.FilterTransformer;
 import com.mirth.connect.model.FilterTransformerElement;
 import com.mirth.connect.model.Rule.Operator;
@@ -47,4 +48,16 @@ public abstract class BaseEditorPaneBase<T extends FilterTransformer<C>, C exten
             return getRight();
         }
     }
+
+    public abstract void setProperties(Connector connector, T properties, boolean response);
+
+    public abstract void resizePanes();
+
+    public abstract void accept(boolean returning);
+
+    public abstract void setConnector(Connector connector);
+
+    public abstract Connector getConnector();
+
+    public abstract String validateElement(C element);
 }

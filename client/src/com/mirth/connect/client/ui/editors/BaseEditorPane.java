@@ -283,6 +283,7 @@ public abstract class BaseEditorPane<T extends FilterTransformer<C>, C extends F
 
     public abstract T getProperties();
 
+    @Override
     public void setProperties(Connector connector, T properties, boolean response) {
         setProperties(connector, properties, response, true);
     }
@@ -897,6 +898,7 @@ public abstract class BaseEditorPane<T extends FilterTransformer<C>, C extends F
         }
     }
 
+    @Override
     public String validateElement(C element) {
         return validateElement(element, true, true);
     }

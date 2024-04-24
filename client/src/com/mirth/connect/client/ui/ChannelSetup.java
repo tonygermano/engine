@@ -153,12 +153,9 @@ public class ChannelSetup extends ChannelSetupBase {
     private static final String PRUNING_WARNING_DEFAULT_TEXT = "(incomplete, errored, and queued messages will not be pruned)";
     private static final String PRUNING_WARNING_ERRORED_TEXT = "(incomplete and queued messages will not be pruned)";
 
-    public Channel currentChannel;
     public Map<Integer, Map<String, String>> resourceIds = new HashMap<Integer, Map<String, String>>();
     public int defaultQueueBufferSize = 1000;
     public int lastModelIndex = -1;
-    public TransformerPane transformerPane = new TransformerPane();
-    public FilterPane filterPane = new FilterPane();
 
     private Frame parent;
     private String saveGroupId;
@@ -171,6 +168,10 @@ public class ChannelSetup extends ChannelSetupBase {
 
     public ChannelSetup() {
         this.parent = (Frame) PlatformUI.MIRTH_FRAME;
+        
+        filterPane = new FilterPane();
+        transformerPane = new TransformerPane();
+        
         initComponents();
         initToolTips();
         initLayout();
@@ -198,7 +199,7 @@ public class ChannelSetup extends ChannelSetupBase {
 
     @Override
     public TransformerPane getTransformerPane() {
-        return transformerPane;
+        return (TransformerPane) transformerPane;
     }
     
     @Override

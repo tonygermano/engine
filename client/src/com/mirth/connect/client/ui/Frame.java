@@ -176,13 +176,12 @@ import javafx.application.Platform;
 /**
  * The main content frame for the Mirth Client Application. Extends JXFrame and sets up all content.
  */
-public class Frame extends FrameBase{
+public class Frame extends FrameBase {
 
     private Logger logger = LogManager.getLogger(this.getClass());
     public DashboardPanel dashboardPanel = null;
     public SettingsPane settingsPane = null;
     public UserPanel userPanel = null;
-    public ChannelSetup channelEditPanel = null;
     public EventBrowser eventBrowser = null;
     public MessageBrowser activeBrowser = null;
     public MessageBrowser messageBrowser = null;

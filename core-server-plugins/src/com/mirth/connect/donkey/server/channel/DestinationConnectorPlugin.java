@@ -11,7 +11,7 @@ public interface DestinationConnectorPlugin {
 
     public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message);
 
-    public Response send(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException;
+    public Response send(ConnectorProperties connectorProperties, ConnectorMessage message);
     
     public void onDeploy() throws ConnectorTaskException;
     

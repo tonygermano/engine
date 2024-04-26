@@ -35,7 +35,7 @@ public class DefaultContextFactoryController extends ContextFactoryController {
 
     private Logger logger = LogManager.getLogger(getClass());
     private ExtensionController extensionController;
-    private Map<String, LibraryProperties> libraryResources = new ConcurrentHashMap<String, LibraryProperties>();
+	private Map<String, LibraryProperties> libraryResources = new ConcurrentHashMap<String, LibraryProperties>();
     private Map<String, List<URL>> libraryCache = new ConcurrentHashMap<String, List<URL>>();
     private volatile Set<String> globalScriptResourceIds = new LinkedHashSet<String>();
     private Map<Set<String>, MirthContextFactory> contextFactoryMap = new ConcurrentHashMap<Set<String>, MirthContextFactory>();
@@ -64,6 +64,14 @@ public class DefaultContextFactoryController extends ContextFactoryController {
             return instance;
         }
     }
+    @Override
+    public ExtensionController getExtensionController() {
+		return extensionController;
+	}
+    @Override
+	public void setExtensionController(ExtensionController extensionController) {
+		this.extensionController = extensionController;
+	}
 
     public static ContextFactoryController create(ExtensionController extensionController) {
         synchronized (DefaultContextFactoryController.class) {

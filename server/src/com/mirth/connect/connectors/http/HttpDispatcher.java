@@ -514,7 +514,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    protected String getConfigurationClass() {
+    public String getConfigurationClass() {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 

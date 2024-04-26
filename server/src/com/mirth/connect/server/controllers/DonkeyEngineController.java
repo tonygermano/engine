@@ -177,7 +177,7 @@ public class DonkeyEngineController implements EngineController {
     protected ConfigurationController configurationController = getConfigurationController();
     protected ScriptController scriptController = getScriptController();
     protected ChannelController channelController = getChannelController();
-    protected com.mirth.connect.donkey.server.controllers.ChannelController donkeyChannelController = com.mirth.connect.donkey.server.controllers.ChannelController.getInstance();
+    protected com.mirth.connect.donkey.server.controllers.ChannelController donkeyChannelController = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController();
     protected EventController eventController = getEventController();
     protected ExtensionController extensionController = getExtensionController();
     protected ContextFactoryController contextFactoryController = getContextFactoryController();
@@ -2322,7 +2322,7 @@ public class DonkeyEngineController implements EngineController {
             Channel.DELETE_PERMIT.acquire();
 
             try {
-                com.mirth.connect.donkey.server.controllers.MessageController.getInstance().deleteMessages(channelId, messages);
+            	com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().deleteMessages(channelId, messages);
             } finally {
                 Channel.DELETE_PERMIT.release();
             }

@@ -10,7 +10,7 @@ import com.mirth.connect.model.ChannelPurgeHelper;
 public class ServerPurgeHelper implements ChannelPurgeHelper {
 
     public Map<Status, Long> getMessageStatistics(String channelId, Integer metaDataId) {
-        com.mirth.connect.donkey.server.controllers.ChannelController donkeyChannelController = com.mirth.connect.donkey.server.controllers.ChannelController.getInstance();
+        com.mirth.connect.donkey.server.controllers.ChannelController donkeyChannelController = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController();
         Statistics totalStats = donkeyChannelController.getTotalStatistics();
         Map<Status, Long> lifetimeStats = new HashMap<Status, Long>();
 

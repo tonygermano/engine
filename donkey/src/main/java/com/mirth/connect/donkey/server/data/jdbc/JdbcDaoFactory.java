@@ -21,6 +21,7 @@ import com.mirth.connect.donkey.model.DonkeyDaoException;
 import com.mirth.connect.donkey.server.Donkey;
 import com.mirth.connect.donkey.server.channel.Statistics;
 import com.mirth.connect.donkey.server.controllers.ChannelController;
+import com.mirth.connect.donkey.server.controllers.ControllerFactory;
 import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
 import com.mirth.connect.donkey.server.data.StatisticsUpdater;
 import com.mirth.connect.donkey.util.SerializerProvider;
@@ -62,7 +63,7 @@ public class JdbcDaoFactory implements DonkeyDaoFactory {
 
     protected JdbcDaoFactory() {
         donkey = Donkey.getInstance();
-        channelController = ChannelController.getInstance();
+        channelController = ControllerFactory.getFactory().createChannelController();
     }
 
     public String getStatsServerId() {

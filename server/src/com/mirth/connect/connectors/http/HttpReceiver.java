@@ -80,6 +80,8 @@ import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.security.Constraint;
 
 import com.mirth.connect.connectors.core.http.HttpConfiguration;
+import com.mirth.connect.connectors.core.http.HttpRequestMessage;
+import com.mirth.connect.connectors.core.http.HttpSourceConnectorPlugin;
 import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.connectors.core.http.IHttpReceiver;
 import com.mirth.connect.connectors.core.http.HttpStaticResource.ResourceType;
@@ -375,7 +377,10 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     }
 
     @Override
-    protected String getConfigurationClass() {
+    public String getConfigurationClass() {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.getConfigurationClass();
+    	}
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 
@@ -565,8 +570,17 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             }
         }
     }
+    
+    public void sendErrorResponse(Object baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult, Throwable t) throws IOException {
+    	if (connectorPlugin != null && connectorPlugin instanceof HttpSourceConnectorPlugin) {
+    		((HttpSourceConnectorPlugin) connectorPlugin).sendErrorResponse(baseRequest, servletResponse, dispatchResult, t);
+    	} else {
+    		doSendErrorResponse(baseRequest, servletResponse, dispatchResult, t);
+    	}
+    }
 
-    protected void sendErrorResponse(Request baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult, Throwable t) throws IOException {
+    @Override
+    public void doSendErrorResponse(Object baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult, Throwable t) throws IOException {
         String responseError = ExceptionUtils.getRootCauseMessage(t);
         logger.error("Error receiving message (" + getConnectorProperties().getName() + " \"Source\" on channel " + getChannelId() + ").", t);
         eventController.dispatchEvent(new ErrorEvent(getChannelId(), getMetaDataId(), dispatchResult == null ? null : dispatchResult.getMessageId(), ErrorEventType.SOURCE_CONNECTOR, getSourceName(), getConnectorProperties().getName(), "Error receiving message", t));
@@ -586,7 +600,15 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         servletResponse.getOutputStream().write(responseError.getBytes());
     }
 
-    protected Object getMessage(Request request, Map<String, Object> sourceMap, List<Attachment> attachments) throws IOException, ChannelException, MessagingException, DonkeyElementException, ParserConfigurationException {
+    protected Object getMessage(Request request, Map<String, Object> sourceMap, List<Attachment> attachments) throws Exception {
+    	if (connectorPlugin != null && connectorPlugin instanceof HttpSourceConnectorPlugin) {
+    		return ((HttpSourceConnectorPlugin) connectorPlugin).getMessage(request, request.getContentType(), sourceMap, attachments);
+    	} else {
+    		return doGetMessage(request, sourceMap, attachments);
+    	}
+    }
+    
+    protected Object doGetMessage(Request request, Map<String, Object> sourceMap, List<Attachment> attachments) throws IOException, ChannelException, MessagingException, DonkeyElementException, ParserConfigurationException {
         HttpRequestMessage requestMessage = createRequestMessage(request, false);
 
         /*
@@ -610,8 +632,9 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         return rawMessageContent;
     }
 
-    protected HttpRequestMessage createRequestMessage(Request request, boolean ignorePayload) throws IOException, MessagingException {
-        return createRequestMessage(request, ignorePayload, shouldParseMultipart(getConnectorProperties(), request));
+    @Override
+    public HttpRequestMessage createRequestMessage(Object request, boolean ignorePayload) throws IOException, MessagingException {
+        return createRequestMessage((Request) request, ignorePayload, shouldParseMultipart(getConnectorProperties(), (Request) request));
     }
     
     protected boolean shouldParseMultipart(HttpReceiverProperties connectorProperties, Request request) {
@@ -677,23 +700,24 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         return requestMessage;
     }
 
-    protected void populateSourceMap(Request request, HttpRequestMessage requestMessage, Map<String, Object> sourceMap) {
+    @Override
+    public void populateSourceMap(Object request, HttpRequestMessage requestMessage, Map<String, Object> sourceMap) {
         sourceMap.put("remoteAddress", requestMessage.getRemoteAddress());
-        sourceMap.put("remotePort", request.getRemotePort());
-        sourceMap.put("localAddress", StringUtils.trimToEmpty(request.getLocalAddr()));
-        sourceMap.put("localPort", request.getLocalPort());
+        sourceMap.put("remotePort", ((Request) request).getRemotePort());
+        sourceMap.put("localAddress", StringUtils.trimToEmpty(((Request) request).getLocalAddr()));
+        sourceMap.put("localPort", ((Request) request).getLocalPort());
         sourceMap.put("method", requestMessage.getMethod());
         sourceMap.put("url", requestMessage.getRequestUrl());
-        HttpURI uri = request.getHttpURI();
+        HttpURI uri = ((Request) request).getHttpURI();
         sourceMap.put("uri", StringUtils.trimToEmpty(uri.isAbsolute() ? uri.toString() : uri.getPathQuery()));
-        sourceMap.put("protocol", StringUtils.trimToEmpty(request.getProtocol()));
+        sourceMap.put("protocol", StringUtils.trimToEmpty(((Request) request).getProtocol()));
         sourceMap.put("query", requestMessage.getQueryString());
         sourceMap.put("contextPath", requestMessage.getContextPath());
         sourceMap.put("headers", new MessageHeaders(requestMessage.getCaseInsensitiveHeaders()));
         sourceMap.put("parameters", new MessageParameters(requestMessage.getParameters()));
 
         // Add custom source map variables from the configuration interface
-        sourceMap.putAll(configuration.getRequestInformation(request));
+        sourceMap.putAll(configuration.getRequestInformation((Request) request));
     }
 
     private class StaticResourceHandler extends AbstractHandler {

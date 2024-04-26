@@ -274,7 +274,7 @@ public class WebServiceReceiver extends SourceConnector implements IWebServiceRe
     }
 
     @Override
-    protected String getConfigurationClass() {
+	public String getConfigurationClass() {
         return configurationController.getProperty(connectorProperties.getProtocol(), "wsConfigurationClass");
     }
 

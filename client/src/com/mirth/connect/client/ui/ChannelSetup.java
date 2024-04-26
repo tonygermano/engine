@@ -3365,6 +3365,7 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
+    @Override
     public int getSelectedDestinationIndex() {
         return destinationTable.getSelectedModelIndex();
     }

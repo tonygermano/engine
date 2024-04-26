@@ -5256,7 +5256,12 @@ public class Frame extends FrameBase{
 
 	@Override
 	public void setupUIManager() {
-		// TODO Auto-generated method stub
 		Mirth.initUIManager();
-	};
+	}
+
+	@Override
+	public ChannelSetupBase getChannelEditPanel() {
+		return channelEditPanel;
+	}
+	
 }

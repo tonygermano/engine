@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.mirth.connect.donkey.model.DonkeyDaoException;
 import com.mirth.connect.donkey.server.Donkey;
 import com.mirth.connect.donkey.server.controllers.ChannelController;
+import com.mirth.connect.donkey.server.controllers.ControllerFactory;
 import com.mirth.connect.donkey.server.data.jdbc.CachedPreparedStatementSource;
 import com.mirth.connect.donkey.server.data.jdbc.ConnectionPool;
 import com.mirth.connect.donkey.server.data.jdbc.JdbcDao;
@@ -42,7 +43,7 @@ public class TestDaoFactory extends JdbcDaoFactory {
 
     public TestDaoFactory() {
         donkey = Donkey.getInstance();
-        channelController = ChannelController.getInstance();
+        channelController = ControllerFactory.getFactory().createChannelController();
         serializerProvider = new SerializerProvider() {
             @Override
             public Serializer getSerializer(Integer metaDataId) {

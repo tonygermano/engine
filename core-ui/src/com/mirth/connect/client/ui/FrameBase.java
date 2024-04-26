@@ -1,13 +1,10 @@
 package com.mirth.connect.client.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -297,5 +294,7 @@ public abstract class FrameBase extends JXFrame {
     public abstract TemplatePanelBase getOutboundTemplatePanel();
     
     public abstract void setupUIManager();
+    
+    public abstract ChannelSetupBase getChannelEditPanel();
     
 }

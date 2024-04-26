@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
+import com.mirth.connect.model.Connector;
 import com.mirth.connect.model.FilterTransformer;
 import com.mirth.connect.model.FilterTransformerElement;
 import com.mirth.connect.model.Rule.Operator;
@@ -28,6 +29,8 @@ public abstract class BaseEditorPaneBase<T extends FilterTransformer<C>, C exten
     public abstract void addNewElement(String name, String variable, String mapping, String type);
     
     public abstract void addNewElement(String name, String variable, String mapping, String type, boolean showIteratorWizard);
+    
+    public abstract Connector getConnector();
 
     protected static class OperatorNamePair extends MutablePair<Operator, String> {
 

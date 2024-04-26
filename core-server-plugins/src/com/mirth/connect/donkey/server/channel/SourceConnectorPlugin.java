@@ -18,4 +18,8 @@ public interface SourceConnectorPlugin {
 
     public void onHalt() throws ConnectorTaskException;
     
+    default public String getConfigurationClass() {
+    	return null;
+    }
+    
 }

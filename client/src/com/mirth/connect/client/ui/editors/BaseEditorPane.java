@@ -184,6 +184,7 @@ public abstract class BaseEditorPane<T extends FilterTransformer<C>, C extends F
         return enabledColumn;
     }
 
+    @Override
     public Connector getConnector() {
         return connector;
     }

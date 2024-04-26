@@ -108,7 +108,9 @@ import com.mirth.connect.client.core.UnauthorizedException;
 import com.mirth.connect.client.core.Version;
 import com.mirth.connect.client.core.VersionMismatchException;
 import com.mirth.connect.client.ui.DashboardPanel.TableState;
+import com.mirth.connect.client.ui.alert.AlertChannelPane;
 import com.mirth.connect.client.ui.alert.AlertEditPanel;
+import com.mirth.connect.client.ui.alert.AlertActionPane;
 import com.mirth.connect.client.ui.alert.AlertPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertEditPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertPanel;
@@ -118,6 +120,7 @@ import com.mirth.connect.client.ui.browsers.message.MessageBrowserBase;
 import com.mirth.connect.client.ui.browsers.message.MessageBrowserChannelModel;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanel;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
+import com.mirth.connect.client.ui.components.rsta.MirthRTextScrollPane;
 import com.mirth.connect.client.ui.components.rsta.ac.js.MirthJavaScriptLanguageSupport;
 import com.mirth.connect.client.ui.dependencies.ChannelDependenciesWarningDialog;
 import com.mirth.connect.client.ui.extensionmanager.ExtensionManagerPanel;
@@ -257,7 +260,7 @@ public class Frame extends FrameBase{
 
     public Frame() {
         Platform.setImplicitExit(false);
-        
+
         initializeCoreClasses();
 
         // Load RSyntaxTextArea language support
@@ -329,6 +332,8 @@ public class Frame extends FrameBase{
     
     private void initializeCoreClasses() {
     	TransmissionModeClientProvider.BASIC_MODE_CLIENT_PROVIDER_CLASS = BasicModeClientProvider.class;
+    	MIRTH_R_TEXT_SCROLL_PANE = MirthRTextScrollPane.class;
+        ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
     }
 
     @Override
@@ -4655,6 +4660,7 @@ public class Frame extends FrameBase{
         }
     }
 
+    @Override
     public void importAlert(String alertXML, boolean showAlerts) {
         ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
         List<AlertModel> alertList;
@@ -5264,4 +5270,73 @@ public class Frame extends FrameBase{
 		return channelEditPanel;
 	}
 	
+	public void setAlertPanel(AlertPanel panel) {
+		this.alertPanel = panel;
+	}
+
+	@Override
+	public void setAlertEditPanel(AlertEditPanel alertEditPanel) {
+		this.alertEditPanel = alertEditPanel;
+		
+	}
+
+	@Override
+	public AlertPanel getAlertPanel() {
+		return this.alertPanel;
+	}
+	
+	@Override
+	public AlertEditPanel getAlertEditPanel() {
+		return this.alertEditPanel;
+	}
+
+	@Override
+	public JXTaskPane getAlertEditTasks() {
+		return this.alertEditTasks;
+		
+	}
+
+	@Override
+	public JPopupMenu getAlertPopupMenu() {
+		return this.alertPopupMenu;
+		
+	}
+	
+	@Override
+	public JPopupMenu getAlertEditPopupMenu() {
+		return this.alertEditPopupMenu;
+		
+	}
+
+	@Override
+	public AlertChannelPane getNewAlertChannelPaneBase() {
+		return new AlertChannelPane();
+		
+	}
+
+	@Override
+	public AlertActionPane getNewAlertActionPane() {
+		return new AlertActionPane();
+	};
+	
+	@Override
+	public void refreshAlerts() {
+		this.doRefreshAlerts();
+	}
+	
+	@Override
+	public void deleteAlert() {
+		this.doDeleteAlert();
+	}
+	
+	@Override
+	public void editAlert() {
+		this.doEditAlert();
+	}
+	
+	@Override
+	public JXTaskPane getAlertTasks() {
+		return this.alertTasks;
+	}
+
 }

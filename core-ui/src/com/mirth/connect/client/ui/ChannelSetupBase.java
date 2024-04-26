@@ -36,8 +36,6 @@ public abstract class ChannelSetupBase extends JPanel {
     
     public abstract void updateQueueWarning(MessageStorageMode messageStorageMode);
     
-    public abstract int getSelectedDestinationIndex();
-    
     /** Sets the destination variable list from the transformer steps */
     public abstract void setDestinationVariableList();
     
@@ -82,4 +80,6 @@ public abstract class ChannelSetupBase extends JPanel {
      * Set Data types specified by selected destination for destination and response
      */
     public abstract void checkAndSetDestinationAndResponseDataType();
+    
+    public abstract int getSelectedDestinationIndex();
 }

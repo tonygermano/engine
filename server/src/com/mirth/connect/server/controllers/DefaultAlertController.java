@@ -43,7 +43,7 @@ public class DefaultAlertController extends AlertController {
     private Logger logger = LogManager.getLogger(this.getClass());
 
     private static AlertController instance = null;
-    private static Map<Class<?>, AlertWorker> alertWorkers = new HashMap<Class<?>, AlertWorker>();
+    private static Map<Class<?>, AlertWorkerBase> alertWorkers = new HashMap<Class<?>, AlertWorkerBase>();
     private EventController eventController = ControllerFactory.getFactory().createEventController();
     private Map<String, Protocol> alertActionProtocols = new LinkedHashMap<String, Protocol>();
 
@@ -85,14 +85,14 @@ public class DefaultAlertController extends AlertController {
 
     @Override
     public void addWorker(AlertWorkerBase alertWorker) {
-        alertWorkers.put(alertWorker.getTriggerClass(), (AlertWorker) alertWorker);
+        alertWorkers.put(alertWorker.getTriggerClass(), alertWorker);
 
         eventController.addListener(alertWorker);
     }
 
     @Override
     public void removeAllWorkers() {
-        for (AlertWorker worker : alertWorkers.values()) {
+        for (AlertWorkerBase worker : alertWorkers.values()) {
             eventController.removeListener(worker);
         }
 
@@ -122,7 +122,7 @@ public class DefaultAlertController extends AlertController {
     }
 
     private AlertStatus getEnabledAlertStatus(String alertId) {
-        for (AlertWorker alertWorker : alertWorkers.values()) {
+        for (AlertWorkerBase alertWorker : alertWorkers.values()) {
             AlertStatus alertStatus = alertWorker.getAlertStatus(alertId);
 
             if (alertStatus != null) {
@@ -296,14 +296,14 @@ public class DefaultAlertController extends AlertController {
          * Although we can look up the correct worker, we attempt to disable the alert on all
          * workers just in case any shenanigans have occurred.
          */
-        for (AlertWorker worker : alertWorkers.values()) {
+        for (AlertWorkerBase worker : alertWorkers.values()) {
             worker.disableAlert(alertId);
         }
     }
 
     @Override
     public Alert getEnabledAlert(String alertId) {
-        for (AlertWorker worker : alertWorkers.values()) {
+        for (AlertWorkerBase worker : alertWorkers.values()) {
             Alert alert = worker.getEnabledAlert(alertId);
 
             if (alert != null) {

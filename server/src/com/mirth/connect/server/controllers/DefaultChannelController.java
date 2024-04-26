@@ -33,6 +33,9 @@ import org.apache.logging.log4j.Logger;
 import com.mirth.connect.client.core.ControllerException;
 import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
+import com.mirth.connect.connectors.http.HttpDispatcherProperties;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
 import com.mirth.connect.donkey.model.channel.Ports;
@@ -1128,4 +1131,13 @@ public class DefaultChannelController extends ChannelController {
     	return new HttpReceiverProperties();
     }
     
+    @Override
+    public IHttpDispatcherProperties createHttpDispatcherProperties() {
+        return new HttpDispatcherProperties();
+    }
+    
+    @Override
+    public IHttpDispatcherProperties createHttpDispatcherProperties(IHttpDispatcherProperties props) {
+        return new HttpDispatcherProperties((HttpDispatcherProperties) props);
+    }
 }

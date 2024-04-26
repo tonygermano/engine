@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+@SuppressWarnings({ "serial", "deprecation" })
 public class HttpStaticResource implements Serializable {
 
     public enum ResourceType {

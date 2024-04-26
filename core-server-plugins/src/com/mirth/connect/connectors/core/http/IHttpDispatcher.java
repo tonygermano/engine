@@ -10,7 +10,7 @@ import com.mirth.connect.donkey.server.ConnectorTaskException;
 import com.mirth.connect.donkey.server.channel.IDestinationConnector;
 
 public interface IHttpDispatcher extends IDestinationConnector {
-
+    
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry();
     
     public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message);

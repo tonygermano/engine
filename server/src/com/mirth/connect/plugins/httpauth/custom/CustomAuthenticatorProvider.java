@@ -35,7 +35,7 @@ public class CustomAuthenticatorProvider extends AuthenticatorProvider {
         CustomHttpAuthProperties props = (CustomHttpAuthProperties) getProperties();
 
         String channelId = getConnector().getChannelId();
-        String channelName = getConnector().getChannel().getName();
+        String channelName = getConnector().getChannelName();
         String authenticatorClass = replacer.replaceValues(props.getAuthenticatorClass(), channelId, channelName);
 
         Map<String, String> properties = new LinkedHashMap<String, String>();

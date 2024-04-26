@@ -10,8 +10,7 @@
 package com.mirth.connect.model;
 
 import java.io.Serializable;
-
-import org.apache.commons.lang3.ObjectUtils;
+import java.util.Objects;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -42,7 +41,7 @@ public class ArchiveMetaData implements Serializable {
 
         ArchiveMetaData transport = (ArchiveMetaData) that;
 
-        return ObjectUtils.equals(this.getType(), transport.getType());
+        return Objects.equals(this.getType(), transport.getType());
     }
 
     public String toString() {

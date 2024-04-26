@@ -66,7 +66,7 @@ public class JavaScriptAuthenticator extends Authenticator {
                 throw new Exception("Script not found in cache");
             } else {
                 try {
-                    Scriptable scope = JavaScriptScopeUtil.getMessageReceiverScope(getContextFactory(), scriptLogger, provider.getConnector().getChannelId(), provider.getConnector().getChannel().getName());
+                    Scriptable scope = JavaScriptScopeUtil.getMessageReceiverScope(getContextFactory(), scriptLogger, provider.getConnector().getChannelId(), provider.getConnector().getChannelName());
 
                     Map<String, Object> sourceMap = new HashMap<String, Object>();
                     request.populateMap(sourceMap);
@@ -84,15 +84,15 @@ public class JavaScriptAuthenticator extends Authenticator {
 
                             if (object instanceof AuthenticationResult) {
                                 return (AuthenticationResult) object;
-                            } else if (object instanceof com.mirth.connect.plugins.httpauth.userutil.AuthenticationResult) {
-                                return new AuthenticationResult((com.mirth.connect.plugins.httpauth.userutil.AuthenticationResult) object);
+                            } else if (object instanceof AuthenticationResult) {
+                                return new AuthenticationResult((AuthenticationResult) object);
                             } else if (object instanceof Boolean && (Boolean) object) {
                                 return AuthenticationResult.Success();
                             }
                         } else if (result instanceof AuthenticationResult) {
                             return (AuthenticationResult) result;
-                        } else if (result instanceof com.mirth.connect.plugins.httpauth.userutil.AuthenticationResult) {
-                            return new AuthenticationResult((com.mirth.connect.plugins.httpauth.userutil.AuthenticationResult) result);
+                        } else if (result instanceof AuthenticationResult) {
+                            return new AuthenticationResult((AuthenticationResult) result);
                         } else if (result instanceof Boolean && (Boolean) result) {
                             return AuthenticationResult.Success();
                         } else {

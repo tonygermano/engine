@@ -116,7 +116,7 @@ public class OAuth2Authenticator extends Authenticator {
     private OAuth2HttpAuthProperties getReplacedProperties(RequestInfo request) {
         OAuth2HttpAuthProperties properties = new OAuth2HttpAuthProperties((OAuth2HttpAuthProperties) provider.getProperties());
         String channelId = provider.getConnector().getChannelId();
-        String channelName = provider.getConnector().getChannel().getName();
+        String channelName = provider.getConnector().getChannelName();
         Map<String, Object> map = new HashMap<String, Object>();
         request.populateMap(map);
 

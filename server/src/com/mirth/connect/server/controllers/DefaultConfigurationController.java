@@ -128,6 +128,8 @@ import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.server.util.DatabaseUtil;
 import com.mirth.connect.server.util.PasswordRequirementsChecker;
 import com.mirth.connect.server.util.ResourceUtil;
+import com.mirth.connect.server.util.ServerSMTPConnection;
+import com.mirth.connect.server.util.ServerSMTPConnectionFactory;
 import com.mirth.connect.server.util.SqlConfig;
 import com.mirth.connect.server.util.StatementLock;
 import com.mirth.connect.server.util.javascript.JavaScriptCoreUtil;
@@ -212,7 +214,7 @@ public class DefaultConfigurationController extends ConfigurationController {
     public DefaultConfigurationController() {
 
     }
-    
+
     public static ConfigurationController create() {
         synchronized (DefaultConfigurationController.class) {
             if (instance == null) {
@@ -224,7 +226,7 @@ public class DefaultConfigurationController extends ConfigurationController {
                     try {
                         instance.getClass().getMethod("initialize").invoke(instance);
                     } catch (Exception e) {
-                    	LogManager.getLogger(DefaultConfigurationController.class).error("Error calling initialize method in DefaultConfigurationController", e);
+                        LogManager.getLogger(DefaultConfigurationController.class).error("Error calling initialize method in DefaultConfigurationController", e);
                     }
                 }
             }
@@ -237,7 +239,7 @@ public class DefaultConfigurationController extends ConfigurationController {
 
         try {
             initializeCoreClasses();
-            
+
             // Delimiter parsing disabled by default so getString() returns the whole property, even if there are commas
             mirthConfigBuilder = PropertiesConfigurationUtil.createBuilder(new File(ClassPathResource.getResourceURI("mirth.properties")));
             mirthConfig = mirthConfigBuilder.getConfiguration();
@@ -575,7 +577,7 @@ public class DefaultConfigurationController extends ConfigurationController {
         Properties serverSettings = getPropertiesForGroup(PROPERTIES_CORE);
         return new ServerSettings(environmentName, serverName, serverSettings, ObjectXMLSerializer.getInstance());
     }
-    
+
     @Override
     public PublicServerSettings getPublicServerSettings() throws ControllerException {
         return new PublicServerSettings(getServerSettings(), ObjectXMLSerializer.getInstance());
@@ -592,11 +594,11 @@ public class DefaultConfigurationController extends ConfigurationController {
     }
 
     @Override
-    public void setServerSettings(ServerSettings settings) throws ControllerException {        
+    public void setServerSettings(ServerSettings settings) throws ControllerException {
         Properties properties = settings.getProperties(ObjectXMLSerializer.getInstance());
 
         validateServerSettings(properties);
-        
+
         String environmentName = settings.getEnvironmentName();
         if (environmentName != null) {
             saveProperty(PROPERTIES_CORE, "environment.name", environmentName);
@@ -612,15 +614,15 @@ public class DefaultConfigurationController extends ConfigurationController {
             saveProperty(PROPERTIES_CORE, (String) name, (String) properties.get(name));
         }
     }
-    
-    public void validateServerSettings(Properties properties) throws ControllerException {  
+
+    public void validateServerSettings(Properties properties) throws ControllerException {
         Boolean autoLogoutEnabled = false;
         Integer autoLogoutTime = null;
-        
+
         if (properties.getProperty("administratorautologoutinterval.enabled") != null) {
             autoLogoutEnabled = intToBooleanObject(properties.getProperty("administratorautologoutinterval.enabled"), false);
         }
-        
+
         if (autoLogoutEnabled == true) {
             try {
                 autoLogoutTime = Integer.parseInt(properties.getProperty("administratorautologoutinterval.field"));
@@ -632,7 +634,7 @@ public class DefaultConfigurationController extends ConfigurationController {
             }
         }
     }
-    
+
     /**
      * Takes a String and returns a Boolean Object. "1" = true "0" = false null or not a number =
      * defaultValue
@@ -729,8 +731,8 @@ public class DefaultConfigurationController extends ConfigurationController {
 
     List<DriverInfo> parseDbdriversXml(Reader reader) throws Exception {
         List<DriverInfo> drivers = new ArrayList<DriverInfo>();
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         Document document = dbf.newDocumentBuilder().parse(new InputSource(reader));
         Element driversElement = document.getDocumentElement();
 
@@ -1562,8 +1564,7 @@ public class DefaultConfigurationController extends ConfigurationController {
             logger.debug("generated new certificate with serial number: " + ((X509Certificate) sslCert).getSerialNumber());
 
             // add the generated SSL cert to the keystore using the key password
-            keyStore.setKeyEntry(certificateAlias, sslKeyPair.getPrivate(), keyPassword, new Certificate[] {
-                    sslCert });
+            keyStore.setKeyEntry(certificateAlias, sslKeyPair.getPrivate(), keyPassword, new Certificate[] {sslCert});
         } else {
             logger.debug("found certificate in keystore");
         }
@@ -1634,15 +1635,16 @@ public class DefaultConfigurationController extends ConfigurationController {
             throw new ControllerException(e);
         }
     }
-    
+
     private void initializeCoreClasses() {
         Alert.USER_PROTOCOL_CLASS = UserProtocol.class;
-        DefaultUserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
+        UserController.DEFAULT_USER_CONTROLLER_CLASS = DefaultUserController.class;
         JavaScriptCoreUtil.JAVASCRIPT_UTIL_CLASS = JavaScriptUtil.class;
         JavaScriptCoreUtil.JAVASCRIPT_SCOPE_UTIL_CLASS = JavaScriptScopeUtil.class;
         ExtensionStatuses.DEFAULT_EXTENSION_STATUS_PROVIDER = ExtensionStatusFile.class;
         TransmissionModeProvider.BASIC_MODE_PROVIDER = BasicModeProvider.class;
         BatchStreamReader.DEFAULT_BATCH_STREAM_READER = DefaultBatchStreamReader.class;
+        ServerSMTPConnectionFactory.SERVER_SMTP_CONNECTION = ServerSMTPConnection.class;
     }
 
     @Override
@@ -1713,7 +1715,7 @@ public class DefaultConfigurationController extends ConfigurationController {
             email.setMsg("Receipt of this email confirms that mail originating from this Mirth Connect Server is capable of reaching its intended destination.\n\nSMTP Configuration:\n- Host: " + host + "\n- Port: " + port);
 
             email.send();
-            return new ConnectionTestResponse(ConnectionTestResponse.Type.SUCCESS, "Sucessfully sent test email to: " + to);
+            return new ConnectionTestResponse(ConnectionTestResponse.Type.SUCCESS, "Successfully sent test email to: " + to);
         } catch (EmailException e) {
             return new ConnectionTestResponse(ConnectionTestResponse.Type.FAILURE, e.getMessage());
         }

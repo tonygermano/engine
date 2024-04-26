@@ -95,6 +95,8 @@ import com.mirth.commons.encryption.Output;
 import com.mirth.connect.client.core.ControllerException;
 import com.mirth.connect.donkey.model.DatabaseConstants;
 import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
+import com.mirth.connect.donkey.server.channel.AbstractEmailReceiver;
+import com.mirth.connect.donkey.server.channel.PollConnector;
 import com.mirth.connect.donkey.server.data.DonkeyStatisticsUpdater;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.model.Channel;
@@ -1645,6 +1647,7 @@ public class DefaultConfigurationController extends ConfigurationController {
         TransmissionModeProvider.BASIC_MODE_PROVIDER = BasicModeProvider.class;
         BatchStreamReader.DEFAULT_BATCH_STREAM_READER = DefaultBatchStreamReader.class;
         ServerSMTPConnectionFactory.SERVER_SMTP_CONNECTION = ServerSMTPConnection.class;
+        AbstractEmailReceiver.POLL_CONNECTOR = PollConnector.class;
     }
 
     @Override

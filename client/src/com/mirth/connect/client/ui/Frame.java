@@ -122,6 +122,7 @@ import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanel;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
 import com.mirth.connect.client.ui.components.rsta.ac.js.MirthJavaScriptLanguageSupport;
 import com.mirth.connect.client.ui.dependencies.ChannelDependenciesWarningDialog;
+import com.mirth.connect.client.ui.editors.TabbedTemplatePanel;
 import com.mirth.connect.client.ui.extensionmanager.ExtensionManagerPanel;
 import com.mirth.connect.client.ui.reference.ReferenceListFactory;
 import com.mirth.connect.client.ui.tag.SettingsPanelTags;
@@ -5249,12 +5250,12 @@ public class Frame extends FrameBase {
 
 	@Override
 	public TemplatePanelBase getInboundTemplatePanel() {
-		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getInboundTemplatePanel();
+		return ((TabbedTemplatePanel) channelEditPanel.transformerPane.templatePanel).getMessageTemplatePanel().getInboundTemplatePanel();
 	}
 
 	@Override
 	public TemplatePanelBase getOutboundTemplatePanel() {
-		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getOutboundTemplatePanel();
+		return ((TabbedTemplatePanel) channelEditPanel.transformerPane.templatePanel).getMessageTemplatePanel().getOutboundTemplatePanel();
 	}
 
 	@Override

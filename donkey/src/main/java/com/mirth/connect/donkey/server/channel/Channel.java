@@ -167,6 +167,7 @@ public class Channel implements IChannel, Runnable {
         this.localChannelId = localChannelId;
     }
 
+    @Override
     public String getName() {
         return name;
     }

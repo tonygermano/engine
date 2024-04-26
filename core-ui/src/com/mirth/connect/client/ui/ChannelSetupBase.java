@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import com.mirth.connect.client.ui.editors.BaseEditorPaneBase;
 import com.mirth.connect.model.Channel;
+import com.mirth.connect.model.Connector;
 import com.mirth.connect.model.Filter;
 import com.mirth.connect.model.MessageStorageMode;
 import com.mirth.connect.model.Rule;
@@ -85,4 +86,82 @@ public abstract class ChannelSetupBase extends JPanel {
      * Set Data types specified by selected destination for destination and response
      */
     public abstract void checkAndSetDestinationAndResponseDataType();
+
+    /**
+     * Adds a new channel that is passed in and then sets the overall panel to edit that channel.
+     */
+    public abstract void addChannel(Channel channel, String groupId);
+
+    public abstract String checkInvalidPluginProperties(Channel channel);
+
+    /**
+     * Sets the overall panel to edit the channel with the given channel index. 
+     */
+    public abstract void editChannel(Channel channel);
+
+    public abstract void closePopupWindow();
+
+    /**
+     * Save all of the current channel information in the editor to the actual channel
+     */
+    public abstract boolean saveChanges();
+
+    /**
+     * Moves the selected destination to the next spot in the array list.
+     */
+    public abstract void moveDestinationDown();
+
+    /**
+     * Moves the selected destination to the previous spot in the array list.
+     */
+    public abstract void moveDestinationUp();
+
+    public abstract void validateScripts();
+
+    /** 
+     * Adds a new destination. 
+     */
+    public abstract void addNewDestination();
+
+    /** 
+     * Deletes the selected destination. 
+     */
+    public abstract void deleteDestination();
+
+    public abstract void cloneDestination();
+
+    public abstract void enableDestination();
+
+    public abstract void disableDestination();
+
+    /**
+     * Checks all of the connectors in this channel and returns the errors found.
+     * 
+     * @param channel
+     * @return
+     */
+    public abstract String checkAllForms(Channel channel);
+
+    public abstract void setChannelEnabledField(boolean enabled);
+
+    /**
+     * Is called to load the transformer pane on either the source or destination
+     */
+    public abstract String editTransformer();
+
+    /**
+     * Is called to load the response transformer pane on the destination
+     */
+    public abstract String editResponseTransformer();
+
+    /**
+     * Is called to load the filter pane on either the source or destination 
+     */
+    public abstract String editFilter();
+
+    public abstract void doValidate();
+
+    public abstract void importConnector(Connector connector);
+
+    public abstract Connector exportSelectedConnector();
 }

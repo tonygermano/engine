@@ -15,6 +15,7 @@ public abstract class BaseEditorPaneBase<T extends FilterTransformer<C>, C exten
     
     public static final String MAPPER = "Mapper";
     public static final String MESSAGE_BUILDER = "Message Builder";
+    public JPanel templatePanel;
     
     protected abstract int getNumColumn();
     
@@ -60,4 +61,6 @@ public abstract class BaseEditorPaneBase<T extends FilterTransformer<C>, C exten
     public abstract Connector getConnector();
 
     public abstract String validateElement(C element);
+
+    public abstract boolean isModified();
 }

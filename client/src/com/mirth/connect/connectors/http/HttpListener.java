@@ -74,7 +74,8 @@ import com.mirth.connect.client.ui.components.MirthTable;
 import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ListenerSettingsPanel;
-import com.mirth.connect.connectors.http.HttpStaticResource.ResourceType;
+import com.mirth.connect.connectors.core.http.HttpStaticResource;
+import com.mirth.connect.connectors.core.http.HttpStaticResource.ResourceType;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 
 import net.miginfocom.swing.MigLayout;

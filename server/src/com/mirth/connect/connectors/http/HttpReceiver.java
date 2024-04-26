@@ -109,7 +109,7 @@ import com.mirth.connect.plugins.httpauth.Authenticator;
 import com.mirth.connect.plugins.httpauth.AuthenticatorProvider;
 import com.mirth.connect.plugins.httpauth.AuthenticatorProviderFactory;
 import com.mirth.connect.plugins.httpauth.HttpAuthConnectorPluginProperties;
-import com.mirth.connect.plugins.httpauth.HttpAuthConnectorPluginProperties.AuthType;
+import com.mirth.connect.plugins.httpauth.AuthType;
 import com.mirth.connect.plugins.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.RequestInfo.EntityProvider;
 import com.mirth.connect.server.controllers.ChannelController;

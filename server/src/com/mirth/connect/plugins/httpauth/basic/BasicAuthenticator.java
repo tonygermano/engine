@@ -87,7 +87,7 @@ public class BasicAuthenticator extends Authenticator {
     private BasicHttpAuthProperties getReplacedProperties(RequestInfo request) {
         BasicHttpAuthProperties properties = new BasicHttpAuthProperties((BasicHttpAuthProperties) provider.getProperties());
         String channelId = provider.getConnector().getChannelId();
-        String channelName = provider.getConnector().getChannel().getName();
+        String channelName = provider.getConnector().getChannelName();
         Map<String, Object> map = new HashMap<String, Object>();
         request.populateMap(map);
 

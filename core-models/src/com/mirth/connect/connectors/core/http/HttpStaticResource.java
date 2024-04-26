@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.http;
+package com.mirth.connect.connectors.core.http;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+@SuppressWarnings({ "serial", "deprecation" })
 public class HttpStaticResource implements Serializable {
 
     public enum ResourceType {

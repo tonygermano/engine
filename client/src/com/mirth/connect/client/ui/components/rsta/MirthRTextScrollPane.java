@@ -22,6 +22,10 @@ import com.mirth.connect.model.codetemplates.ContextType;
 public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConstants, IMirthRTextScrollPane {
 
     private MirthRSyntaxTextArea textArea;
+    
+    public MirthRTextScrollPane() {
+        this(ContextType.SOURCE_RECEIVER, true);
+    }
 
     public MirthRTextScrollPane(ContextType contextType) {
         this(contextType, true);
@@ -53,6 +57,7 @@ public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConst
         textArea.setContextType(contextType);
     }
 
+    @Override
     public String getText() {
         return textArea.getEOLFixedText();
     }
@@ -73,10 +78,12 @@ public class MirthRTextScrollPane extends RTextScrollPane implements SyntaxConst
         textArea.setSelectedText(text);
     }
 
+    @Override
     public Document getDocument() {
         return textArea.getDocument();
     }
 
+    @Override
     public void setSaveEnabled(boolean saveEnabled) {
         textArea.setSaveEnabled(saveEnabled);
     }

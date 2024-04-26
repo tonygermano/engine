@@ -1091,4 +1091,7 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
             }
         }
     }
+
+    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message) {
+    }
 }

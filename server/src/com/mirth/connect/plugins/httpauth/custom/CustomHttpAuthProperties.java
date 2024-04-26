@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.mirth.connect.plugins.httpauth.AuthType;
 import com.mirth.connect.plugins.httpauth.HttpAuthConnectorPluginProperties;
 
 public class CustomHttpAuthProperties extends HttpAuthConnectorPluginProperties {

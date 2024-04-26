@@ -80,4 +80,6 @@ public abstract class ChannelSetupBase extends JPanel {
      * Set Data types specified by selected destination for destination and response
      */
     public abstract void checkAndSetDestinationAndResponseDataType();
+    
+    public abstract int getSelectedDestinationIndex();
 }

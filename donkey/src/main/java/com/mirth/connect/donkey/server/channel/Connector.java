@@ -138,6 +138,7 @@ public abstract class Connector implements IConnector {
         this.filterTransformerExecutor = filterTransformerExecutor;
     }
 
+    @Override
     public Set<String> getResourceIds() {
         return resourceIds;
     }

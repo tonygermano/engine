@@ -16,23 +16,22 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpHeader;
+import com.mirth.connect.plugins.httpauth.userutil.AuthStatus;
 
-public class AuthenticationResult {
+public class AuthenticationResult extends AuthenticationResultBase{
 
-    public enum AuthStatus {
-        CHALLENGED, SUCCESS, FAILURE;
-    }
+    
 
     private AuthStatus status;
     private String username = "";
     private String realm = "";
     private Map<String, List<String>> responseHeaders = new LinkedHashMap<String, List<String>>();
 
-    public AuthenticationResult(AuthStatus status) {
-        setStatus(status);
+    public AuthenticationResult(AuthStatus object) {
+        setStatus(object);
     }
 
-    public AuthenticationResult(com.mirth.connect.plugins.httpauth.userutil.AuthenticationResult result) {
+    public AuthenticationResult(AuthenticationResult result) {
         switch (result.getStatus()) {
             case CHALLENGED:
                 setStatus(AuthStatus.CHALLENGED);
@@ -51,17 +50,19 @@ public class AuthenticationResult {
         setResponseHeaders(result.getResponseHeaders());
     }
 
+    @Override
     public AuthStatus getStatus() {
         return status;
     }
 
-    public void setStatus(AuthStatus status) {
-        if (status == null) {
+    public void setStatus(AuthStatus object) {
+        if (object == null) {
             throw new IllegalArgumentException("Status cannot be null.");
         }
-        this.status = status;
+        this.status = object;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -70,6 +71,7 @@ public class AuthenticationResult {
         this.username = StringUtils.trimToEmpty(username);
     }
 
+    @Override
     public String getRealm() {
         return realm;
     }
@@ -78,6 +80,7 @@ public class AuthenticationResult {
         this.realm = StringUtils.trimToEmpty(realm);
     }
 
+    @Override
     public Map<String, List<String>> getResponseHeaders() {
         return responseHeaders;
     }

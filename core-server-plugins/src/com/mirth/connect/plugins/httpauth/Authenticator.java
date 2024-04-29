@@ -21,5 +21,5 @@ public abstract class Authenticator {
         this.properties = properties;
     }
 
-    public abstract AuthenticationResult authenticate(RequestInfo request) throws Exception;
+    public abstract AuthenticationResultBase authenticate(RequestInfo request) throws Exception;
 }

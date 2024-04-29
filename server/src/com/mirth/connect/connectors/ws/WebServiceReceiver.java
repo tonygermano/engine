@@ -52,7 +52,7 @@ import com.mirth.connect.donkey.server.message.batch.BatchMessageException;
 import com.mirth.connect.donkey.server.message.batch.BatchMessageReader;
 import com.mirth.connect.donkey.server.message.batch.ResponseHandler;
 import com.mirth.connect.donkey.server.message.batch.SimpleResponseHandler;
-import com.mirth.connect.plugins.httpauth.AuthenticationResult;
+import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
 import com.mirth.connect.plugins.httpauth.Authenticator;
 import com.mirth.connect.plugins.httpauth.AuthenticatorProvider;
 import com.mirth.connect.plugins.httpauth.AuthenticatorProviderFactory;
@@ -390,7 +390,7 @@ public class WebServiceReceiver extends SourceConnector implements IWebServiceRe
                 RequestInfo requestInfo = new RequestInfo(remoteAddress, remotePort, localAddress, localPort, protocol, method, requestURI, headers, queryParameters, entityProvider);
 
                 try {
-                    AuthenticationResult result = authenticator.authenticate(requestInfo);
+                    AuthenticationResultBase result = authenticator.authenticate(requestInfo);
 
                     for (Entry<String, List<String>> entry : result.getResponseHeaders().entrySet()) {
                         if (StringUtils.isNotBlank(entry.getKey()) && entry.getValue() != null) {

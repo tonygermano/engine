@@ -39,6 +39,7 @@ import org.eclipse.jetty.util.TypeUtil;
 
 import com.mirth.connect.donkey.util.MessageMaps;
 import com.mirth.connect.plugins.httpauth.AuthenticationResult;
+import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
 import com.mirth.connect.plugins.httpauth.Authenticator;
 import com.mirth.connect.plugins.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.digest.DigestHttpAuthProperties.Algorithm;
@@ -82,7 +83,7 @@ public class DigestAuthenticator extends Authenticator {
     }
 
     @Override
-    public AuthenticationResult authenticate(RequestInfo request) {
+    public AuthenticationResultBase authenticate(RequestInfo request) {
         DigestHttpAuthProperties properties = getReplacedProperties(request);
         List<String> authHeaderList = request.getHeaders().get(HttpHeader.AUTHORIZATION.asString());
         Map<String, String> directives = new CaseInsensitiveMap<String, String>();

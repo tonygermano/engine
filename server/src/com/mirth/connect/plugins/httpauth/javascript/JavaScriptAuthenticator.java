@@ -24,6 +24,7 @@ import org.mozilla.javascript.Undefined;
 
 import com.mirth.connect.plugins.httpauth.AuthenticationResult;
 import com.mirth.connect.plugins.httpauth.Authenticator;
+import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
 import com.mirth.connect.plugins.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.userutil.AuthStatus;
 import com.mirth.connect.server.MirthJavascriptTransformerException;
@@ -45,7 +46,7 @@ public class JavaScriptAuthenticator extends Authenticator {
     }
 
     @Override
-    public AuthenticationResult authenticate(RequestInfo request) throws Exception {
+    public AuthenticationResultBase authenticate(RequestInfo request) throws Exception {
         return JavaScriptUtil.execute(new JavaScriptAuthenticatorTask(request));
     }
 
@@ -85,7 +86,7 @@ public class JavaScriptAuthenticator extends Authenticator {
                             if (object instanceof AuthenticationResult) {
                                 return (AuthenticationResult) object;
                             } else if (object instanceof AuthenticationResult) {
-                                return new AuthenticationResult((AuthenticationResult) object);
+                                return new AuthenticationResult((AuthStatus) object);
                             } else if (object instanceof Boolean && (Boolean) object) {
                                 return AuthenticationResult.Success();
                             }

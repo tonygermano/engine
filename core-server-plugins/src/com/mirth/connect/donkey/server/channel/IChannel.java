@@ -5,8 +5,6 @@ import java.util.Set;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
 
 public interface IChannel {
-    
-    public String getName();
 
 	public DebugOptions getDebugOptions();
 	

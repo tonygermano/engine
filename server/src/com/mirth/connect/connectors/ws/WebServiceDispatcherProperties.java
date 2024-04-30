@@ -495,6 +495,34 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
     @Override public void migrate3_12_0(DonkeyElement element) {}// @formatter:on
 
     @Override
+    public void migrate4_6_0(DonkeyElement element) {
+        DonkeyElement wsdlDefinitionMapElement = element.getChildElement("wsdlDefinitionMap");
+        if (wsdlDefinitionMapElement != null) {
+            DonkeyElement mapElement = wsdlDefinitionMapElement.getChildElement("map");
+            if (mapElement != null) {
+                for (DonkeyElement entryElement : mapElement.getChildElements()) {
+                    for (DonkeyElement entrySubElement : entryElement.getChildElements()) {
+                        if (StringUtils.equals("com.mirth.connect.connectors.ws.DefinitionServiceMap_-DefinitionPortMap", entrySubElement.getLocalName())) {
+                            entrySubElement.setNodeName("com.mirth.connect.connectors.core.ws.DefinitionServiceMap_-DefinitionPortMap");
+
+                            DonkeyElement subMapElement = entrySubElement.getChildElement("map");
+                            if (subMapElement != null) {
+                                for (DonkeyElement subMapEntryElement : subMapElement.getChildElements()) {
+                                    for (DonkeyElement subMapEntrySubElement : subMapEntryElement.getChildElements()) {
+                                        if (StringUtils.equals("com.mirth.connect.connectors.ws.DefinitionServiceMap_-PortInformation", subMapEntrySubElement.getLocalName())) {
+                                            subMapEntrySubElement.setNodeName("com.mirth.connect.connectors.core.ws.DefinitionServiceMap_-PortInformation");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public Map<String, Object> getPurgedProperties() {
         Map<String, Object> purgedProperties = super.getPurgedProperties();
         purgedProperties.put("destinationConnectorProperties", destinationConnectorProperties.getPurgedProperties());

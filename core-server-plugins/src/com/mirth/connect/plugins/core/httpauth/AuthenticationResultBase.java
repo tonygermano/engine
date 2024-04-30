@@ -1,9 +1,9 @@
-package com.mirth.connect.plugins.httpauth;
+package com.mirth.connect.plugins.core.httpauth;
 
 import java.util.List;
 import java.util.Map;
 
-import com.mirth.connect.plugins.httpauth.userutil.AuthStatus;
+import com.mirth.connect.plugins.core.httpauth.userutil.AuthStatus;
 
 public abstract class AuthenticationResultBase {
 

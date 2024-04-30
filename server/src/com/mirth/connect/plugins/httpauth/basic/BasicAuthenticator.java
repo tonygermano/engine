@@ -24,10 +24,10 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.http.HttpHeader;
 
 import com.mirth.connect.donkey.util.MessageMaps;
+import com.mirth.connect.plugins.core.httpauth.AuthenticationResultBase;
+import com.mirth.connect.plugins.core.httpauth.Authenticator;
+import com.mirth.connect.plugins.core.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.AuthenticationResult;
-import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
-import com.mirth.connect.plugins.httpauth.Authenticator;
-import com.mirth.connect.plugins.httpauth.RequestInfo;
 import com.mirth.connect.server.channel.MirthMessageMaps;
 import com.mirth.connect.server.util.TemplateValueReplacer;
 

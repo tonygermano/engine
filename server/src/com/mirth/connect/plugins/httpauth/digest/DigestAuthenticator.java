@@ -38,10 +38,10 @@ import org.eclipse.jetty.util.QuotedStringTokenizer;
 import org.eclipse.jetty.util.TypeUtil;
 
 import com.mirth.connect.donkey.util.MessageMaps;
+import com.mirth.connect.plugins.core.httpauth.AuthenticationResultBase;
+import com.mirth.connect.plugins.core.httpauth.Authenticator;
+import com.mirth.connect.plugins.core.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.AuthenticationResult;
-import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
-import com.mirth.connect.plugins.httpauth.Authenticator;
-import com.mirth.connect.plugins.httpauth.RequestInfo;
 import com.mirth.connect.plugins.httpauth.digest.DigestHttpAuthProperties.Algorithm;
 import com.mirth.connect.plugins.httpauth.digest.DigestHttpAuthProperties.QOPMode;
 import com.mirth.connect.server.channel.MirthMessageMaps;

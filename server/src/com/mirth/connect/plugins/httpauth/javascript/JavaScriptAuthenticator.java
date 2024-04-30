@@ -22,11 +22,11 @@ import org.mozilla.javascript.Script;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
+import com.mirth.connect.plugins.core.httpauth.AuthenticationResultBase;
+import com.mirth.connect.plugins.core.httpauth.Authenticator;
+import com.mirth.connect.plugins.core.httpauth.RequestInfo;
+import com.mirth.connect.plugins.core.httpauth.userutil.AuthStatus;
 import com.mirth.connect.plugins.httpauth.AuthenticationResult;
-import com.mirth.connect.plugins.httpauth.Authenticator;
-import com.mirth.connect.plugins.httpauth.AuthenticationResultBase;
-import com.mirth.connect.plugins.httpauth.RequestInfo;
-import com.mirth.connect.plugins.httpauth.userutil.AuthStatus;
 import com.mirth.connect.server.MirthJavascriptTransformerException;
 import com.mirth.connect.server.userutil.SourceMap;
 import com.mirth.connect.server.util.CompiledScriptCache;

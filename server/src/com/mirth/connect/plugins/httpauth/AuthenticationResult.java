@@ -16,7 +16,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpHeader;
-import com.mirth.connect.plugins.httpauth.userutil.AuthStatus;
+
+import com.mirth.connect.plugins.core.httpauth.AuthenticationResultBase;
+import com.mirth.connect.plugins.core.httpauth.userutil.AuthStatus;
 
 public class AuthenticationResult extends AuthenticationResultBase{
 

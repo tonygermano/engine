@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.plugins.httpauth;
+package com.mirth.connect.plugins.core.httpauth;
 
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.server.channel.IConnector;

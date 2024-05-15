@@ -13,8 +13,8 @@ import java.util.UUID;
 
 import com.mirth.connect.donkey.server.channel.Connector;
 import com.mirth.connect.model.codetemplates.ContextType;
-import com.mirth.connect.plugins.httpauth.Authenticator;
-import com.mirth.connect.plugins.httpauth.AuthenticatorProvider;
+import com.mirth.connect.plugins.core.httpauth.Authenticator;
+import com.mirth.connect.plugins.core.httpauth.AuthenticatorProvider;
 import com.mirth.connect.plugins.httpauth.HttpAuthConnectorPluginProperties;
 import com.mirth.connect.server.controllers.ContextFactoryController;
 import com.mirth.connect.server.controllers.ControllerFactory;

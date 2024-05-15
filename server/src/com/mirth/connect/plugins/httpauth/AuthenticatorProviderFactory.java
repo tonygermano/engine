@@ -12,6 +12,8 @@ package com.mirth.connect.plugins.httpauth;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.server.channel.Connector;
 import com.mirth.connect.donkey.server.channel.IConnector;
+import com.mirth.connect.plugins.core.httpauth.AuthenticatorProvider;
+import com.mirth.connect.plugins.core.httpauth.IAuthenticatorProviderFactory;
 import com.mirth.connect.plugins.httpauth.basic.BasicAuthenticatorProvider;
 import com.mirth.connect.plugins.httpauth.custom.CustomAuthenticatorProvider;
 import com.mirth.connect.plugins.httpauth.digest.DigestAuthenticatorProvider;

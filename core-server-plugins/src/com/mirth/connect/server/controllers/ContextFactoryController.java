@@ -36,4 +36,8 @@ public abstract class ContextFactoryController extends Controller {
     public abstract void reloadResource(String resourceId) throws Exception;
 
     public abstract List<URL> getLibraries(String resourceId) throws Exception;
+    
+    public abstract void setExtensionController(ExtensionController extensionController);
+
+    public abstract ExtensionController getExtensionController();
 }

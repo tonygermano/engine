@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.plugins.httpauth.userutil;
+package com.mirth.connect.plugins.core.httpauth.userutil;
 
 /**
  * Denotes the result of an HTTP authentication attempt. Available statuses:

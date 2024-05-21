@@ -84,8 +84,11 @@ import com.mirth.connect.connectors.core.http.HttpRequestMessage;
 import com.mirth.connect.connectors.core.http.HttpSourceConnectorPlugin;
 import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.connectors.core.http.IHttpReceiver;
+import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
 import com.mirth.connect.connectors.core.http.HttpStaticResource.ResourceType;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
+import com.mirth.connect.donkey.model.channel.ListenerConnectorPropertiesInterface;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
 import com.mirth.connect.donkey.model.message.BatchRawMessage;
@@ -151,7 +154,7 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     
     @Override
     public void doOnDeploy() throws ConnectorTaskException {
-    	if (getConnectorProperties().isXmlBody() && isProcessBatch()) {
+    	if (((IHttpReceiverProperties) getConnectorProperties()).isXmlBody() && isProcessBatch()) {
             throw new ConnectorTaskException("Batch processing is not supported for Xml Body.");
         }
 
@@ -171,8 +174,8 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             throw new ConnectorTaskException(e);
         }
 
-        String replacedBinaryMimeTypes = replacer.replaceValues(getConnectorProperties().getBinaryMimeTypes(), getChannelId(), getChannel().getName());
-        if (getConnectorProperties().isBinaryMimeTypesRegex()) {
+        String replacedBinaryMimeTypes = replacer.replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getBinaryMimeTypes(), getChannelId(), getChannel().getName());
+        if (((IHttpReceiverProperties) getConnectorProperties()).isBinaryMimeTypesRegex()) {
             try {
                 binaryMimeTypesRegex = Pattern.compile(replacedBinaryMimeTypes);
             } catch (PatternSyntaxException e) {
@@ -230,12 +233,12 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     public void doOnStart() throws ConnectorTaskException {
     	String channelId = getChannelId();
         String channelName = getChannel().getName();
-        host = replacer.replaceValues(getConnectorProperties().getListenerConnectorProperties().getHost(), channelId, channelName);
-        port = NumberUtils.toInt(replacer.replaceValues(getConnectorProperties().getListenerConnectorProperties().getPort(), channelId, channelName));
-        timeout = NumberUtils.toInt(replacer.replaceValues(getConnectorProperties().getTimeout(), channelId, channelName), 0);
+        host = replacer.replaceValues(((ListenerConnectorPropertiesInterface) getConnectorProperties()).getListenerConnectorProperties().getHost(), channelId, channelName);
+        port = NumberUtils.toInt(replacer.replaceValues(((ListenerConnectorPropertiesInterface) getConnectorProperties()).getListenerConnectorProperties().getPort(), channelId, channelName));
+        timeout = NumberUtils.toInt(replacer.replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getTimeout(), channelId, channelName), 0);
 
         // Initialize contextPath to "" or its value after replacements
-        String contextPath = (getConnectorProperties().getContextPath() == null ? "" : replacer.replaceValues(getConnectorProperties().getContextPath(), channelId, channelName)).trim();
+        String contextPath = (((IHttpReceiverProperties) getConnectorProperties()).getContextPath() == null ? "" : replacer.replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getContextPath(), channelId, channelName)).trim();
 
         /*
          * Empty string and "/" are both valid and equal functionally. However if there is a
@@ -257,11 +260,11 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             Handler serverHandler = handlers;
 
             // Add handlers for each static resource
-            if (getConnectorProperties().getStaticResources() != null) {
+            if (((IHttpReceiverProperties) getConnectorProperties()).getStaticResources() != null) {
                 NavigableMap<String, List<HttpStaticResource>> staticResourcesMap = new TreeMap<String, List<HttpStaticResource>>();
 
                 // Add each static resource to a map first to allow sorting and deduplication
-                for (HttpStaticResource staticResource : getConnectorProperties().getStaticResources()) {
+                for (HttpStaticResource staticResource : ((IHttpReceiverProperties) getConnectorProperties()).getStaticResources()) {
                     String resourceContextPath = replacer.replaceValues(staticResource.getContextPath(), channelId, channelName);
                     Map<String, List<String>> queryParameters = new HashMap<String, List<String>>();
 
@@ -451,14 +454,14 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     }
 
     protected void sendResponse(Request baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult) throws Exception {
-        ContentType contentType = ContentType.parse(replaceValues(getConnectorProperties().getResponseContentType(), dispatchResult));
-        if (!getConnectorProperties().isResponseDataTypeBinary() && contentType.getCharset() == null) {
+        ContentType contentType = ContentType.parse(replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getResponseContentType(), dispatchResult));
+        if (!((IHttpReceiverProperties) getConnectorProperties()).isResponseDataTypeBinary() && contentType.getCharset() == null) {
             /*
              * If text mode is used and a specific charset isn't already defined, use the one from
              * the connector properties. We can't use ContentType.withCharset here because it
              * doesn't preserve other parameters, like boundary definitions
              */
-            contentType = ContentType.parse(contentType.toString() + "; charset=" + CharsetUtils.getEncoding(getConnectorProperties().getCharset()));
+            contentType = ContentType.parse(contentType.toString() + "; charset=" + CharsetUtils.getEncoding(((IHttpReceiverProperties) getConnectorProperties()).getCharset()));
         }
 
         // Replace response headers
@@ -470,10 +473,10 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     Map<String, List<String>> getHeaders(DispatchResult dispatchResult) {
         Map<String, List<String>> responseHeaders = new HashMap<String, List<String>>();
 
-        if (getConnectorProperties().isUseHeadersVariable()) {
-            responseHeaders = HttpUtil.getTableMap(getConnectorProperties().getResponseHeadersVariable(), channel.getMessageMaps(), dispatchResult.getProcessedMessage().getMergedConnectorMessage());
+        if (((IHttpReceiverProperties) getConnectorProperties()).isUseHeadersVariable()) {
+            responseHeaders = HttpUtil.getTableMap(((IHttpReceiverProperties) getConnectorProperties()).getResponseHeadersVariable(), channel.getMessageMaps(), dispatchResult.getProcessedMessage().getMergedConnectorMessage());
         } else {
-            for (Entry<String, List<String>> entry : getConnectorProperties().getResponseHeadersMap().entrySet()) {
+            for (Entry<String, List<String>> entry : ((IHttpReceiverProperties) getConnectorProperties()).getResponseHeadersMap().entrySet()) {
                 String replacedKey = replaceValues(entry.getKey(), dispatchResult);
 
                 for (String headerValue : entry.getValue()) {
@@ -501,7 +504,7 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         }
 
         // set the status code
-        int statusCode = NumberUtils.toInt(replaceValues(getConnectorProperties().getResponseStatusCode(), dispatchResult), -1);
+        int statusCode = NumberUtils.toInt(replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getResponseStatusCode(), dispatchResult), -1);
 
         /*
          * set the response body and status code (if we choose a response from the drop-down)
@@ -530,10 +533,10 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             if (message != null || responseBytes != null) {
                 OutputStream responseOutputStream = servletResponse.getOutputStream();
                 if (responseBytes == null) {
-                    if (getConnectorProperties().isResponseDataTypeBinary()) {
+                    if (((IHttpReceiverProperties) getConnectorProperties()).isResponseDataTypeBinary()) {
                         responseBytes = Base64Util.decodeBase64(message.getBytes("US-ASCII"));
                     } else {
-                        responseBytes = message.getBytes(CharsetUtils.getEncoding(getConnectorProperties().getCharset()));
+                        responseBytes = message.getBytes(CharsetUtils.getEncoding(((IHttpReceiverProperties) getConnectorProperties()).getCharset()));
                     }
                 }
 
@@ -619,8 +622,8 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
          */
         Object rawMessageContent;
 
-        if (getConnectorProperties().isXmlBody()) {
-            rawMessageContent = HttpMessageConverter.httpRequestToXml(requestMessage, getConnectorProperties().isParseMultipart(), getConnectorProperties().isIncludeMetadata(), this);
+        if (((IHttpReceiverProperties) getConnectorProperties()).isXmlBody()) {
+            rawMessageContent = HttpMessageConverter.httpRequestToXml(requestMessage, ((IHttpReceiverProperties) getConnectorProperties()).isParseMultipart(), ((IHttpReceiverProperties) getConnectorProperties()).isIncludeMetadata(), this);
         } else {
             rawMessageContent = requestMessage.getContent();
         }
@@ -634,10 +637,10 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public HttpRequestMessage createRequestMessage(Object request, boolean ignorePayload) throws IOException, MessagingException {
-        return createRequestMessage((Request) request, ignorePayload, shouldParseMultipart(getConnectorProperties(), (Request) request));
+        return createRequestMessage((Request) request, ignorePayload, shouldParseMultipart((IHttpReceiverProperties) getConnectorProperties(), (Request) request));
     }
     
-    protected boolean shouldParseMultipart(HttpReceiverProperties connectorProperties, Request request) {
+    protected boolean shouldParseMultipart(IHttpReceiverProperties connectorProperties, Request request) {
     	// Only parse multipart if XML Body is selected and Parse Multipart is enabled
     	return connectorProperties.isXmlBody() && connectorProperties.isParseMultipart() && ServletFileUpload.isMultipartContent(request);
     }
@@ -767,12 +770,12 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
                 try {
                     contentType = ContentType.parse(contentTypeString);
                 } catch (Exception e) {
-                    contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), CharsetUtils.getEncoding(getConnectorProperties().getCharset()));
+                    contentType = ContentType.create(ContentType.TEXT_PLAIN.getMimeType(), CharsetUtils.getEncoding(((IHttpReceiverProperties) getConnectorProperties()).getCharset()));
                 }
 
                 Charset charset = contentType.getCharset();
                 if (charset == null) {
-                    charset = Charset.forName(CharsetUtils.getEncoding(getConnectorProperties().getCharset()));
+                    charset = Charset.forName(CharsetUtils.getEncoding(((IHttpReceiverProperties) getConnectorProperties()).getCharset()));
                 }
 
                 servletResponse.setContentType(contentType.toString());
@@ -1088,7 +1091,7 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     public boolean isBinaryContentType(ContentType contentType) {
         String mimeType = contentType.getMimeType();
 
-        if (getConnectorProperties().isBinaryMimeTypesRegex()) {
+        if (((IHttpReceiverProperties) getConnectorProperties()).isBinaryMimeTypesRegex()) {
             return binaryMimeTypesRegex.matcher(mimeType).matches();
         } else {
             return StringUtils.startsWithAny(mimeType, binaryMimeTypesArray);
@@ -1096,7 +1099,7 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     }
 
     @Override
-    public HttpReceiverProperties getConnectorProperties() {
-        return (HttpReceiverProperties) super.getConnectorProperties();
+    public ConnectorProperties getConnectorProperties() {
+        return super.getConnectorProperties();
     }
 }

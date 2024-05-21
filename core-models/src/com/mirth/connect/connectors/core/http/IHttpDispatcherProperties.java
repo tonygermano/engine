@@ -56,4 +56,6 @@ public interface IHttpDispatcherProperties {
     CharSequence getParametersVariable();
     
     void setContentType(String contentType);
+    
+    boolean isResponseBinaryMimeTypesRegex();
 }

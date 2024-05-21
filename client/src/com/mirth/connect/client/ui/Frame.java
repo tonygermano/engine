@@ -108,9 +108,9 @@ import com.mirth.connect.client.core.UnauthorizedException;
 import com.mirth.connect.client.core.Version;
 import com.mirth.connect.client.core.VersionMismatchException;
 import com.mirth.connect.client.ui.DashboardPanel.TableState;
+import com.mirth.connect.client.ui.alert.AlertActionPane;
 import com.mirth.connect.client.ui.alert.AlertChannelPane;
 import com.mirth.connect.client.ui.alert.AlertEditPanel;
-import com.mirth.connect.client.ui.alert.AlertActionPane;
 import com.mirth.connect.client.ui.alert.AlertPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertEditPanel;
 import com.mirth.connect.client.ui.alert.DefaultAlertPanel;
@@ -123,6 +123,7 @@ import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
 import com.mirth.connect.client.ui.components.rsta.MirthRTextScrollPane;
 import com.mirth.connect.client.ui.components.rsta.ac.js.MirthJavaScriptLanguageSupport;
 import com.mirth.connect.client.ui.dependencies.ChannelDependenciesWarningDialog;
+import com.mirth.connect.client.ui.editors.TabbedTemplatePanel;
 import com.mirth.connect.client.ui.extensionmanager.ExtensionManagerPanel;
 import com.mirth.connect.client.ui.reference.ReferenceListFactory;
 import com.mirth.connect.client.ui.tag.SettingsPanelTags;
@@ -177,13 +178,12 @@ import javafx.application.Platform;
 /**
  * The main content frame for the Mirth Client Application. Extends JXFrame and sets up all content.
  */
-public class Frame extends FrameBase{
+public class Frame extends FrameBase {
 
     private Logger logger = LogManager.getLogger(this.getClass());
     public DashboardPanel dashboardPanel = null;
     public SettingsPane settingsPane = null;
     public UserPanel userPanel = null;
-    public ChannelSetup channelEditPanel = null;
     public EventBrowser eventBrowser = null;
     public MessageBrowser activeBrowser = null;
     public MessageBrowser messageBrowser = null;
@@ -5252,12 +5252,12 @@ public class Frame extends FrameBase{
 
 	@Override
 	public TemplatePanelBase getInboundTemplatePanel() {
-		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getInboundTemplatePanel();
+		return ((TabbedTemplatePanel) channelEditPanel.transformerPane.templatePanel).getMessageTemplatePanel().getInboundTemplatePanel();
 	}
 
 	@Override
 	public TemplatePanelBase getOutboundTemplatePanel() {
-		return channelEditPanel.transformerPane.templatePanel.getMessageTemplatePanel().getOutboundTemplatePanel();
+		return ((TabbedTemplatePanel) channelEditPanel.transformerPane.templatePanel).getMessageTemplatePanel().getOutboundTemplatePanel();
 	}
 
 	@Override

@@ -27,6 +27,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.api.InvocationHandlerRecorder;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
+import com.mirth.connect.connectors.core.ConnectorSettingsPanelBase;
+import com.mirth.connect.connectors.core.ConnectorSettingsPanelPlugin;
 import com.mirth.connect.model.ConnectorMetaData;
 import com.mirth.connect.model.PluginClass;
 import com.mirth.connect.model.PluginMetaData;
@@ -209,14 +211,26 @@ public class LoadedExtensions {
                 if (PlatformUI.MIRTH_FRAME.getClient().isExtensionEnabled(metaData.getName())) {
 
                     String connectorName = metaData.getName();
-                    ConnectorSettingsPanel connectorSettingsPanel = (ConnectorSettingsPanel) Class.forName(metaData.getClientClassName()).newInstance();
-
+                    
+                    Object connectorSettingsPanel = Class.forName(metaData.getClientClassName()).newInstance();
+                    
+                    if (connectorSettingsPanel instanceof ConnectorSettingsPanelPlugin) {
+                    	ConnectorSettingsPanelPlugin plugin = (ConnectorSettingsPanelPlugin) connectorSettingsPanel;
+                    	ConnectorSettingsPanelBase base = (ConnectorSettingsPanelBase) Class.forName(metaData.getClientBaseClassName()).newInstance();
+                    	plugin.initialize(base);
+                    	base.initialize(plugin);
+                    	
+                    	connectorSettingsPanel = base;
+                    } else if (connectorSettingsPanel instanceof ConnectorSettingsPanelBase) {
+                    	((ConnectorSettingsPanelBase) connectorSettingsPanel).initialize(null);
+                    }
+                    
                     if (metaData.getType() == ConnectorMetaData.Type.SOURCE) {
-                        connectors.put(connectorName, connectorSettingsPanel);
-                        sourceConnectors.put(connectorName, connectorSettingsPanel);
+                        connectors.put(connectorName, (ConnectorSettingsPanel) connectorSettingsPanel);
+                        sourceConnectors.put(connectorName, (ConnectorSettingsPanel) connectorSettingsPanel);
                     } else if (metaData.getType() == ConnectorMetaData.Type.DESTINATION) {
-                        connectors.put(connectorName, connectorSettingsPanel);
-                        destinationConnectors.put(connectorName, connectorSettingsPanel);
+                        connectors.put(connectorName, (ConnectorSettingsPanel) connectorSettingsPanel);
+                        destinationConnectors.put(connectorName, (ConnectorSettingsPanel) connectorSettingsPanel);
                     } else {
                         // type must be SOURCE or DESTINATION
                         throw new Exception();

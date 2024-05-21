@@ -32,6 +32,7 @@ import com.mirth.connect.client.ui.PlatformUI;
 import com.mirth.connect.client.ui.TreeTransferable;
 import com.mirth.connect.client.ui.components.MirthTree;
 import com.mirth.connect.client.ui.editors.BaseEditorPane;
+import com.mirth.connect.client.ui.editors.TabbedTemplatePanel;
 import com.mirth.connect.client.ui.editors.TransformerTreeTableNode;
 import com.mirth.connect.client.ui.util.VariableListUtil;
 import com.mirth.connect.model.Connector;
@@ -166,7 +167,7 @@ public class TransformerPane extends BaseEditorPane<Transformer, Step> {
         setOutboundDataTypeProperties(properties.getOutboundProperties());
         setInboundTemplate(properties.getInboundTemplate());
         setOutboundTemplate(properties.getOutboundTemplate());
-        templatePanel.setTransformerView();
+        ((TabbedTemplatePanel) templatePanel).setTransformerView();
 
         if (connector.getMetaDataId() == 0) {
             ((ChannelSetup) PlatformUI.MIRTH_FRAME.getChannelSetup()).updateAttachmentHandler(properties.getInboundDataType());

@@ -153,12 +153,9 @@ public class ChannelSetup extends ChannelSetupBase {
     private static final String PRUNING_WARNING_DEFAULT_TEXT = "(incomplete, errored, and queued messages will not be pruned)";
     private static final String PRUNING_WARNING_ERRORED_TEXT = "(incomplete and queued messages will not be pruned)";
 
-    public Channel currentChannel;
     public Map<Integer, Map<String, String>> resourceIds = new HashMap<Integer, Map<String, String>>();
     public int defaultQueueBufferSize = 1000;
     public int lastModelIndex = -1;
-    public TransformerPane transformerPane = new TransformerPane();
-    public FilterPane filterPane = new FilterPane();
 
     private Frame parent;
     private String saveGroupId;
@@ -171,6 +168,10 @@ public class ChannelSetup extends ChannelSetupBase {
 
     public ChannelSetup() {
         this.parent = (Frame) PlatformUI.MIRTH_FRAME;
+        
+        filterPane = new FilterPane();
+        transformerPane = new TransformerPane();
+        
         initComponents();
         initToolTips();
         initLayout();
@@ -198,7 +199,7 @@ public class ChannelSetup extends ChannelSetupBase {
 
     @Override
     public TransformerPane getTransformerPane() {
-        return transformerPane;
+        return (TransformerPane) transformerPane;
     }
     
     @Override
@@ -211,6 +212,7 @@ public class ChannelSetup extends ChannelSetupBase {
         return sourceConnectorPanel;
     }
 
+    @Override
     public void closePopupWindow() {
         tagsField.closePopupWindow();
     }
@@ -326,6 +328,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Is called to load the transformer pane on either the source or destination
      */
+    @Override
     public String editTransformer() {
         String name = "";
 
@@ -351,6 +354,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Is called to load the response transformer pane on the destination
      */
+    @Override
     public String editResponseTransformer() {
         String name = "";
 
@@ -370,7 +374,10 @@ public class ChannelSetup extends ChannelSetupBase {
         return name;
     }
 
-    /** Is called to load the filter pane on either the source or destination */
+    /**
+     * Is called to load the filter pane on either the source or destination 
+     */
+    @Override
     public String editFilter() {
         String name = "";
 
@@ -544,7 +551,10 @@ public class ChannelSetup extends ChannelSetupBase {
         return false;
     }
 
-    /** Sets the overall panel to edit the channel with the given channel index. */
+    /** 
+     * Sets the overall panel to edit the channel with the given channel index. 
+     */
+    @Override
     public void editChannel(Channel channel) {
         loadingChannel = true;
         dateStartEdit = Calendar.getInstance();
@@ -609,6 +619,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Adds a new channel that is passed in and then sets the overall panel to edit that channel.
      */
+    @Override
     public void addChannel(Channel channel, String groupId) {
         loadingChannel = true;
         lastModelIndex = -1;
@@ -923,6 +934,7 @@ public class ChannelSetup extends ChannelSetupBase {
         return checkInvalidPluginProperties(null, connector);
     }
 
+    @Override
     public String checkInvalidPluginProperties(Channel channel) {
         return checkInvalidPluginProperties(channel, null);
     }
@@ -1175,6 +1187,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Save all of the current channel information in the editor to the actual channel
      */
+    @Override
     public boolean saveChanges() {
     	Integer userId = null;
     	Channel originalStateChannel = null;
@@ -1480,13 +1493,17 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
-    /** Adds a new destination. */
+    /** 
+     * Adds a new destination. 
+     */
+    @Override
     public void addNewDestination() {
         makeDestinationTable(true);
         destinationTableScrollPane.getViewport().setViewPosition(new Point(0, destinationTable.getRowHeight() * destinationTable.getRowCount()));
         parent.setSaveEnabled(true);
     }
 
+    @Override
     public void cloneDestination() {
         if (parent.changesHaveBeenMade()) {
             if (!parent.alertOption(this.parent, "You must save your channel before cloning.  Would you like to save your channel now?") || !saveChanges()) {
@@ -1511,6 +1528,7 @@ public class ChannelSetup extends ChannelSetupBase {
         parent.setSaveEnabled(true);
     }
 
+    @Override
     public void enableDestination() {
         List<Connector> destinationConnectors = currentChannel.getDestinationConnectors();
         Connector destination = destinationConnectors.get(destinationTable.getSelectedModelIndex());
@@ -1524,6 +1542,7 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
+    @Override
     public void disableDestination() {
         List<Connector> destinationConnectors = currentChannel.getDestinationConnectors();
 
@@ -1551,7 +1570,10 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
-    /** Deletes the selected destination. */
+    /** 
+     * Deletes the selected destination. 
+     */
+    @Override
     public void deleteDestination() {
         isDeleting = true;
         List<Connector> destinationConnectors = currentChannel.getDestinationConnectors();
@@ -1621,6 +1643,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Moves the selected destination to the previous spot in the array list.
      */
+    @Override
     public void moveDestinationUp() {
         List<Connector> destinationConnectors = currentChannel.getDestinationConnectors();
         int destinationIndex = destinationTable.getSelectedModelIndex();
@@ -1637,6 +1660,7 @@ public class ChannelSetup extends ChannelSetupBase {
     /**
      * Moves the selected destination to the next spot in the array list.
      */
+    @Override
     public void moveDestinationDown() {
         List<Connector> destinationConnectors = currentChannel.getDestinationConnectors();
         int destinationIndex = destinationTable.getSelectedModelIndex();
@@ -1656,6 +1680,7 @@ public class ChannelSetup extends ChannelSetupBase {
      * @param channel
      * @return
      */
+    @Override
     public String checkAllForms(Channel channel) {
         String errors = "";
         ConnectorSettingsPanel tempConnector = null;
@@ -1784,6 +1809,7 @@ public class ChannelSetup extends ChannelSetupBase {
         return errors;
     }
 
+    @Override
     public void doValidate() {
         if (sourcePanel.isVisible()) {
             String validationMessage = sourceConnectorPanel.doValidate(sourceConnectorPanel.getProperties(), true);
@@ -1802,6 +1828,7 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
+    @Override
     public void validateScripts() {
         scriptsPanel.validateCurrentScript();
     }
@@ -3269,6 +3296,7 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
+    @Override
     public Connector exportSelectedConnector() {
         if (channelView.getSelectedIndex() == SOURCE_TAB_INDEX) {
             return currentChannel.getSourceConnector();
@@ -3279,6 +3307,7 @@ public class ChannelSetup extends ChannelSetupBase {
         }
     }
 
+    @Override
     public void importConnector(Connector connector) {
         String alertMessage = checkInvalidPluginProperties(connector);
         if (StringUtils.isNotBlank(alertMessage)) {
@@ -3370,6 +3399,7 @@ public class ChannelSetup extends ChannelSetupBase {
         return destinationTable.getSelectedModelIndex();
     }
     
+    @Override
     public void setChannelEnabledField(boolean enabled) {
     	summaryEnabledCheckBox.setSelected(enabled);
     }

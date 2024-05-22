@@ -25,6 +25,7 @@ import com.mirth.connect.donkey.model.message.Status;
 import com.mirth.connect.donkey.model.message.attachment.Attachment;
 import com.mirth.connect.donkey.server.channel.Statistics;
 import com.mirth.connect.donkey.server.controllers.ChannelController;
+import com.mirth.connect.donkey.server.controllers.ControllerFactory;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.server.data.StatisticsUpdater;
 import com.mirth.connect.donkey.server.event.DonkeyEventDispatcherProvider;
@@ -39,7 +40,7 @@ public class PassthruDao implements DonkeyDao {
     private StatisticsUpdater statisticsUpdater;
 
     protected PassthruDao() {
-        ChannelController channelController = ChannelController.getInstance();
+        ChannelController channelController = ControllerFactory.getFactory().createChannelController();
         currentStats = channelController.getStatistics();
         totalStats = channelController.getTotalStatistics();
 

@@ -7,16 +7,17 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.plugins.httpauth;
+package com.mirth.connect.plugins.core.httpauth;
 
-import com.mirth.connect.donkey.server.channel.Connector;
+import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
+import com.mirth.connect.donkey.server.channel.IConnector;
 
 public abstract class AuthenticatorProvider {
 
-    private Connector connector;
-    private HttpAuthConnectorPluginProperties properties;
+    private IConnector connector;
+    private ConnectorPluginProperties properties;
 
-    public AuthenticatorProvider(Connector connector, HttpAuthConnectorPluginProperties properties) {
+    public AuthenticatorProvider(IConnector connector, ConnectorPluginProperties properties) {
         this.connector = connector;
         this.properties = properties;
     }
@@ -25,11 +26,11 @@ public abstract class AuthenticatorProvider {
 
     public void shutdown() {}
 
-    public Connector getConnector() {
+    public IConnector getConnector() {
         return connector;
     }
 
-    public HttpAuthConnectorPluginProperties getProperties() {
+    public ConnectorPluginProperties getProperties() {
         return properties;
     }
 }

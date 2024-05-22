@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.plugins.httpauth;
+package com.mirth.connect.plugins.core.httpauth;
 
 import java.util.Map;
 
@@ -21,5 +21,5 @@ public abstract class Authenticator {
         this.properties = properties;
     }
 
-    public abstract AuthenticationResult authenticate(RequestInfo request) throws Exception;
+    public abstract AuthenticationResultBase authenticate(RequestInfo request) throws Exception;
 }

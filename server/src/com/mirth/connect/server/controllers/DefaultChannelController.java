@@ -31,6 +31,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.ControllerException;
+import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
+import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
+import com.mirth.connect.connectors.http.HttpDispatcherProperties;
+import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
 import com.mirth.connect.donkey.model.channel.Ports;
@@ -235,7 +240,7 @@ public class DefaultChannelController extends ChannelController {
                 if (!clientChannels.containsKey(serverChannelId)) {
                     ChannelSummary summary = new ChannelSummary(serverChannelId);
                     summary.getChannelStatus().setChannel(serverChannels.get(serverChannelId));
-                    summary.getChannelStatus().setLocalChannelId(com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getLocalChannelId(serverChannelId, true));
+                    summary.getChannelStatus().setLocalChannelId(com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(serverChannelId, true));
 
                     DeployedChannelInfo deployedChannelInfo = getDeployedChannelInfoById(serverChannelId);
                     boolean serverChannelDeployed = deployedChannelInfo != null;
@@ -531,7 +536,7 @@ public class DefaultChannelController extends ChannelController {
         try {
             //TODO combine and organize these.
             // Delete the "d_" tables and the channel record from "d_channels"
-            com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().removeChannel(channel.getId());
+        	com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().removeChannel(channel.getId());
             // Delete the channel record from the "channel" table
             SqlConfig.getInstance().getSqlSessionManager().delete("Channel.deleteChannel", channel.getId());
 
@@ -724,37 +729,37 @@ public class DefaultChannelController extends ChannelController {
 
     @Override
     public Statistics getStatistics() {
-        return com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getStatistics();
+        return com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getStatistics();
     }
 
     @Override
     public Statistics getTotalStatistics() {
-        return com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getTotalStatistics();
+        return com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getTotalStatistics();
     }
 
     @Override
     public Statistics getStatisticsFromStorage(String serverId) {
-        return com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getStatisticsFromStorage(serverId);
+        return com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getStatisticsFromStorage(serverId);
     }
 
     @Override
     public Statistics getTotalStatisticsFromStorage(String serverId) {
-        return com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getTotalStatisticsFromStorage(serverId);
+        return com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getTotalStatisticsFromStorage(serverId);
     }
 
     @Override
     public int getConnectorMessageCount(String channelId, String serverId, int metaDataId, Status status) {
-        return com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getConnectorMessageCount(channelId, serverId, metaDataId, status);
+        return com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getConnectorMessageCount(channelId, serverId, metaDataId, status);
     }
 
     @Override
     public void resetStatistics(Map<String, List<Integer>> channelConnectorMap, Set<Status> statuses) {
-        com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().resetStatistics(channelConnectorMap, statuses);
+    	com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().resetStatistics(channelConnectorMap, statuses);
     }
 
     @Override
     public void resetAllStatistics() {
-        com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().resetAllStatistics();
+    	com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().resetAllStatistics();
     }
 
     @Override
@@ -1110,7 +1115,7 @@ public class DefaultChannelController extends ChannelController {
         logger.debug("getting ports in use");
         try {
             TemplateValueReplacer replacer = new TemplateValueReplacer();
-            List<Ports> portsList = com.mirth.connect.donkey.server.controllers.ChannelController.getInstance().getPortsInUse();
+            List<Ports> portsList = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getPortsInUse();
             for (Ports portsItem : portsList) {
                 portsItem.setPort(replacer.replaceValues(portsItem.getPort(), portsItem.getId(), portsItem.getName()));
             }
@@ -1121,4 +1126,18 @@ public class DefaultChannelController extends ChannelController {
         }
     }
     
+    @Override
+    public IHttpReceiverProperties createHttpReceiverProperties() {
+    	return new HttpReceiverProperties();
+    }
+    
+    @Override
+    public IHttpDispatcherProperties createHttpDispatcherProperties() {
+        return new HttpDispatcherProperties();
+    }
+    
+    @Override
+    public IHttpDispatcherProperties createHttpDispatcherProperties(IHttpDispatcherProperties props) {
+        return new HttpDispatcherProperties((HttpDispatcherProperties) props);
+    }
 }

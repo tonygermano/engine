@@ -92,6 +92,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.connectors.core.http.HttpConfiguration;
 import com.mirth.connect.connectors.core.http.IHttpDispatcher;
+import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -133,6 +134,15 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	} else {
+    		doOnDeploy();
+    	}
+    }
+    
+    @Override
+    public void doOnDeploy() throws ConnectorTaskException {
         // load the default configuration
         String configurationClass = getConfigurationClass();
 
@@ -150,23 +160,50 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
             throw new ConnectorTaskException(e);
         }
 
-        if (getConnectorProperties().isResponseBinaryMimeTypesRegex()) {
+        if (((IHttpDispatcherProperties) getConnectorProperties()).isResponseBinaryMimeTypesRegex()) {
             binaryMimeTypesRegexMap = new ConcurrentHashMap<String, Pattern>();
         } else {
             binaryMimeTypesArrayMap = new ConcurrentHashMap<String, String[]>();
         }
     }
-
+    
     @Override
     public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	} else {
+    		doOnUndeploy();
+    	}
+    }
+
+    @Override
+    public void doOnUndeploy() throws ConnectorTaskException {
         configuration.configureConnectorUndeploy(this);
     }
+    
+    @Override
+    public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	} else {
+    		doOnStart();
+    	}
+    }
 
     @Override
-    public void onStart() throws ConnectorTaskException {}
-
+    public void doOnStart() throws ConnectorTaskException {}
+    
     @Override
     public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	} else {
+    		doOnStop();
+    	}
+    }
+
+    @Override
+    public void doOnStop() throws ConnectorTaskException {
         for (CloseableHttpClient client : clients.values().toArray(new CloseableHttpClient[clients.size()])) {
             HttpClientUtils.closeQuietly(client);
         }
@@ -174,9 +211,18 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
         clients.clear();
         userTokens.clear();
     }
-
+    
     @Override
     public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	} else {
+    		doOnHalt();
+    	}
+    }
+
+    @Override
+    public void doOnHalt() throws ConnectorTaskException {
         for (CloseableHttpClient client : clients.values().toArray(new CloseableHttpClient[clients.size()])) {
             HttpClientUtils.closeQuietly(client);
         }
@@ -184,9 +230,18 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
         clients.clear();
         userTokens.clear();
     }
-
+    
     @Override
     public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.replaceConnectorProperties(connectorProperties, connectorMessage);
+    	} else {
+    		doReplaceConnectorProperties(connectorProperties, connectorMessage);
+    	}
+    }
+
+    @Override
+    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
         HttpDispatcherProperties httpDispatcherProperties = (HttpDispatcherProperties) connectorProperties;
 
         // Replace all values in connector properties
@@ -204,9 +259,18 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
         httpDispatcherProperties.setContentType(replacer.replaceValues(httpDispatcherProperties.getContentType(), connectorMessage));
         httpDispatcherProperties.setSocketTimeout(replacer.replaceValues(httpDispatcherProperties.getSocketTimeout(), connectorMessage));
     }
-
+    
     @Override
     public Response send(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.send(connectorProperties, connectorMessage);
+    	} else {
+    		return doSend(connectorProperties, connectorMessage);
+    	}
+    }
+
+    @Override
+    public Response doSend(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
         HttpDispatcherProperties httpDispatcherProperties = (HttpDispatcherProperties) connectorProperties;
         eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.WRITING));
 
@@ -451,7 +515,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    protected String getConfigurationClass() {
+    public String getConfigurationClass() {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 
@@ -674,7 +738,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     private boolean isBinaryContentType(String binaryMimeTypes, ContentType contentType) {
         String mimeType = contentType.getMimeType();
 
-        if (getConnectorProperties().isResponseBinaryMimeTypesRegex()) {
+        if (((IHttpDispatcherProperties) getConnectorProperties()).isResponseBinaryMimeTypesRegex()) {
             Pattern binaryMimeTypesRegex = binaryMimeTypesRegexMap.get(binaryMimeTypes);
 
             if (binaryMimeTypesRegex == null) {
@@ -711,7 +775,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    public HttpDispatcherProperties getConnectorProperties() {
-        return (HttpDispatcherProperties) super.getConnectorProperties();
+    public ConnectorProperties getConnectorProperties() {
+        return super.getConnectorProperties();
     }
 }

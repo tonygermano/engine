@@ -29,14 +29,14 @@ import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.util.Base64Util;
 import com.mirth.connect.donkey.util.StringUtil;
 
-public class MessageController {
+public class DefaultMessageController extends MessageController {
     @Inject
-    private static MessageController instance;
+    private static DefaultMessageController instance;
 
-    public static MessageController getInstance() {
-        synchronized (MessageController.class) {
+    public static DefaultMessageController getInstance() {
+        synchronized (DefaultMessageController.class) {
             if (instance == null) {
-                instance = new MessageController();
+                instance = new DefaultMessageController();
             }
 
             return instance;
@@ -45,7 +45,7 @@ public class MessageController {
 
     private Donkey donkey = Donkey.getInstance();
 
-    private MessageController() {}
+    private DefaultMessageController() {}
 
     public Attachment createAttachment(Object data, String type) throws UnsupportedDataTypeException {
         return createAttachment(data, type, false);

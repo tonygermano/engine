@@ -120,6 +120,7 @@ import com.mirth.connect.client.ui.browsers.message.MessageBrowserBase;
 import com.mirth.connect.client.ui.browsers.message.MessageBrowserChannelModel;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanel;
 import com.mirth.connect.client.ui.codetemplate.CodeTemplatePanelBase;
+import com.mirth.connect.client.ui.components.rsta.MirthRTextScrollPane;
 import com.mirth.connect.client.ui.components.rsta.ac.js.MirthJavaScriptLanguageSupport;
 import com.mirth.connect.client.ui.dependencies.ChannelDependenciesWarningDialog;
 import com.mirth.connect.client.ui.editors.TabbedTemplatePanel;
@@ -331,6 +332,7 @@ public class Frame extends FrameBase {
     
     private void initializeCoreClasses() {
     	TransmissionModeClientProvider.BASIC_MODE_CLIENT_PROVIDER_CLASS = BasicModeClientProvider.class;
+    	MIRTH_R_TEXT_SCROLL_PANE = MirthRTextScrollPane.class;
         ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
     }
 
@@ -5264,6 +5266,10 @@ public class Frame extends FrameBase {
 	}
 
 	@Override
+	public ChannelSetupBase getChannelEditPanel() {
+		return channelEditPanel;
+	}
+	
 	public void setAlertPanel(AlertPanel panel) {
 		this.alertPanel = panel;
 	}
@@ -5332,4 +5338,5 @@ public class Frame extends FrameBase {
 	public JXTaskPane getAlertTasks() {
 		return this.alertTasks;
 	}
+
 }

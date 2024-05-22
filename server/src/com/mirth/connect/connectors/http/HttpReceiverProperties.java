@@ -310,6 +310,19 @@ public class HttpReceiverProperties extends ConnectorProperties implements Liste
     @Override public void migrate3_11_0(DonkeyElement element) {}
     @Override public void migrate3_11_1(DonkeyElement element) {} 
     @Override public void migrate3_12_0(DonkeyElement element) {}// @formatter:on
+    
+    @Override
+    public void migrate4_6_0(DonkeyElement element) {
+    	super.migrate4_6_0(element);
+    	
+    	DonkeyElement staticResourcesEl = element.getChildElement("staticResources");
+    	if (staticResourcesEl != null) {
+    		DonkeyElement classEl = staticResourcesEl.getChildElement("com.mirth.connect.connectors.http.HttpStaticResource");
+    		if (classEl != null) {
+    			classEl.setNodeName("com.mirth.connect.connectors.core.http.HttpStaticResource");
+    		}
+    	}
+    }
 
     @Override
     public Map<String, Object> getPurgedProperties() {

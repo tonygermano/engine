@@ -1,4 +1,4 @@
-package com.mirth.connect.plugins.httpauth;
+package com.mirth.connect.plugins.core.httpauth;
 
 public interface IHttpAuthConnectorPluginProperties {
     

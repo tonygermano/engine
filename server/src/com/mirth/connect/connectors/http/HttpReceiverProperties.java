@@ -317,9 +317,12 @@ public class HttpReceiverProperties extends ConnectorProperties implements Liste
     	
     	DonkeyElement staticResourcesEl = element.getChildElement("staticResources");
     	if (staticResourcesEl != null) {
-    		DonkeyElement classEl = staticResourcesEl.getChildElement("com.mirth.connect.connectors.http.HttpStaticResource");
-    		if (classEl != null) {
-    			classEl.setNodeName("com.mirth.connect.connectors.core.http.HttpStaticResource");
+    		List<DonkeyElement> resources = staticResourcesEl.getChildElements();
+    		
+    		for (DonkeyElement resource : resources) {
+    			if (resource.getNodeName().equals("com.mirth.connect.connectors.http.HttpStaticResource")) {
+    				resource.setNodeName("com.mirth.connect.connectors.core.http.HttpStaticResource");
+    			}
     		}
     	}
     }

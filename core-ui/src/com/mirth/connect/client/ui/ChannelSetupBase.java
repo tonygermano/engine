@@ -166,4 +166,6 @@ public abstract class ChannelSetupBase extends JPanel {
     public abstract void importConnector(Connector connector);
 
     public abstract Connector exportSelectedConnector();
+    
+    public abstract int getSelectedDestinationIndex();
 }

@@ -258,6 +258,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseBinaryMimeTypes = responseBinaryMimeTypes;
     }
 
+    @Override
     public boolean isResponseBinaryMimeTypesRegex() {
         return responseBinaryMimeTypesRegex;
     }

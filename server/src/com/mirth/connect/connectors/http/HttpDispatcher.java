@@ -92,6 +92,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.connectors.core.http.HttpConfiguration;
 import com.mirth.connect.connectors.core.http.IHttpDispatcher;
+import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.ErrorEventType;
@@ -159,7 +160,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
             throw new ConnectorTaskException(e);
         }
 
-        if (getConnectorProperties().isResponseBinaryMimeTypesRegex()) {
+        if (((IHttpDispatcherProperties) getConnectorProperties()).isResponseBinaryMimeTypesRegex()) {
             binaryMimeTypesRegexMap = new ConcurrentHashMap<String, Pattern>();
         } else {
             binaryMimeTypesArrayMap = new ConcurrentHashMap<String, String[]>();
@@ -514,7 +515,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    protected String getConfigurationClass() {
+    public String getConfigurationClass() {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "httpConfigurationClass");
     }
 
@@ -737,7 +738,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     private boolean isBinaryContentType(String binaryMimeTypes, ContentType contentType) {
         String mimeType = contentType.getMimeType();
 
-        if (getConnectorProperties().isResponseBinaryMimeTypesRegex()) {
+        if (((IHttpDispatcherProperties) getConnectorProperties()).isResponseBinaryMimeTypesRegex()) {
             Pattern binaryMimeTypesRegex = binaryMimeTypesRegexMap.get(binaryMimeTypes);
 
             if (binaryMimeTypesRegex == null) {
@@ -774,7 +775,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    public HttpDispatcherProperties getConnectorProperties() {
-        return (HttpDispatcherProperties) super.getConnectorProperties();
+    public ConnectorProperties getConnectorProperties() {
+        return super.getConnectorProperties();
     }
 }

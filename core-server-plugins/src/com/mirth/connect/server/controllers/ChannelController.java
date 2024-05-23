@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.ControllerException;
+import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
 import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
@@ -105,6 +106,8 @@ public abstract class ChannelController extends Controller {
     public abstract boolean updateChannelGroups(Set<ChannelGroup> channelGroups, Set<String> removedChannelGroupIds, boolean override) throws ControllerException;
 
     public abstract List<Ports> getPortsInUse();
+    
+    public abstract IHttpReceiverProperties createHttpReceiverProperties();
 
     public abstract IHttpDispatcherProperties createHttpDispatcherProperties();
 

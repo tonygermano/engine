@@ -60,7 +60,6 @@ import com.mirth.connect.donkey.server.channel.MetaDataReplacer;
 import com.mirth.connect.donkey.server.channel.ResponseSelector;
 import com.mirth.connect.donkey.server.channel.ResponseTransformerExecutor;
 import com.mirth.connect.donkey.server.channel.SourceConnector;
-import com.mirth.connect.donkey.server.controllers.ChannelController;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.server.data.buffered.BufferedDaoFactory;
 import com.mirth.connect.donkey.server.queue.ConnectorMessageQueueDataSource;
@@ -390,7 +389,7 @@ public class TestUtils {
 
     @SuppressWarnings("unchecked")
     public static List<Long> getMessageIds(String channelId) throws Exception {
-        return (List<Long>) selectColumn("SELECT id FROM d_m" + ChannelController.getInstance().getLocalChannelId(channelId));
+        return (List<Long>) selectColumn("SELECT id FROM d_m" + com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(channelId));
     }
 
     public static int getNumMessages(String channelId) throws Exception {
@@ -403,7 +402,7 @@ public class TestUtils {
         ResultSet result = null;
 
         try {
-            long localChannelId = ChannelController.getInstance().getLocalChannelId(channelId);
+            long localChannelId = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(channelId);
 
             StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM d_m" + localChannelId + " m");
 
@@ -496,7 +495,7 @@ public class TestUtils {
     }
 
     public static void createTestMessagesFast(String channelId, Message templateMessage, int power) throws Exception {
-        long localChannelId = ChannelController.getInstance().getLocalChannelId(channelId);
+        long localChannelId = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(channelId);
         deleteAllMessages(channelId);
         createTestMessages(channelId, templateMessage, 1);
 
@@ -541,7 +540,7 @@ public class TestUtils {
 
     public static void fixMessageIdSequence(String channelId) throws Exception {
         Connection connection = null;
-        long localChannelId = ChannelController.getInstance().getLocalChannelId(channelId);
+        long localChannelId = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(channelId);
         String database = (String) Donkey.getInstance().getConfiguration().getDonkeyProperties().get("database");
         Long maxId = null;
 

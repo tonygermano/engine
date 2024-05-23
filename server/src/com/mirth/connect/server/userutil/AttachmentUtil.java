@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.mirth.connect.donkey.model.message.MessageSerializerException;
 import com.mirth.connect.donkey.server.channel.Channel;
-import com.mirth.connect.donkey.server.controllers.MessageController;
 import com.mirth.connect.donkey.server.controllers.UnsupportedDataTypeException;
 import com.mirth.connect.server.attachments.MirthAttachmentHandlerProvider;
 import com.mirth.connect.server.attachments.passthru.PassthruAttachmentHandlerProvider;
@@ -374,7 +373,7 @@ public class AttachmentUtil {
      *             If the attachment content is not a String or byte array.
      */
     public static Attachment addAttachment(List<Attachment> attachments, Object content, String type, boolean base64Encode) throws UnsupportedDataTypeException {
-        Attachment userAttachment = convertFromDonkeyAttachment(MessageController.getInstance().createAttachment(content, type, base64Encode));
+        Attachment userAttachment = convertFromDonkeyAttachment(com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().createAttachment(content, type, base64Encode));
         attachments.add(userAttachment);
         return userAttachment;
     }
@@ -416,8 +415,8 @@ public class AttachmentUtil {
      *             If the attachment content is not a String or byte array.
      */
     public static Attachment createAttachment(ImmutableConnectorMessage connectorMessage, Object content, String type, boolean base64Encode) throws UnsupportedDataTypeException {
-        com.mirth.connect.donkey.model.message.attachment.Attachment attachment = MessageController.getInstance().createAttachment(content, type, base64Encode);
-        MessageController.getInstance().insertAttachment(attachment, connectorMessage.getChannelId(), connectorMessage.getMessageId());
+        com.mirth.connect.donkey.model.message.attachment.Attachment attachment = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().createAttachment(content, type, base64Encode);
+        com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().insertAttachment(attachment, connectorMessage.getChannelId(), connectorMessage.getMessageId());
         return convertFromDonkeyAttachment(attachment);
     }
 
@@ -582,9 +581,9 @@ public class AttachmentUtil {
      *             If the attachment content is not a String or byte array.
      */
     public static Attachment updateAttachment(String channelId, Long messageId, String attachmentId, Object content, String type, boolean base64Encode) throws UnsupportedDataTypeException {
-        com.mirth.connect.donkey.model.message.attachment.Attachment attachment = MessageController.getInstance().createAttachment(content, type, base64Encode);
+        com.mirth.connect.donkey.model.message.attachment.Attachment attachment = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().createAttachment(content, type, base64Encode);
         attachment.setId(attachmentId);
-        MessageController.getInstance().updateAttachment(attachment, channelId, messageId);
+        com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createMessageController().updateAttachment(attachment, channelId, messageId);
         return convertFromDonkeyAttachment(attachment);
     }
 

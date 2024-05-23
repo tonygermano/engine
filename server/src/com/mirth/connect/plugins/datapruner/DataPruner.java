@@ -39,7 +39,6 @@ import com.mirth.connect.donkey.model.message.Message;
 import com.mirth.connect.donkey.model.message.Status;
 import com.mirth.connect.donkey.model.message.attachment.Attachment;
 import com.mirth.connect.donkey.server.Donkey;
-import com.mirth.connect.donkey.server.controllers.ChannelController;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
 import com.mirth.connect.donkey.util.ThreadUtils;
@@ -459,7 +458,7 @@ public class DataPruner implements Runnable {
         }
 
         int retries = retryCount;
-        long localChannelId = ChannelController.getInstance().getLocalChannelId(channelId);
+        long localChannelId = com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().getLocalChannelId(channelId);
 
         while (true) {
             ThreadUtils.checkInterruptedStatus();

@@ -18,8 +18,6 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import com.mirth.connect.server.tools.ClassPathResource;
-
 public class ExtensionStatuses implements ExtensionStatusInterface {
     
     public static Class<?> DEFAULT_EXTENSION_STATUS_PROVIDER;
@@ -53,7 +51,7 @@ public class ExtensionStatuses implements ExtensionStatusInterface {
         }
 
         try {
-            InputStream is = new FileInputStream(new File(ClassPathResource.getResourceURI("mirth.properties")));
+        	InputStream is = new FileInputStream(new File("./conf/mirth.properties"));
             try {
                 mirthProperties.load(is);
             } finally {

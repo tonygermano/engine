@@ -26,14 +26,14 @@ import com.mirth.connect.donkey.server.channel.Statistics;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
 
-public class ChannelController {
+public class DefaultChannelController extends ChannelController {
     @Inject
-    private static ChannelController instance;
+    private static DefaultChannelController instance;
 
-    public static ChannelController getInstance() {
-        synchronized (ChannelController.class) {
+    public static DefaultChannelController getInstance() {
+        synchronized (DefaultChannelController.class) {
             if (instance == null) {
-                instance = new ChannelController();
+                instance = new DefaultChannelController();
             }
 
             return instance;
@@ -44,7 +44,7 @@ public class ChannelController {
     private Statistics totalStats;
     private Donkey donkey = Donkey.getInstance();
 
-    protected ChannelController() {}
+    protected DefaultChannelController() {}
 
     public void removeChannel(String channelId) {
         DonkeyDao dao = donkey.getDaoFactory().getDao();

@@ -13,6 +13,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
+import com.mirth.connect.plugins.core.httpauth.AuthType;
+import com.mirth.connect.plugins.core.httpauth.IHttpAuthConnectorPluginProperties;
 
 public abstract class HttpAuthConnectorPluginProperties extends ConnectorPluginProperties implements IHttpAuthConnectorPluginProperties {
 

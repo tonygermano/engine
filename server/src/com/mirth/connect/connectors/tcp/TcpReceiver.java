@@ -506,7 +506,7 @@ public class TcpReceiver extends SourceConnector {
     }
 
     @Override
-    protected String getConfigurationClass() {
+	public String getConfigurationClass() {
         return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
     }
 

@@ -26,6 +26,8 @@ public interface IMirthRTextScrollPane {
     
     Document getDocument();
     
+    void setLineNumbersEnabled(boolean enabled);
+    
     void setSaveEnabled(boolean saveEnabled);
     
     String getText();

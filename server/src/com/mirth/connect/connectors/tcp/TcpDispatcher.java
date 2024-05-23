@@ -627,7 +627,7 @@ public class TcpDispatcher extends DestinationConnector {
     }
 
     @Override
-    protected String getConfigurationClass() {
+	public String getConfigurationClass() {
         return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
     }
 

@@ -226,7 +226,7 @@ public class WebServiceDispatcher extends DestinationConnector implements IWebSe
     }
 
     @Override
-    protected String getConfigurationClass() {
+	public String getConfigurationClass() {
         return configurationController.getProperty(getConnectorProperties().getProtocol(), "wsConfigurationClass");
     }
 

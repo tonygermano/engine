@@ -5266,6 +5266,10 @@ public class Frame extends FrameBase {
 	}
 
 	@Override
+	public ChannelSetupBase getChannelEditPanel() {
+		return channelEditPanel;
+	}
+	
 	public void setAlertPanel(AlertPanel panel) {
 		this.alertPanel = panel;
 	}
@@ -5334,4 +5338,5 @@ public class Frame extends FrameBase {
 	public JXTaskPane getAlertTasks() {
 		return this.alertTasks;
 	}
+
 }

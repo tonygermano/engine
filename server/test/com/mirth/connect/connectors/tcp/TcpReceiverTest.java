@@ -164,7 +164,7 @@ public class TcpReceiverTest {
 		}
 		
 		@Override
-		protected String getConfigurationClass() {
+		public String getConfigurationClass() {
 			return "com.mirth.connect.connectors.tcp.DefaultTcpConfiguration";
 		}
 	}

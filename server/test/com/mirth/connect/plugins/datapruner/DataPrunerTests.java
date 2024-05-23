@@ -36,7 +36,6 @@ import com.mirth.connect.donkey.model.message.RawMessage;
 import com.mirth.connect.donkey.model.message.Status;
 import com.mirth.connect.donkey.server.Donkey;
 import com.mirth.connect.donkey.server.DonkeyConfiguration;
-import com.mirth.connect.donkey.server.controllers.ChannelController;
 import com.mirth.connect.donkey.server.event.EventDispatcher;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.server.controllers.ConfigurationController;
@@ -76,7 +75,7 @@ public class DataPrunerTests {
             public void dispatchEvent(Event event) {}
         }, "testserverid"));
 
-        ChannelController.getInstance().initChannelStorage(TEST_CHANNEL_ID);
+        com.mirth.connect.donkey.server.controllers.ControllerFactory.getFactory().createChannelController().initChannelStorage(TEST_CHANNEL_ID);
 
         messageDateThreshold = Calendar.getInstance();
         messageDateThreshold.set(Calendar.DAY_OF_MONTH, messageDateThreshold.get(Calendar.DAY_OF_MONTH) - 90);

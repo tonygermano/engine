@@ -624,7 +624,7 @@ public class FileReceiverTest {
     private TestFileReceiver createReceiver(String directory, boolean directoryRecursion, boolean batchProcess, String sortBy, String fileSizeMaximum, boolean fileTypeBinary) throws Exception {
         TestFileReceiver receiver = spy(new TestFileReceiver() {
             @Override
-            protected String getConfigurationClass() {
+            public String getConfigurationClass() {
                 return null;
             }
         });

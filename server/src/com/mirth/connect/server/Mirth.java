@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,6 +44,7 @@ import com.mirth.connect.model.LibraryProperties;
 import com.mirth.connect.model.ResourceProperties;
 import com.mirth.connect.model.ResourcePropertiesList;
 import com.mirth.connect.model.ServerEvent;
+import com.mirth.connect.model.ServerSettings;
 import com.mirth.connect.model.UpdateSettings;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.model.util.MigrationException;
@@ -338,11 +340,12 @@ public class Mirth extends Thread {
             migrationController.clearStartupLockTable();
         }
 
-        // disable the velocity logging
         Logger velocityLogger = LogManager.getLogger(RuntimeConstants.DEFAULT_RUNTIME_LOG_NAME);
         if (velocityLogger != null && velocityLogger.getLevel() == null && velocityLogger instanceof org.apache.logging.log4j.core.Logger) {
             ((org.apache.logging.log4j.core.Logger) velocityLogger).setLevel(Level.OFF);
         }
+
+        updateServerSettingsFromEnvironment();
 
         eventController.dispatchEvent(new ServerEvent(configurationController.getServerId(), "Server startup"));
 
@@ -404,7 +407,35 @@ public class Mirth extends Thread {
         timer.schedule(new UsageSenderTask(), 0, ConnectServiceUtil.MILLIS_PER_DAY);
     }
 
+	private void updateServerSettingsFromEnvironment() {
+        Optional<String> newServerName = getEnvironmentVariable("MC_SERVER_NAME");
+        Optional<String> newEnvName = getEnvironmentVariable("MC_ENV_NAME");
+        
+        if(newServerName.isPresent() || newEnvName.isPresent()) {
+            try {
+                ServerSettings serverSettings = configurationController.getServerSettings();
+
+                if(newServerName.isPresent()) { serverSettings.setServerName(newServerName.get()); }
+                if(newEnvName.isPresent()) { serverSettings.setEnvironmentName(newEnvName.get()); }
+                
+                configurationController.setServerSettings(serverSettings);
+            } catch (ControllerException e) {
+                logger.error("Failed to update server settings via environment variables", e);
+            }
+        }
+	}
+
     /**
+     * Pull an environment variable. Values are trimmed to a non-empty string.
+     * @param name
+     * @return 
+     */
+    private Optional<String> getEnvironmentVariable(String name) {
+        String propValue = StringUtils.trimToEmpty(System.getenv(name));
+        return StringUtils.isNotBlank(propValue) ? Optional.of(propValue) : Optional.empty();
+    }
+
+	/**
      * Shuts down the server.
      * 
      */

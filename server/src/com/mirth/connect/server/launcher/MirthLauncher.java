@@ -28,6 +28,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,16 +43,16 @@ public class MirthLauncher {
     private static final String MIRTH_PROPERTIES_FILE = "./conf/mirth.properties";
     private static final String PROPERTY_APP_DATA_DIR = "dir.appdata";
     private static final String PROPERTY_INCLUDE_CUSTOM_LIB = "server.includecustomlib";
-    private static final String[] LOG4J_JAR_FILES = { "./server-lib/log4j/log4j-core-2.17.2.jar",
-            "./server-lib/log4j/log4j-api-2.17.2.jar",
-            "./server-lib/log4j/log4j-1.2-api-2.17.2.jar" };
+    private static final String[] LOG4J_JAR_FILES = { "./core-lib/shared/log4j/log4j-core-2.17.2.jar",
+            "./core-lib/shared/log4j/log4j-api-2.17.2.jar",
+            "./core-lib/shared/log4j/log4j-1.2-api-2.17.2.jar" };
 
     private static String appDataDir = null;
 
     private static LoggerWrapper logger;
 
     public static void main(String[] args) {
-        JarFile mirthClientCoreJarFile = null;
+        JarFile mirthServerJarFile = null;
         try {
             List<URL> classpathUrls = new ArrayList<>();
             // Always add log4j
@@ -86,13 +87,22 @@ public class MirthLauncher {
             }
 
             ManifestFile mirthServerJar = new ManifestFile("server-lib/mirth-server.jar");
-            ManifestFile mirthClientCoreJar = new ManifestFile("server-lib/mirth-client-core.jar");
+            ManifestDirectory coreLibServerDirMirthLibs = new ManifestDirectory("core-lib/server");
+            coreLibServerDirMirthLibs.setIncludePrefix("mirth-core-");
+            ManifestDirectory coreLibSharedDirMirthLibs = new ManifestDirectory("core-lib/shared");
+            coreLibSharedDirMirthLibs.setIncludePrefix("mirth-core-");
+            ManifestDirectory coreLibServerDir = new ManifestDirectory("core-lib/server");
+            coreLibServerDir.setExcludePrefix("mirth-core-");
+            ManifestDirectory coreLibSharedDir = new ManifestDirectory("core-lib/shared");
+            coreLibSharedDir.setExcludePrefix("mirth-core-");
             ManifestDirectory serverLibDir = new ManifestDirectory("server-lib");
-            serverLibDir.setExcludes(new String[] { "mirth-client-core.jar" });
 
             List<ManifestEntry> manifestList = new ArrayList<ManifestEntry>();
             manifestList.add(mirthServerJar);
-            manifestList.add(mirthClientCoreJar);
+            manifestList.add(coreLibServerDirMirthLibs);
+            manifestList.add(coreLibSharedDirMirthLibs);
+            manifestList.add(coreLibServerDir);
+            manifestList.add(coreLibSharedDir);
             manifestList.add(serverLibDir);
 
             // We want to include custom-lib if the property isn't found, or if it equals "true"
@@ -103,9 +113,9 @@ public class MirthLauncher {
             ManifestEntry[] manifest = manifestList.toArray(new ManifestEntry[manifestList.size()]);
 
             // Get the current server version
-            mirthClientCoreJarFile = new JarFile(mirthClientCoreJar.getName());
+            mirthServerJarFile = new JarFile(mirthServerJar.getName());
             Properties versionProperties = new Properties();
-            versionProperties.load(mirthClientCoreJarFile.getInputStream(mirthClientCoreJarFile.getJarEntry("version.properties")));
+            versionProperties.load(mirthServerJarFile.getInputStream(mirthServerJarFile.getJarEntry("version.properties")));
             String currentVersion = versionProperties.getProperty("mirth.version");
 
             addManifestToClasspath(manifest, classpathUrls);
@@ -119,11 +129,11 @@ public class MirthLauncher {
             e.printStackTrace();
         } finally {
             try {
-                if (mirthClientCoreJarFile != null) {
-                    mirthClientCoreJarFile.close();
+                if (mirthServerJarFile != null) {
+                    mirthServerJarFile.close();
                 }
             } catch (IOException e) {
-                logger.error("Error closing mirthClientCoreJarFile.", e);
+                logger.error("Error closing mirthServerJarFile.", e);
             }
         }
     }
@@ -206,12 +216,16 @@ public class MirthLauncher {
             if (manifestEntryFile.exists()) {
                 if (manifestEntryFile.isDirectory()) {
                     ManifestDirectory manifestDir = (ManifestDirectory) manifestEntry;
-                    IOFileFilter fileFilter = null;
+                    IOFileFilter fileFilter = FileFilterUtils.fileFileFilter();
 
+                    if (manifestDir.getIncludePrefix() != null) {
+                        fileFilter = FileFilterUtils.and(fileFilter, new PrefixFileFilter(manifestDir.getIncludePrefix()));
+                    }
+                    if (manifestDir.getExcludePrefix() != null) {
+                        fileFilter = FileFilterUtils.and(fileFilter, FileFilterUtils.notFileFilter(new PrefixFileFilter(manifestDir.getExcludePrefix())));
+                    }
                     if (manifestDir.getExcludes().length > 0) {
-                        fileFilter = FileFilterUtils.and(FileFilterUtils.fileFileFilter(), FileFilterUtils.notFileFilter(new NameFileFilter(manifestDir.getExcludes())));
-                    } else {
-                        fileFilter = FileFilterUtils.fileFileFilter();
+                        fileFilter = FileFilterUtils.and(fileFilter, FileFilterUtils.notFileFilter(new NameFileFilter(manifestDir.getExcludes())));
                     }
 
                     Collection<File> pathFiles = FileUtils.listFiles(manifestEntryFile, fileFilter, FileFilterUtils.trueFileFilter());

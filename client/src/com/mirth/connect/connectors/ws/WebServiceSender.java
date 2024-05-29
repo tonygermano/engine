@@ -47,10 +47,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.syntax.jedit.SyntaxDocument;
@@ -59,6 +57,7 @@ import org.syntax.jedit.tokenmarker.XMLTokenMarker;
 import com.mirth.connect.client.core.ClientException;
 import com.mirth.connect.client.ui.ConnectorTypeDecoration;
 import com.mirth.connect.client.ui.Frame;
+import com.mirth.connect.client.ui.FrameBase;
 import com.mirth.connect.client.ui.Mirth;
 import com.mirth.connect.client.ui.PlatformUI;
 import com.mirth.connect.client.ui.RefreshTableModel;
@@ -74,12 +73,16 @@ import com.mirth.connect.client.ui.components.MirthTable;
 import com.mirth.connect.client.ui.components.MirthTextField;
 import com.mirth.connect.client.ui.panels.connectors.ConnectorSettingsPanel;
 import com.mirth.connect.client.ui.panels.connectors.ResponseHandler;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.PortInformation;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.WebServiceConnectorServletInterface;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.model.Connector.Mode;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.util.ConnectionTestResponse;
+
+import net.miginfocom.swing.MigLayout;
 
 public class WebServiceSender extends ConnectorSettingsPanel {
 
@@ -101,7 +104,7 @@ public class WebServiceSender extends ConnectorSettingsPanel {
     private int headerLastIndex = -1;
 
     ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
-    private Frame parent;
+    private FrameBase parent;
     private DefinitionServiceMap currentServiceMap;
 
     public WebServiceSender() {

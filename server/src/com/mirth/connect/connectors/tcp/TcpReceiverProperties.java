@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.tcp.ITcpReceiverProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorProperties;
@@ -29,15 +30,12 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.TcpUtil;
 
 @SuppressWarnings("serial")
-public class TcpReceiverProperties extends ConnectorProperties implements ListenerConnectorPropertiesInterface, SourceConnectorPropertiesInterface {
+public class TcpReceiverProperties extends ConnectorProperties implements ListenerConnectorPropertiesInterface, SourceConnectorPropertiesInterface, ITcpReceiverProperties {
     private ListenerConnectorProperties listenerConnectorProperties;
     private SourceConnectorProperties sourceConnectorProperties;
 
     public static final String PROTOCOL = "TCP";
     public static final String NAME = "TCP Listener";
-    public static final int SAME_CONNECTION = 0;
-    public static final int NEW_CONNECTION = 1;
-    public static final int NEW_CONNECTION_ON_RECOVERY = 2;
 
     private TransmissionModeProperties transmissionModeProperties;
     private boolean serverMode;
@@ -108,6 +106,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.transmissionModeProperties = transmissionModeProperties;
     }
 
+    @Override
     public boolean isServerMode() {
         return serverMode;
     }
@@ -116,6 +115,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.serverMode = serverMode;
     }
 
+    @Override
     public String getRemoteAddress() {
         return remoteAddress;
     }
@@ -124,6 +124,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.remoteAddress = remoteAddress;
     }
 
+    @Override
     public String getRemotePort() {
         return remotePort;
     }
@@ -132,6 +133,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.remotePort = remotePort;
     }
 
+    @Override
     public boolean isOverrideLocalBinding() {
         return overrideLocalBinding;
     }
@@ -196,6 +198,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.charsetEncoding = charsetEncoding;
     }
 
+    @Override
     public int getRespondOnNewConnection() {
         return respondOnNewConnection;
     }
@@ -204,6 +207,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.respondOnNewConnection = respondOnNewConnection;
     }
 
+    @Override
     public String getResponseAddress() {
         return responseAddress;
     }
@@ -220,6 +224,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.responsePort = responsePort;
     }
 
+    @Override
     public Set<ConnectorPluginProperties> getResponseConnectorPluginProperties() {
         return responseConnectorPluginProperties;
     }

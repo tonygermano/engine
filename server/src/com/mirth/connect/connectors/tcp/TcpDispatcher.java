@@ -32,6 +32,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.tcp.StateAwareSocketInterface;
+import com.mirth.connect.connectors.core.tcp.TcpConfiguration;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
@@ -39,13 +41,13 @@ import com.mirth.connect.donkey.model.event.ErrorEventType;
 import com.mirth.connect.donkey.model.message.ConnectorMessage;
 import com.mirth.connect.donkey.model.message.Response;
 import com.mirth.connect.donkey.model.message.Status;
+import com.mirth.connect.donkey.model.message.StreamHandler;
+import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
 import com.mirth.connect.donkey.server.ConnectorTaskException;
 import com.mirth.connect.donkey.server.channel.DestinationConnector;
 import com.mirth.connect.donkey.server.event.ConnectionStatusEvent;
 import com.mirth.connect.donkey.server.event.ConnectorCountEvent;
 import com.mirth.connect.donkey.server.event.ErrorEvent;
-import com.mirth.connect.donkey.server.message.StreamHandler;
-import com.mirth.connect.donkey.server.message.batch.BatchStreamReader;
 import com.mirth.connect.donkey.util.ThreadUtils;
 import com.mirth.connect.model.transmission.batch.DefaultBatchStreamReader;
 import com.mirth.connect.plugins.BasicModeProvider;
@@ -625,7 +627,7 @@ public class TcpDispatcher extends DestinationConnector {
     }
 
     @Override
-    protected String getConfigurationClass() {
+	public String getConfigurationClass() {
         return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
     }
 

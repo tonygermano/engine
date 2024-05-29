@@ -19,8 +19,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.PortInformation;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcherProperties;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
@@ -30,7 +32,7 @@ import com.mirth.connect.donkey.util.purge.PurgeUtil;
 import com.mirth.connect.donkey.util.xstream.SerializerException;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 
-public class WebServiceDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class WebServiceDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, IWebServiceDispatcherProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
@@ -120,6 +122,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         soapAction = props.getSoapAction();
     }
 
+    @Override
     public String getWsdlUrl() {
         return wsdlUrl;
     }
@@ -144,6 +147,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.port = port;
     }
 
+    @Override
     public String getLocationURI() {
         return locationURI;
     }
@@ -152,6 +156,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.locationURI = locationURI;
     }
 
+    @Override
     public String getSocketTimeout() {
         return socketTimeout;
     }
@@ -176,6 +181,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.useAuthentication = useAuthentication;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -184,6 +190,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -280,6 +287,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.isUseAttachmentsVariable = isUseAttachmentsVariable;
     }
 
+    @Override
     public String getSoapAction() {
         return soapAction;
     }
@@ -485,6 +493,34 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
     @Override public void migrate3_11_0(DonkeyElement element) {}
     @Override public void migrate3_11_1(DonkeyElement element) {} 
     @Override public void migrate3_12_0(DonkeyElement element) {}// @formatter:on
+
+    @Override
+    public void migrate4_6_0(DonkeyElement element) {
+        DonkeyElement wsdlDefinitionMapElement = element.getChildElement("wsdlDefinitionMap");
+        if (wsdlDefinitionMapElement != null) {
+            DonkeyElement mapElement = wsdlDefinitionMapElement.getChildElement("map");
+            if (mapElement != null) {
+                for (DonkeyElement entryElement : mapElement.getChildElements()) {
+                    for (DonkeyElement entrySubElement : entryElement.getChildElements()) {
+                        if (StringUtils.equals("com.mirth.connect.connectors.ws.DefinitionServiceMap_-DefinitionPortMap", entrySubElement.getLocalName())) {
+                            entrySubElement.setNodeName("com.mirth.connect.connectors.core.ws.DefinitionServiceMap_-DefinitionPortMap");
+
+                            DonkeyElement subMapElement = entrySubElement.getChildElement("map");
+                            if (subMapElement != null) {
+                                for (DonkeyElement subMapEntryElement : subMapElement.getChildElements()) {
+                                    for (DonkeyElement subMapEntrySubElement : subMapEntryElement.getChildElements()) {
+                                        if (StringUtils.equals("com.mirth.connect.connectors.ws.DefinitionServiceMap_-PortInformation", subMapEntrySubElement.getLocalName())) {
+                                            subMapEntrySubElement.setNodeName("com.mirth.connect.connectors.core.ws.DefinitionServiceMap_-PortInformation");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     public Map<String, Object> getPurgedProperties() {

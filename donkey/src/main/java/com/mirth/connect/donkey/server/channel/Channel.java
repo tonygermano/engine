@@ -74,7 +74,7 @@ import com.mirth.connect.donkey.server.StopException;
 import com.mirth.connect.donkey.server.UndeployException;
 import com.mirth.connect.donkey.server.channel.components.PostProcessor;
 import com.mirth.connect.donkey.server.channel.components.PreProcessor;
-import com.mirth.connect.donkey.server.controllers.ChannelController;
+import com.mirth.connect.donkey.server.controllers.ControllerFactory;
 import com.mirth.connect.donkey.server.controllers.MessageController;
 import com.mirth.connect.donkey.server.data.DonkeyDao;
 import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
@@ -90,7 +90,7 @@ import com.mirth.connect.donkey.util.MessageMaps;
 import com.mirth.connect.donkey.util.Serializer;
 import com.mirth.connect.donkey.util.ThreadUtils;
 
-public class Channel implements Runnable {
+public class Channel implements IChannel, Runnable {
     private String channelId;
     private long localChannelId;
     private String name;
@@ -138,10 +138,11 @@ public class Channel implements Runnable {
     private ChannelProcessLock processLock;
     private Lock removeContentLock = new ReentrantLock(true);
 
-    private MessageController messageController = MessageController.getInstance();
+    private MessageController messageController = ControllerFactory.getFactory().createMessageController();
 
     private Logger logger = LogManager.getLogger(getClass());
 
+    @Override
     public DebugOptions getDebugOptions() {
         return debugOptions;
     }
@@ -198,6 +199,7 @@ public class Channel implements Runnable {
         this.deployDate = deployedDate;
     }
 
+    @Override
     public Set<String> getResourceIds() {
         return resourceIds;
     }
@@ -476,7 +478,7 @@ public class Channel implements Runnable {
             throw new DeployException("Failed to deploy channel. The channel configuration is incomplete.");
         }
 
-        ChannelController.getInstance().initChannelStorage(channelId);
+        ControllerFactory.getFactory().createChannelController().initChannelStorage(channelId);
 
         /*
          * Before deploying, make sure the connector is deployable. Verify that if queueing is
@@ -575,7 +577,7 @@ public class Channel implements Runnable {
             throw new DeployException("Failed to deploy channel " + name + " (" + channelId + ").", t);
         }
 
-        Statistics channelStatistics = ChannelController.getInstance().getStatistics();
+        Statistics channelStatistics = ControllerFactory.getFactory().createChannelController().getStatistics();
         Map<Integer, Map<Status, Long>> connectorStatistics = new HashMap<Integer, Map<Status, Long>>();
         Map<Status, Long> statisticMap = new HashMap<Status, Long>(channelStatistics.getConnectorStats(channelId, 0));
         statisticMap.put(Status.QUEUED, (long) sourceQueue.size());

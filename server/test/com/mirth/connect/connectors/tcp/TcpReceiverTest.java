@@ -18,10 +18,10 @@ import org.junit.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.mirth.connect.donkey.model.message.DataType;
 import com.mirth.connect.donkey.server.ConnectorTaskException;
 import com.mirth.connect.donkey.server.channel.Channel;
 import com.mirth.connect.donkey.server.event.EventDispatcher;
-import com.mirth.connect.donkey.server.message.DataType;
 import com.mirth.connect.plugins.DataTypeServerPlugin;
 import com.mirth.connect.plugins.TransmissionModeProvider;
 import com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeServerPlugin;
@@ -164,7 +164,7 @@ public class TcpReceiverTest {
 		}
 		
 		@Override
-		protected String getConfigurationClass() {
+		public String getConfigurationClass() {
 			return "com.mirth.connect.connectors.tcp.DefaultTcpConfiguration";
 		}
 	}

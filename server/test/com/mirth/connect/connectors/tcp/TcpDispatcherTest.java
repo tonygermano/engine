@@ -705,7 +705,7 @@ public class TcpDispatcherTest {
 		}
 		
 		@Override
-		protected String getConfigurationClass() {
+		public String getConfigurationClass() {
 			return "com.mirth.connect.connectors.tcp.DefaultTcpConfiguration";
 		}
 	}

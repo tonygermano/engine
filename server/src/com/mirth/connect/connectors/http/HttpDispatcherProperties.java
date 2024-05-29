@@ -18,13 +18,15 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
+import com.mirth.connect.donkey.model.channel.RemoteHostConnectorProperties;
 import com.mirth.connect.donkey.util.DonkeyElement;
 import com.mirth.connect.donkey.util.purge.PurgeUtil;
 
-public class HttpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface {
+public class HttpDispatcherProperties extends ConnectorProperties implements DestinationConnectorPropertiesInterface, RemoteHostConnectorProperties, IHttpDispatcherProperties {
 
     private DestinationConnectorProperties destinationConnectorProperties;
 
@@ -130,10 +132,12 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         socketTimeout = props.getSocketTimeout();
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
@@ -170,6 +174,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.method = method;
     }
 
+    @Override
     public Map<String, List<String>> getHeadersMap() {
         return headers;
     }
@@ -198,10 +203,12 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         return parameters;
     }
 
+    @Override
     public void setParametersMap(Map<String, List<String>> parameters) {
         this.parameters = parameters;
     }
 
+    @Override
     public boolean isUseParametersVariable() {
         return useParametersVariable;
     }
@@ -209,7 +216,8 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
     public void setUseParametersVariable(boolean useParametersVariable) {
         this.useParametersVariable = useParametersVariable;
     }
-    
+
+    @Override    
     public String getParametersVariable() {
         return this.parametersVariable;
     }
@@ -250,6 +258,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseBinaryMimeTypes = responseBinaryMimeTypes;
     }
 
+    @Override
     public boolean isResponseBinaryMimeTypesRegex() {
         return responseBinaryMimeTypesRegex;
     }
@@ -266,10 +275,12 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.multipart = multipart;
     }
 
+    @Override
     public boolean isUseAuthentication() {
         return useAuthentication;
     }
 
+    @Override
     public void setUseAuthentication(boolean useAuthentication) {
         this.useAuthentication = useAuthentication;
     }
@@ -294,14 +305,17 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -318,6 +332,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         return contentType;
     }
 
+    @Override
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
@@ -338,10 +353,12 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.charset = charset;
     }
 
+    @Override
     public String getSocketTimeout() {
         return socketTimeout;
     }
 
+    @Override
     public void setSocketTimeout(String socketTimeout) {
         this.socketTimeout = socketTimeout;
     }

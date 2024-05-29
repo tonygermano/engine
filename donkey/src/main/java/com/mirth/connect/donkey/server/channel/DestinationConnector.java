@@ -40,6 +40,7 @@ import com.mirth.connect.donkey.model.message.ContentType;
 import com.mirth.connect.donkey.model.message.MessageContent;
 import com.mirth.connect.donkey.model.message.MessageSerializerException;
 import com.mirth.connect.donkey.model.message.Response;
+import com.mirth.connect.donkey.model.message.ResponseValidator;
 import com.mirth.connect.donkey.model.message.Status;
 import com.mirth.connect.donkey.model.message.attachment.AttachmentHandlerProvider;
 import com.mirth.connect.donkey.server.ConnectorTaskException;
@@ -50,16 +51,16 @@ import com.mirth.connect.donkey.server.data.DonkeyDaoFactory;
 import com.mirth.connect.donkey.server.event.ConnectionStatusEvent;
 import com.mirth.connect.donkey.server.event.DeployedStateEvent;
 import com.mirth.connect.donkey.server.event.ErrorEvent;
-import com.mirth.connect.donkey.server.message.ResponseValidator;
 import com.mirth.connect.donkey.server.queue.DestinationQueue;
 import com.mirth.connect.donkey.util.MessageMaps;
 import com.mirth.connect.donkey.util.Serializer;
 import com.mirth.connect.donkey.util.ThreadUtils;
 
-public abstract class DestinationConnector extends Connector implements Runnable {
+public class DestinationConnector extends Connector implements Runnable, IDestinationConnector {
  
     private final static String QUEUED_RESPONSE = "Message queued successfully";
 
+    protected DestinationConnectorPlugin connectorPlugin;
     private Integer orderId;
     private Map<Long, DestinationQueueThread> queueThreads = new ConcurrentHashMap<Long, DestinationQueueThread>();
     private Deque<Long> processingThreadIdStack;
@@ -77,10 +78,58 @@ public abstract class DestinationConnector extends Connector implements Runnable
     private StorageSettings storageSettings = new StorageSettings();
     private DonkeyDaoFactory daoFactory;
     private Logger logger = LogManager.getLogger(getClass());
+    
+    public void initialize(DestinationConnectorPlugin connectorPlugin) {
+    	this.connectorPlugin = connectorPlugin;
+    }
 
-    public abstract void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message);
+    public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.replaceConnectorProperties(connectorProperties, message);
+    	}
+    }
 
-    public abstract Response send(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException;
+    public Response send(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.send(connectorProperties, message);
+    	}
+    	return null;
+    }
+    
+    @Override
+    public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	}
+    }
+    
+    @Override
+    public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	}
+    }
+
+    @Override
+    public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	}
+    }
+
+    @Override
+    public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	}
+    }
+
+    @Override
+    public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	}
+    }
 
     public DestinationQueue getQueue() {
         return queue;
@@ -101,6 +150,7 @@ public abstract class DestinationConnector extends Connector implements Runnable
      * matter. If queuing is set to On Failure, then both main processing threads and queue threads
      * need to be taken into account.
      */
+    @Override
     public int getPotentialThreadCount() {
         int maxProcessingThreads = ((SourceConnectorPropertiesInterface) getChannel().getSourceConnector().getConnectorProperties()).getSourceConnectorProperties().getProcessingThreads();
         int potentialThreadCount;
@@ -163,12 +213,18 @@ public abstract class DestinationConnector extends Connector implements Runnable
         processingThreadIdStack.push(threadId);
     }
 
+    @Override
     public String getDestinationName() {
         return destinationName;
     }
 
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
+    }
+    
+    @Override
+    public String getConnectorName() {
+        return getDestinationName();
     }
 
     public boolean isEnabled() {
@@ -266,7 +322,8 @@ public abstract class DestinationConnector extends Connector implements Runnable
         return isQueueEnabled() && destinationConnectorProperties.isRegenerateTemplate() && destinationConnectorProperties.isIncludeFilterTransformer();
     }
 
-    protected AttachmentHandlerProvider getAttachmentHandlerProvider() {
+    @Override
+    public AttachmentHandlerProvider getAttachmentHandlerProvider() {
         return channel.getAttachmentHandlerProvider();
     }
 
@@ -1033,5 +1090,8 @@ public abstract class DestinationConnector extends Connector implements Runnable
                 }
             }
         }
+    }
+
+    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message) {
     }
 }

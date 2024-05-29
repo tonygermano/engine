@@ -15,10 +15,10 @@ import java.util.Set;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
 import com.mirth.connect.donkey.model.channel.DeployedState;
+import com.mirth.connect.donkey.model.message.DataType;
 import com.mirth.connect.donkey.server.ConnectorTaskException;
-import com.mirth.connect.donkey.server.message.DataType;
 
-public abstract class Connector {
+public abstract class Connector implements IConnector {
     protected Channel channel;
 
     private String channelId;
@@ -55,6 +55,7 @@ public abstract class Connector {
 
     }
 
+    @Override
     public Channel getChannel() {
         return channel;
     }
@@ -63,6 +64,7 @@ public abstract class Connector {
         this.channel = channel;
     }
 
+    @Override
     public String getChannelId() {
         return channelId;
     }
@@ -70,7 +72,13 @@ public abstract class Connector {
     public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
+    
+    @Override
+    public String getChannelName() {
+        return channel != null ? channel.getName() : null;
+    }
 
+    @Override
     public int getMetaDataId() {
         return metaDataId;
     }
@@ -79,6 +87,7 @@ public abstract class Connector {
         this.metaDataId = metaDataId;
     }
 
+    @Override
     public DataType getInboundDataType() {
         return inboundDataType;
     }
@@ -95,6 +104,7 @@ public abstract class Connector {
         this.outboundDataType = outboundDataType;
     }
 
+    @Override
     public DeployedState getCurrentState() {
         return currentState;
     }
@@ -103,6 +113,7 @@ public abstract class Connector {
         this.currentState = currentState;
     }
 
+    @Override
     public ConnectorProperties getConnectorProperties() {
         return connectorProperties;
     }
@@ -127,6 +138,7 @@ public abstract class Connector {
         this.filterTransformerExecutor = filterTransformerExecutor;
     }
 
+    @Override
     public Set<String> getResourceIds() {
         return resourceIds;
     }

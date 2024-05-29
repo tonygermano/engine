@@ -30,6 +30,9 @@ import javax.ws.rs.core.MediaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.mirth.connect.client.core.Version;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.DefinitionPortMap;
+import com.mirth.connect.connectors.core.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.connectors.file.FileDispatcherProperties;
 import com.mirth.connect.connectors.file.FileReceiverProperties;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
@@ -40,9 +43,6 @@ import com.mirth.connect.connectors.smtp.SmtpDispatcherProperties;
 import com.mirth.connect.connectors.tcp.TcpDispatcherProperties;
 import com.mirth.connect.connectors.vm.VmDispatcherProperties;
 import com.mirth.connect.connectors.vm.VmReceiverProperties;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.DefinitionPortMap;
-import com.mirth.connect.connectors.ws.DefinitionServiceMap.PortInformation;
 import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
@@ -123,7 +123,7 @@ import com.mirth.connect.util.ConfigurationProperty;
 import com.mirth.connect.util.ConnectionTestResponse;
 
 @SuppressWarnings("serial")
-public class SwaggerExamplesServlet extends HttpServlet {
+public class SwaggerExamplesServlet extends HttpServlet implements ISwaggerExamplesServlet {
 	
 	private static Calendar dateNow;
 	private static Calendar dateTomorrow;
@@ -1322,7 +1322,7 @@ public class SwaggerExamplesServlet extends HttpServlet {
 	}
 	
 	private ServerSettings getServerSettingsExample() {
-	    ServerSettings serverSettings = new ServerSettings("Environment 1", "Server 1", getPropertiesExample());
+	    ServerSettings serverSettings = new ServerSettings("Environment 1", "Server 1", getPropertiesExample(), ObjectXMLSerializer.getInstance());
 	    serverSettings.setClearGlobalMap(true);
 	    serverSettings.setSmtpHost("");
 	    serverSettings.setSmtpPort("");
@@ -1336,7 +1336,7 @@ public class SwaggerExamplesServlet extends HttpServlet {
 	}
 	
 	private PublicServerSettings getPublicServerSettingsExample() {
-	    return new PublicServerSettings(getServerSettingsExample());
+	    return new PublicServerSettings(getServerSettingsExample(), ObjectXMLSerializer.getInstance());
 	}
 	
 	private SystemInfo getSystemInfoExample() {
@@ -1389,7 +1389,7 @@ public class SwaggerExamplesServlet extends HttpServlet {
 	    UpdateSettings updateSettings = new UpdateSettings();
 	    updateSettings.setLastStatsTime(dateNow.getTimeInMillis());
 	    updateSettings.setStatsEnabled(true);
-	    updateSettings.setProperties(getPropertiesExample());
+	    updateSettings.setProperties(getPropertiesExample(), ObjectXMLSerializer.getInstance());
 	    return updateSettings;
 	}
 	

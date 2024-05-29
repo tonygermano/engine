@@ -418,7 +418,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
                 list.add(header.getValue());
             }
 
-            connectorMessage.getConnectorMap().put("responseStatusCode", String.valueOf(statusCode));
+            connectorMessage.getConnectorMap().put("responseStatusCode", statusCode);
             connectorMessage.getConnectorMap().put("responseStatusLine", statusLine.toString());
             connectorMessage.getConnectorMap().put("responseHeaders", new MessageHeaders(new CaseInsensitiveMap(headers)));
 

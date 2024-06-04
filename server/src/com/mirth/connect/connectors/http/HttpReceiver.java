@@ -669,8 +669,9 @@ public class HttpReceiver extends SourceConnector implements BinaryContentTypeRe
                 Thread.currentThread().setName("HTTP Receiver Thread on " + getChannel().getName() + " (" + getChannelId() + ") < " + originalThreadName);
                 HttpRequestMessage requestMessage = createRequestMessage(baseRequest, true);
 
-                String contextPath = URLDecoder.decode(requestMessage.getContextPath(), "US-ASCII");
-                if (contextPath.endsWith("/")) {
+                // Decode URL-encoding, and normalize all backslashes to forward slashes
+                String contextPath = StringUtils.replaceChars(URLDecoder.decode(requestMessage.getContextPath(), "US-ASCII"), '\\', '/');
+                while (contextPath.endsWith("/")) {
                     contextPath = contextPath.substring(0, contextPath.length() - 1);
                 }
                 logger.debug("Received static resource request at: " + contextPath);
@@ -730,29 +731,41 @@ public class HttpReceiver extends SourceConnector implements BinaryContentTypeRe
                         ResourceUtil.closeResourceQuietly(is);
                     }
                 } else if (staticResource.getResourceType() == ResourceType.DIRECTORY) {
-                    File file = new File(value);
+                    File parentFile = new File(value);
+                    File file = null;
 
-                    if (file.isDirectory()) {
+                    if (parentFile.isDirectory()) {
+                        if (!StringUtils.startsWithIgnoreCase(contextPath, staticResource.getContextPath())) {
+                            // This should technically never happen as the resource is deployed at this context path.
+                            servletResponse.reset();
+                            return;
+                        }
+
                         // Use the trailing path as the child path for the actual resource directory
-                        String childPath = StringUtils.removeStartIgnoreCase(contextPath, staticResource.getContextPath());
-                        if (childPath.startsWith("/")) {
+                        String childPath = StringUtils.replaceChars(StringUtils.removeStartIgnoreCase(contextPath, staticResource.getContextPath()), '\\', '/');
+                        while (childPath.startsWith("/")) {
                             childPath = childPath.substring(1);
                         }
 
                         if (!childPath.contains("/")) {
-                            file = new File(file, childPath);
+                            file = new File(parentFile, childPath);
                         } else {
                             // If a subdirectory is specified, pass to the next request handler
                             servletResponse.reset();
                             return;
                         }
                     } else {
-                        throw new Exception("File \"" + file.toString() + "\" does not exist or is not a directory.");
+                        throw new Exception("\"" + parentFile.toString() + "\" does not exist or is not a directory.");
                     }
 
-                    if (file.exists()) {
+                    if (file != null && file.exists()) {
                         if (file.isDirectory()) {
-                            // The directory itself was requested, instead of a specific file
+                            // A directory was requested, instead of a specific file
+                            servletResponse.reset();
+                            return;
+                        }
+                        if (file.getParentFile() == null || !file.getParentFile().equals(parentFile)) {
+                            // File parent is not the expected directory
                             servletResponse.reset();
                             return;
                         }

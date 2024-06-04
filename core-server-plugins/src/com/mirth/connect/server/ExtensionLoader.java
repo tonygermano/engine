@@ -28,6 +28,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.semver4j.Semver;
 
 import com.google.inject.Inject;
 import com.mirth.connect.donkey.util.ResourceUtil;
@@ -53,6 +54,7 @@ public class ExtensionLoader{
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, MetaData> invalidMetaDataMap = new HashMap<String, MetaData>();
+    private Map<String, String> coreLibraryVersionPropertiesFilenamesMap = new HashMap<String, String>();
     private boolean loadedExtensions = false;
     private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
@@ -140,30 +142,59 @@ public class ExtensionLoader{
     }
 
     public boolean isExtensionCompatible(MetaData metaData) {
-        String serverMirthVersion;
-        try {
-            serverMirthVersion = getServerVersion();
-        } catch (Exception e) {
-            logger.error("An error occurred while attempting to determine the current server version.", e);
+        if (metaData.getCoreVersions() != null) {
+            // validate extension the new way for commercial extensions
+            Map<String, String> connectCoreVersions = new HashMap<String, String>();
+            try {
+                connectCoreVersions = getCoreVersions();
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the current core versions.", e);
+                return false;
+            }
+            
+            logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: pluginCoreVersions=" + StringUtils.join(metaData.getCoreVersions()) + ", connectCoreVersions=" + StringUtils.join(connectCoreVersions));
+            
+            // Compare the coreVersions map between an extension and the Connect core libraries.
+            // The coreVersions from an extension is the minimum version of the Connect core libraries that are required.
+            // If any Connect core library version is lower than any respective coreVersions entry from an extension,
+            // then the extension is not compatible.
+            for (Map.Entry<String, String> extensionCoreVersionEntry : metaData.getCoreVersions().entrySet()) {
+                if (connectCoreVersions.containsKey(extensionCoreVersionEntry.getKey())) {
+                    Semver connectCoreVersion = new Semver(connectCoreVersions.get(extensionCoreVersionEntry.getKey()));
+                    if (connectCoreVersion.isLowerThan(extensionCoreVersionEntry.getValue())) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        } else {
+            // validate extension the old way for non-commercial extensions
+            String serverMirthVersion;
+            try {
+                serverMirthVersion = getServerVersion();
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the current server version.", e);
+                return false;
+            }
+            
+            String[] extensionMirthVersions = metaData.getMirthVersion().split(",");
+
+            logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: versions=" + ArrayUtils.toString(extensionMirthVersions) + ", server=" + serverMirthVersion);
+
+            // if there is no build version, just use the patch version
+            if (serverMirthVersion.split("\\.").length == 4) {
+                serverMirthVersion = serverMirthVersion.substring(0, serverMirthVersion.lastIndexOf('.'));
+            }
+
+            for (int i = 0; i < extensionMirthVersions.length; i++) {
+                if (extensionMirthVersions[i].trim().equals(serverMirthVersion)) {
+                    return true;
+                }
+            }
+
             return false;
         }
-
-        String[] extensionMirthVersions = metaData.getMirthVersion().split(",");
-
-        logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: versions=" + ArrayUtils.toString(extensionMirthVersions) + ", server=" + serverMirthVersion);
-
-        // if there is no build version, just use the patch version
-        if (serverMirthVersion.split("\\.").length == 4) {
-            serverMirthVersion = serverMirthVersion.substring(0, serverMirthVersion.lastIndexOf('.'));
-        }
-
-        for (int i = 0; i < extensionMirthVersions.length; i++) {
-            if (extensionMirthVersions[i].trim().equals(serverMirthVersion)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -246,5 +277,42 @@ public class ExtensionLoader{
         }
         
         return versionConfig.getString("mirth.version");
+    }
+    
+    /**
+     * Get core library versions from each of the core library's *.version.properties files.
+     * @return Map<String, String> == Map<coreLibaryName, coreLibraryVersion>
+     * @throws FileNotFoundException
+     * @throws ConfigurationException
+     */
+    private Map<String, String> getCoreVersions() throws FileNotFoundException, ConfigurationException {
+        String coreLibraryVersionProperty = "library.version";
+        Map<String, String> coreVersions = new HashMap<String, String>();
+        
+        initializeCoreLibraryVersionPropertiesFilenamesMap();
+        
+        InputStream versionPropertiesStream = null;
+        try {
+            for (Map.Entry<String, String> coreLibraryVersionProperties : coreLibraryVersionPropertiesFilenamesMap.entrySet()) {
+                versionPropertiesStream = ResourceUtil.getResourceStream(ExtensionLoader.class, coreLibraryVersionProperties.getValue());
+                PropertiesConfiguration versionConfig = PropertiesConfigurationUtil.create(versionPropertiesStream);
+                coreVersions.put(coreLibraryVersionProperties.getKey(), versionConfig.getString(coreLibraryVersionProperty));
+            }
+        } finally {
+            ResourceUtil.closeResourceQuietly(versionPropertiesStream);
+        }
+        
+        return coreVersions;
+    }
+    
+    private void initializeCoreLibraryVersionPropertiesFilenamesMap() {
+        coreLibraryVersionPropertiesFilenamesMap.put("client", "mirth-core-client.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("client-api", "mirth-core-client-api.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("client-base", "mirth-core-client-base.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("client-plugins", "mirth-core-client-plugins.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("models", "mirth-core-models.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("server-plugins", "mirth-core-server-plugins.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("ui", "mirth-core-ui.version.properties");
+        coreLibraryVersionPropertiesFilenamesMap.put("util", "mirth-core-util.version.properties");
     }
 }

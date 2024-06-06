@@ -13,9 +13,9 @@ public interface IHttpDispatcher extends IDestinationConnector {
     
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry();
     
-    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage message);
+    public void doReplaceConnectorProperties(IHttpDispatcherProperties connectorProperties, ConnectorMessage message);
 
-    public Response doSend(ConnectorProperties connectorProperties, ConnectorMessage message) throws InterruptedException;
+    public Response doSend(IHttpDispatcherProperties connectorProperties, ConnectorMessage message) throws InterruptedException;
     
     public void doOnDeploy() throws ConnectorTaskException;
     

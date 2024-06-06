@@ -1409,7 +1409,7 @@ IN THE SOFTWARE.
 
 
 The license below pertains to a portion of the software included with the 
-semver4j 5.3.0 (https://github.com/semver4j/semver4j), which is included with Mirth Connect.
+semver4j 5.3.0 library (https://github.com/semver4j/semver4j), which is included with Mirth Connect.
 
 =================== Beginning of License ===================
 

@@ -26,7 +26,7 @@ public abstract class MetaData {
     private String author;
     private String mirthVersion;
     private String pluginVersion;
-    private Map<String, String> coreVersions;
+    private Map<String, String> minCoreVersions;
     private String url;
     private String description;
     @XStreamAlias("apiProviders")
@@ -79,12 +79,12 @@ public abstract class MetaData {
         this.pluginVersion = pluginVersion;
     }
     
-    public Map<String, String> getCoreVersions() {
-        return coreVersions;
+    public Map<String, String> getMinCoreVersions() {
+        return minCoreVersions;
     }
 
-    public void setCoreVersions(Map<String, String> coreVersions) {
-        this.coreVersions = coreVersions;
+    public void setMinCoreVersions(Map<String, String> minCoreVersions) {
+        this.minCoreVersions = minCoreVersions;
     }
 
     public String getUrl() {

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
@@ -44,6 +45,8 @@ import com.mirth.connect.model.PluginClass;
 import com.mirth.connect.model.PluginClassCondition;
 import com.mirth.connect.model.PluginMetaData;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
+import com.mirth.connect.server.controllers.ConfigurationController;
+import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.util.HttpUtil;
@@ -163,14 +166,14 @@ public class ExtensionLoader{
     }
 
     public boolean isExtensionCompatible(MetaData metaData) {
-        if (metaData.getCoreVersions() != null) {
+        if (!MapUtils.isEmpty(metaData.getMinCoreVersions())) {
             // validate extension the new way for commercial extensions
             Map<String, String> connectCoreVersions = new HashMap<String, String>();
             Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();
             Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
             try {
                 connectCoreVersions = getCoreVersions();
-                extensionMinCoreVersions = metaData.getCoreVersions();
+                extensionMinCoreVersions = metaData.getMinCoreVersions();
                 extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion());
             } catch (Exception e) {
                 logger.error("An error occurred while attempting to determine the core versions.", e);
@@ -185,14 +188,18 @@ public class ExtensionLoader{
             // For an extension to be valid, extensionMinCoreVersions <= connectCoreVersions <= extensionMaxCoreVersions
             // must be true for all map entries.
             for (Map.Entry<String, String> connectCoreVersionEntry : connectCoreVersions.entrySet()) {
-                if (extensionMinCoreVersions.containsKey(connectCoreVersionEntry.getKey()) && extensionMaxCoreVersions.containsKey(connectCoreVersionEntry.getKey())) {
-                    Semver connectCoreVersion = new Semver(connectCoreVersionEntry.getValue());
+                Semver connectCoreVersion = new Semver(connectCoreVersionEntry.getValue());
+                if (extensionMinCoreVersions.containsKey(connectCoreVersionEntry.getKey())) {                    
                     if (connectCoreVersion.isLowerThan(extensionMinCoreVersions.get(connectCoreVersionEntry.getKey()))) {
                         return false;
                     }
-                    
-                    if (!extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()).isEmpty() && connectCoreVersion.isGreaterThan(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()))) {
-                        return false;
+                }
+                
+                if (!MapUtils.isEmpty(extensionMaxCoreVersions)) {
+                    if (extensionMaxCoreVersions.containsKey(connectCoreVersionEntry.getKey())) { 
+                        if (!StringUtils.isEmpty(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey())) && connectCoreVersion.isGreaterThan(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()))) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -348,21 +355,24 @@ public class ExtensionLoader{
      * @return Map<String, String> == Map<coreLibaryName, pluginMaxCoreLibraryVersion>
      * @throws FileNotFoundException
      * @throws ConfigurationException
-     * @throws JsonProcessingException 
-     * @throws JsonMappingException 
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
      */
     private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion) throws FileNotFoundException, ConfigurationException, JsonMappingException, JsonProcessingException {
-        Map<String, String> pluginMaxCoreVersions = new HashMap<String, String>();        
-        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();        
 
-        // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
-        Iterator<Map.Entry<String, JsonNode>> pluginCoreVersions = mapper.readTree(extensionsCoreVersionsS3File).get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
-        while(pluginCoreVersions.hasNext()) {
-            Map.Entry<String, JsonNode> me = pluginCoreVersions.next();
-            pluginMaxCoreVersions.put(me.getKey(), me.getValue().has("max") ? me.getValue().get("max").textValue() : "");
+        if (!StringUtils.isEmpty(extensionsCoreVersionsS3File)) {
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
+            Iterator<Map.Entry<String, JsonNode>> extensionCoreVersions = mapper.readTree(extensionsCoreVersionsS3File).get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
+            while(extensionCoreVersions.hasNext()) {
+                Map.Entry<String, JsonNode> me = extensionCoreVersions.next();
+                extensionMaxCoreVersions.put(me.getKey(), me.getValue().has("max") ? me.getValue().get("max").textValue() : "");
+            }
         }
         
-        return pluginMaxCoreVersions;
+        return extensionMaxCoreVersions;
     }
     
     /**
@@ -371,6 +381,10 @@ public class ExtensionLoader{
      * @return
      */
     private String getExtensionsCoreVersionsFileFromS3() {
-        return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, MirthSSLUtil.DEFAULT_HTTPS_CLIENT_PROTOCOLS, MirthSSLUtil.DEFAULT_HTTPS_CIPHER_SUITES);
+        ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
+        String[] protcols = MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols());
+        String[] cipherSuites = MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites());
+        
+        return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, protcols, cipherSuites);
     }
 }

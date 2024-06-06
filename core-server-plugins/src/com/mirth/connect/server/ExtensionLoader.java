@@ -182,7 +182,7 @@ public class ExtensionLoader{
             // connectCoreVersions      Connect Core library versions
             // extensionMinCoreVersions minimum coreVersions for an extension
             // extensionMaxCoreVersions maximum coreVersions for an extension
-            // For an extension to be valid, extensionMinCoreVersions < connectCoreVersions < extensionMaxCoreVersions
+            // For an extension to be valid, extensionMinCoreVersions <= connectCoreVersions <= extensionMaxCoreVersions
             // must be true for all map entries.
             for (Map.Entry<String, String> connectCoreVersionEntry : connectCoreVersions.entrySet()) {
                 if (extensionMinCoreVersions.containsKey(connectCoreVersionEntry.getKey()) && extensionMaxCoreVersions.containsKey(connectCoreVersionEntry.getKey())) {

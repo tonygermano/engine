@@ -67,7 +67,7 @@ public class ExtensionLoader{
             "mirth-core-models.version.properties",
             "mirth-core-server-plugins.version.properties",
             "mirth-core-ui.version.properties",
-            "mirth-core-util.version.properties");    
+            "mirth-core-util.version.properties");
     private static final String EXTENSIONS_CORE_VERSIONS_S3_FILE_URL = "https://s3.amazonaws.com/downloads.mirthcorp.com/connect/extensions-core-versions/extensionsCoreVersions.json";
     private static final int TIMEOUT = 30000;
     private static final boolean HOSTNAME_VERIFICATION = true;
@@ -90,7 +90,6 @@ public class ExtensionLoader{
     }
 
     public Map<String, PluginMetaData> getPluginMetaData() {
-        initializeCoreVersionsFields();
         loadExtensions();
         return pluginMetaDataMap;
     }
@@ -240,10 +239,12 @@ public class ExtensionLoader{
     private synchronized void loadExtensions() {
         if (!loadedExtensions) {
             try {
+                initializeCoreVersionsFields();
+                
                 // match all of the file names for the extension
                 IOFileFilter nameFileFilter = new NameFileFilter(new String[] { "plugin.xml",
                         "source.xml", "destination.xml" });
-                // this is probably not needed, but we dont want to pick up directories,
+                // this is probably not needed, but we don't want to pick up directories,
                 // so we AND the two filters
                 IOFileFilter andFileFilter = new AndFileFilter(nameFileFilter, FileFilterUtils.fileFileFilter());
                 // this is directory where extensions are located
@@ -316,7 +317,7 @@ public class ExtensionLoader{
     
     private static void initializeCoreVersionsFields() {
         try {
-            connectCoreVersions = getCoreVersions();
+            connectCoreVersions = getConnectCoreVersions();
         } catch (Exception e) {
             logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
         }
@@ -332,25 +333,25 @@ public class ExtensionLoader{
      * @throws FileNotFoundException
      * @throws ConfigurationException
      */
-    private static Map<String, String> getCoreVersions() throws FileNotFoundException, ConfigurationException {
+    private static Map<String, String> getConnectCoreVersions() throws FileNotFoundException, ConfigurationException {
         String coreLibraryVersionProperty = "library.version";
-        Map<String, String> coreVersions = new HashMap<String, String>();
+        Map<String, String> connectCoreVersions = new HashMap<String, String>();
         
         InputStream versionPropertiesStream = null;
-        try {
-            for (String coreLibraryVersionPropertiesFilename : CORE_LIBRARY_VERSION_PROPERTIES_FILENAMES) {
+        for (String coreLibraryVersionPropertiesFilename : CORE_LIBRARY_VERSION_PROPERTIES_FILENAMES) {
+            try {
                 versionPropertiesStream = ResourceUtil.getResourceStream(ExtensionLoader.class, coreLibraryVersionPropertiesFilename);
                 PropertiesConfiguration versionConfig = PropertiesConfigurationUtil.create(versionPropertiesStream);
                 
                 String coreLibraryName = coreLibraryVersionPropertiesFilename.substring(0, coreLibraryVersionPropertiesFilename.indexOf("."));
                 String coreLibraryVersion = versionConfig.getString(coreLibraryVersionProperty);
-                coreVersions.put(coreLibraryName, coreLibraryVersion);
+                connectCoreVersions.put(coreLibraryName, coreLibraryVersion);
+            } finally {
+                ResourceUtil.closeResourceQuietly(versionPropertiesStream);
             }
-        } finally {
-            ResourceUtil.closeResourceQuietly(versionPropertiesStream);
         }
         
-        return coreVersions;
+        return connectCoreVersions;
     }
     
     /**

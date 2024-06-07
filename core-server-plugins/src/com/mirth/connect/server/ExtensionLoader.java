@@ -69,15 +69,15 @@ public class ExtensionLoader{
             "mirth-core-ui.version.properties",
             "mirth-core-util.version.properties");    
     private static final String EXTENSIONS_CORE_VERSIONS_S3_FILE_URL = "https://s3.amazonaws.com/downloads.mirthcorp.com/connect/extensions-core-versions/extensionsCoreVersions.json";
-    private static int TIMEOUT = 30000;
-    private static boolean HOSTNAME_VERIFICATION = true;
+    private static final int TIMEOUT = 30000;
+    private static final boolean HOSTNAME_VERIFICATION = true;
+    private static Map<String, String> connectCoreVersions = new HashMap<String, String>();
+    private static String extensionsCoreVersionsS3File;
     
-    private Map<String, String> connectCoreVersions = new HashMap<String, String>();
     private Map<String, ConnectorMetaData> connectorMetaDataMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, MetaData> invalidMetaDataMap = new HashMap<String, MetaData>();
-    private String extensionsCoreVersionsS3File;
     private boolean loadedExtensions = false;
     private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
@@ -314,7 +314,7 @@ public class ExtensionLoader{
         return versionConfig.getString("mirth.version");
     }
     
-    private void initializeCoreVersionsFields() {
+    private static void initializeCoreVersionsFields() {
         try {
             connectCoreVersions = getCoreVersions();
         } catch (Exception e) {
@@ -332,7 +332,7 @@ public class ExtensionLoader{
      * @throws FileNotFoundException
      * @throws ConfigurationException
      */
-    private Map<String, String> getCoreVersions() throws FileNotFoundException, ConfigurationException {
+    private static Map<String, String> getCoreVersions() throws FileNotFoundException, ConfigurationException {
         String coreLibraryVersionProperty = "library.version";
         Map<String, String> coreVersions = new HashMap<String, String>();
         
@@ -386,7 +386,7 @@ public class ExtensionLoader{
      * 
      * @return String JSON manifest file from S3 or "" on error
      */
-    private String getExtensionsCoreVersionsFileFromS3() {
+    private static String getExtensionsCoreVersionsFileFromS3() {
         return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, MirthSSLUtil.DEFAULT_HTTPS_CLIENT_PROTOCOLS, MirthSSLUtil.DEFAULT_HTTPS_CIPHER_SUITES);
     }
 }

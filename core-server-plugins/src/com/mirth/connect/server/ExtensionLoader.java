@@ -45,8 +45,6 @@ import com.mirth.connect.model.PluginClass;
 import com.mirth.connect.model.PluginClassCondition;
 import com.mirth.connect.model.PluginMetaData;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
-import com.mirth.connect.server.controllers.ConfigurationController;
-import com.mirth.connect.server.controllers.ControllerFactory;
 import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.tools.ClassPathResource;
 import com.mirth.connect.util.HttpUtil;
@@ -74,6 +72,7 @@ public class ExtensionLoader{
     private static int TIMEOUT = 30000;
     private static boolean HOSTNAME_VERIFICATION = true;
     
+    private Map<String, String> connectCoreVersions = new HashMap<String, String>();
     private Map<String, ConnectorMetaData> connectorMetaDataMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
@@ -91,6 +90,7 @@ public class ExtensionLoader{
     }
 
     public Map<String, PluginMetaData> getPluginMetaData() {
+        initializeCoreVersionsFields();
         loadExtensions();
         return pluginMetaDataMap;
     }
@@ -168,15 +168,13 @@ public class ExtensionLoader{
     public boolean isExtensionCompatible(MetaData metaData) {
         if (!MapUtils.isEmpty(metaData.getMinCoreVersions())) {
             // validate extension the new way for commercial extensions
-            Map<String, String> connectCoreVersions = new HashMap<String, String>();
             Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();
             Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
             try {
-                connectCoreVersions = getCoreVersions();
                 extensionMinCoreVersions = metaData.getMinCoreVersions();
                 extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion());
             } catch (Exception e) {
-                logger.error("An error occurred while attempting to determine the core versions.", e);
+                logger.error("An error occurred while attempting to determine the extension Core versions.", e);
                 return false;
             }
             
@@ -252,9 +250,6 @@ public class ExtensionLoader{
                 File extensionPath = new File(getExtensionsPath());
                 // do a recursive scan for extension files
                 Collection<File> extensionFiles = FileUtils.listFiles(extensionPath, andFileFilter, FileFilterUtils.trueFileFilter());
-                
-                // get extension Core versions JSON from S3
-                extensionsCoreVersionsS3File = getExtensionsCoreVersionsFileFromS3();
 
                 for (File extensionFile : extensionFiles) {
                     try {
@@ -319,6 +314,17 @@ public class ExtensionLoader{
         return versionConfig.getString("mirth.version");
     }
     
+    private void initializeCoreVersionsFields() {
+        try {
+            connectCoreVersions = getCoreVersions();
+        } catch (Exception e) {
+            logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
+        }
+        
+        // get extension Core versions JSON from S3
+        extensionsCoreVersionsS3File = getExtensionsCoreVersionsFileFromS3();
+    }
+    
     /**
      * Get Core library versions from each of the Core library's *.version.properties files.
      * 
@@ -367,8 +373,8 @@ public class ExtensionLoader{
             // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
             Iterator<Map.Entry<String, JsonNode>> extensionCoreVersions = mapper.readTree(extensionsCoreVersionsS3File).get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
             while(extensionCoreVersions.hasNext()) {
-                Map.Entry<String, JsonNode> me = extensionCoreVersions.next();
-                extensionMaxCoreVersions.put(me.getKey(), me.getValue().has("max") ? me.getValue().get("max").textValue() : "");
+                Map.Entry<String, JsonNode> extensionCoreVersionEntry = extensionCoreVersions.next();
+                extensionMaxCoreVersions.put(extensionCoreVersionEntry.getKey(), extensionCoreVersionEntry.getValue().has("max") ? extensionCoreVersionEntry.getValue().get("max").textValue() : "");
             }
         }
         
@@ -378,13 +384,9 @@ public class ExtensionLoader{
     /**
      * Get the JSON manifest file that contains all extensions' Core libraries min and max versions.
      * 
-     * @return
+     * @return String JSON manifest file from S3 or "" on error
      */
     private String getExtensionsCoreVersionsFileFromS3() {
-        ConfigurationController configurationController = ControllerFactory.getFactory().createConfigurationController();
-        String[] protcols = MirthSSLUtil.getEnabledHttpsProtocols(configurationController.getHttpsClientProtocols());
-        String[] cipherSuites = MirthSSLUtil.getEnabledHttpsCipherSuites(configurationController.getHttpsCipherSuites());
-        
-        return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, protcols, cipherSuites);
+        return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, MirthSSLUtil.DEFAULT_HTTPS_CLIENT_PROTOCOLS, MirthSSLUtil.DEFAULT_HTTPS_CIPHER_SUITES);
     }
 }

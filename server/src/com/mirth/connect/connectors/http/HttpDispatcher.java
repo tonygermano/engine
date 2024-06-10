@@ -784,14 +784,17 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
         this.socketFactoryRegistry = socketFactoryRegistry;
     }
     
+    @Override
     public void setBinaryMimeTypesArrayMap(Map<String, String[]> binaryMimeTypesArrayMap) {
         this.binaryMimeTypesArrayMap = binaryMimeTypesArrayMap;
     }
 
+    @Override
     public void setBinaryMimeTypesRegexMap(Map<String, Pattern> binaryMimeTypesRegexMap) {
         this.binaryMimeTypesRegexMap = binaryMimeTypesRegexMap;
     }
 
+    @Override
     public void setConfiguration(HttpConfiguration configuration) {
         this.configuration = configuration;
     }

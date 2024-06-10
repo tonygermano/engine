@@ -268,7 +268,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     		return doSend((IHttpDispatcherProperties) connectorProperties, connectorMessage);
     	}
     }
-
+    
     @Override
     public Response doSend(IHttpDispatcherProperties connectorProperties, ConnectorMessage connectorMessage) {
         HttpDispatcherProperties httpDispatcherProperties = (HttpDispatcherProperties) connectorProperties;
@@ -777,5 +777,22 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     @Override
     public ConnectorProperties getConnectorProperties() {
         return super.getConnectorProperties();
-    }   
+    }
+
+    @Override
+    public void setSocketFactoryRegistry(RegistryBuilder<ConnectionSocketFactory> socketFactoryRegistry) {
+        this.socketFactoryRegistry = socketFactoryRegistry;
+    }
+    
+    public void setBinaryMimeTypesArrayMap(Map<String, String[]> binaryMimeTypesArrayMap) {
+        this.binaryMimeTypesArrayMap = binaryMimeTypesArrayMap;
+    }
+
+    public void setBinaryMimeTypesRegexMap(Map<String, Pattern> binaryMimeTypesRegexMap) {
+        this.binaryMimeTypesRegexMap = binaryMimeTypesRegexMap;
+    }
+
+    public void setConfiguration(HttpConfiguration configuration) {
+        this.configuration = configuration;
+    }
 }

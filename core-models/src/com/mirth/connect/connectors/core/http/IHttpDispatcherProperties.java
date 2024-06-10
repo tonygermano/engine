@@ -25,6 +25,8 @@ public interface IHttpDispatcherProperties {
     
     String getContent();
     
+    void setContent(String string);
+    
     Map<String, Object> getPurgedProperties();
     
     String getName();

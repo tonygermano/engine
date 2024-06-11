@@ -25,18 +25,16 @@ public interface IHttpDispatcherProperties {
     
     String getContent();
     
+    void setContent(String string);
+    
     Map<String, Object> getPurgedProperties();
     
-    void migrate3_7_0(DonkeyElement element);
-    
-    void migrate3_9_0(DonkeyElement element);
-
     String getName();
     
     void setSocketTimeout(String socketTimeout);
     
     Map<String, List<String>> getHeadersMap();
-    
+
     void setUseAuthentication(boolean useAuthentication);
     
     void setUsername(String username);
@@ -53,7 +51,7 @@ public interface IHttpDispatcherProperties {
 
     boolean isUseParametersVariable();
 
-    CharSequence getParametersVariable();
+    String getParametersVariable();    
     
     void setContentType(String contentType);
     

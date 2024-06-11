@@ -12,8 +12,6 @@ public interface IHttpDispatcher extends IDestinationConnector {
     
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry();
     
-    public void setSocketFactoryRegistry(RegistryBuilder<ConnectionSocketFactory> socketFactoryRegistry);
-    
     public void doReplaceConnectorProperties(IHttpDispatcherProperties connectorProperties, ConnectorMessage message);
 
     public Response doSend(IHttpDispatcherProperties connectorProperties, ConnectorMessage message);

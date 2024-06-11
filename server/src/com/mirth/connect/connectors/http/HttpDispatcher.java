@@ -778,24 +778,4 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     public ConnectorProperties getConnectorProperties() {
         return super.getConnectorProperties();
     }
-
-    @Override
-    public void setSocketFactoryRegistry(RegistryBuilder<ConnectionSocketFactory> socketFactoryRegistry) {
-        this.socketFactoryRegistry = socketFactoryRegistry;
-    }
-    
-    @Override
-    public void setBinaryMimeTypesArrayMap(Map<String, String[]> binaryMimeTypesArrayMap) {
-        this.binaryMimeTypesArrayMap = binaryMimeTypesArrayMap;
-    }
-
-    @Override
-    public void setBinaryMimeTypesRegexMap(Map<String, Pattern> binaryMimeTypesRegexMap) {
-        this.binaryMimeTypesRegexMap = binaryMimeTypesRegexMap;
-    }
-
-    @Override
-    public void setConfiguration(HttpConfiguration configuration) {
-        this.configuration = configuration;
-    }
 }

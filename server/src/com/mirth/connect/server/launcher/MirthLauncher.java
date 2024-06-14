@@ -17,13 +17,16 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -32,6 +35,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.mirth.connect.server.extprops.ExtensionStatuses;
@@ -46,6 +50,8 @@ public class MirthLauncher {
     private static final String[] LOG4J_JAR_FILES = { "./core-lib/shared/log4j/log4j-core-2.17.2.jar",
             "./core-lib/shared/log4j/log4j-api-2.17.2.jar",
             "./core-lib/shared/log4j/log4j-1.2-api-2.17.2.jar" };
+    
+    private static Map<String, String> connectCoreVersions = new HashMap<String, String>();
 
     private static String appDataDir = null;
 
@@ -91,6 +97,8 @@ public class MirthLauncher {
             coreLibServerDirMirthLibs.setIncludePrefix("mirth-core-");
             ManifestDirectory coreLibSharedDirMirthLibs = new ManifestDirectory("core-lib/shared");
             coreLibSharedDirMirthLibs.setIncludePrefix("mirth-core-");
+            ManifestDirectory coreLibUiDirMirthLibs = new ManifestDirectory("core-lib/ui");
+            coreLibUiDirMirthLibs.setIncludePrefix("mirth-core-");
             ManifestDirectory coreLibServerDir = new ManifestDirectory("core-lib/server");
             coreLibServerDir.setExcludePrefix("mirth-core-");
             ManifestDirectory coreLibSharedDir = new ManifestDirectory("core-lib/shared");
@@ -111,12 +119,22 @@ public class MirthLauncher {
             }
 
             ManifestEntry[] manifest = manifestList.toArray(new ManifestEntry[manifestList.size()]);
+            
+            List<ManifestEntry> manifestListConnectCoreLibs = new ArrayList<ManifestEntry>();
+            manifestListConnectCoreLibs.add(coreLibServerDirMirthLibs);
+            manifestListConnectCoreLibs.add(coreLibSharedDirMirthLibs);
+            manifestListConnectCoreLibs.add(coreLibUiDirMirthLibs);
+            
+            ManifestEntry[] manifestConnectCoreLibs = manifestListConnectCoreLibs.toArray(new ManifestEntry[manifestListConnectCoreLibs.size()]);
 
             // Get the current server version
             mirthServerJarFile = new JarFile(mirthServerJar.getName());
             Properties versionProperties = new Properties();
             versionProperties.load(mirthServerJarFile.getInputStream(mirthServerJarFile.getJarEntry("version.properties")));
             String currentVersion = versionProperties.getProperty("mirth.version");
+            
+            // Get the current Connect core library versions            
+            initializeCoreVersionsFields(manifestConnectCoreLibs);
 
             addManifestToClasspath(manifest, classpathUrls);
             addExtensionsToClasspath(classpathUrls, currentVersion);
@@ -264,9 +282,9 @@ public class MirthLauncher {
                 		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
                 		Document document = dbf.newDocumentBuilder().parse(extensionFile);
                 		Element rootElement = document.getDocumentElement();
-
+                		
                         boolean enabled = extensionStatuses.isEnabled(rootElement.getElementsByTagName("name").item(0).getTextContent());
-                        boolean compatible = isExtensionCompatible(rootElement.getElementsByTagName("mirthVersion").item(0).getTextContent(), currentVersion);
+                        boolean compatible = isExtensionCompatible(rootElement.getElementsByTagName("pluginVersion").item(0).getTextContent(), currentVersion, rootElement);
 
                         // Only add libraries from extensions that are not disabled and are compatible with the current version
                         if (enabled && compatible) {
@@ -298,23 +316,58 @@ public class MirthLauncher {
         }
     }
 
-    private static boolean isExtensionCompatible(String extensionVersion, String currentVersion) {
-        if (extensionVersion != null) {
-            String[] extensionMirthVersions = extensionVersion.split(",");
-
-            // If there is no build version, just use the patch version
-            if (currentVersion.split("\\.").length == 4) {
-                currentVersion = currentVersion.substring(0, currentVersion.lastIndexOf('.'));
+    private static boolean isExtensionCompatible(String extensionVersion, String currentVersion, Element rootElement) {        
+        if (rootElement.getElementsByTagName("minCoreVersions").item(0) != null) {
+            // validate extension the new way for commercial extensions
+            Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();            
+            try {
+                extensionMinCoreVersions = getExtensionMinCoreVersions(rootElement);
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the extension Core versions.", e);
+                return false;
             }
-
-            for (int i = 0; i < extensionMirthVersions.length; i++) {
-                if (extensionMirthVersions[i].trim().equals(currentVersion)) {
-                    return true;
+            
+            // connectCoreVersions      Connect Core library versions
+            // extensionMinCoreVersions minimum coreVersions for an extension
+            // For an extension to be valid, extensionMinCoreVersions <= connectCoreVersions must be true for all map entries.
+            for (Map.Entry<String, String> connectCoreVersionEntry : connectCoreVersions.entrySet()) {
+                if (extensionMinCoreVersions.containsKey(connectCoreVersionEntry.getKey())) {
+                    String[] connectCoreVersionEntrySplit = connectCoreVersionEntry.getValue().split("\\.");
+                    String[] extensionMinCoreVersionEntrySplit = extensionMinCoreVersions.get(connectCoreVersionEntry.getKey()).split("\\.");
+                    int maxLengthOfCoreVersionEntrySplits = Math.max(connectCoreVersionEntrySplit.length, extensionMinCoreVersionEntrySplit.length);
+                    
+                    for (int i = 0; i < maxLengthOfCoreVersionEntrySplits; i++) {
+                        Integer connectCoreVersion = i < connectCoreVersionEntrySplit.length ? Integer.parseInt(connectCoreVersionEntrySplit[i]) : 0;
+                        Integer extensionMinCoreVersion = i < extensionMinCoreVersionEntrySplit.length ? Integer.parseInt(extensionMinCoreVersionEntrySplit[i]) : 0;
+                        
+                        int comparisonResult = connectCoreVersion.compareTo(extensionMinCoreVersion);
+                        if (comparisonResult < 0) {
+                            return false;
+                        }
+                    }
                 }
             }
-        }
+            
+            return true;
+        } else {
+            // validate extension the old way for non-commercial extensions
+            if (extensionVersion != null) {
+                String[] extensionMirthVersions = extensionVersion.split(",");
 
-        return false;
+                // If there is no build version, just use the patch version
+                if (currentVersion.split("\\.").length == 4) {
+                    currentVersion = currentVersion.substring(0, currentVersion.lastIndexOf('.'));
+                }
+
+                for (int i = 0; i < extensionMirthVersions.length; i++) {
+                    if (extensionMirthVersions[i].trim().equals(currentVersion)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 
     private static void createAppdataDir(Properties mirthProperties) {
@@ -336,5 +389,74 @@ public class MirthLauncher {
 
         appDataDir = appDataDirFile.getAbsolutePath();
         logger.debug("set app data dir: " + appDataDir);
+    }
+    
+    private static void initializeCoreVersionsFields(ManifestEntry[] manifestEntries) {
+        connectCoreVersions = getConnectCoreVersions(manifestEntries);
+    }
+    
+    private static Map<String, String> getConnectCoreVersions(ManifestEntry[] manifestEntries) {
+        Map<String, String> connectCoreVersions = new HashMap<String, String>();
+        
+        for (ManifestEntry manifestEntry : manifestEntries) {
+            File manifestEntryFile = new File(manifestEntry.getName());
+            
+            if (manifestEntryFile.exists()) {
+                if (manifestEntryFile.isDirectory()) {
+                    ManifestDirectory manifestDir = (ManifestDirectory) manifestEntry;
+                    IOFileFilter fileFilter = FileFilterUtils.fileFileFilter();
+                    
+                    if (manifestDir.getIncludePrefix() != null) {
+                        fileFilter = FileFilterUtils.and(fileFilter, new PrefixFileFilter(manifestDir.getIncludePrefix()));
+                    }
+                    
+                    Collection<File> pathFiles = FileUtils.listFiles(manifestEntryFile, fileFilter, FileFilterUtils.trueFileFilter());
+                    
+                    for (File pathFile : pathFiles) {
+                        JarFile connectCoreLibraryJarFile = null;
+                        try {
+                            // e.g. mirth-core-server-plugins-4.6.0
+                            String pathFilename = FilenameUtils.getBaseName(pathFile.toString());
+                            // e.g. mirth-core-server-plugins
+                            String connectCoreLibraryVersionPropertiesFileName = pathFilename.substring(0, pathFilename.length() - 6);
+                            String connectCoreLibraryVersionProperty = "library.version";
+                            connectCoreLibraryJarFile = new JarFile(pathFile);
+                            
+                            Properties connectCoreLibraryVersionProperties = new Properties();
+                            connectCoreLibraryVersionProperties.load(connectCoreLibraryJarFile.getInputStream(connectCoreLibraryJarFile.getJarEntry(connectCoreLibraryVersionPropertiesFileName + ".version.properties")));
+                            connectCoreVersions.put(connectCoreLibraryVersionPropertiesFileName, connectCoreLibraryVersionProperties.getProperty(connectCoreLibraryVersionProperty));
+                        } catch (IOException e) {
+                            logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
+                        } finally {
+                            try {
+                                if (connectCoreLibraryJarFile != null) {
+                                    connectCoreLibraryJarFile.close();
+                                }
+                            } catch (IOException e) {
+                                logger.error("Error closing connectCoreLibraryJarFile.", e);
+                            }
+                        }
+                    }
+                }
+            } else {
+                logger.warn("manifest path not found: " + manifestEntryFile.getAbsolutePath());
+            }
+        }
+        
+        return connectCoreVersions;
+    }
+    
+    private static Map<String, String> getExtensionMinCoreVersions(Element rootElement) {
+        Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();
+        
+        NodeList minCoreVersions = rootElement.getElementsByTagName("entry");
+        
+        for (int i = 0; i < minCoreVersions.getLength(); i++) {
+            Node minCoreVersion = minCoreVersions.item(i);
+            NodeList minCoreVersionChildNodes = minCoreVersion.getChildNodes();
+            extensionMinCoreVersions.put(minCoreVersionChildNodes.item(0).getTextContent(), minCoreVersionChildNodes.item(1).getTextContent());
+        }
+        
+        return extensionMinCoreVersions;
     }
 }

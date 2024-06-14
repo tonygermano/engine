@@ -316,11 +316,7 @@ public class ExtensionLoader{
     }
     
     private static void initializeCoreVersionsFields() {
-        try {
-            connectCoreVersions = getConnectCoreVersions();
-        } catch (Exception e) {
-            logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
-        }
+        connectCoreVersions = getConnectCoreVersions();
         
         // get extension Core versions JSON from S3
         extensionsCoreVersionsS3File = getExtensionsCoreVersionsFileFromS3();
@@ -330,11 +326,9 @@ public class ExtensionLoader{
      * Get Core library versions from each of the Core library's *.version.properties files.
      * 
      * @return Map<String, String> == Map<coreLibaryName, coreLibraryVersion>
-     * @throws FileNotFoundException
-     * @throws ConfigurationException
      */
-    private static Map<String, String> getConnectCoreVersions() throws FileNotFoundException, ConfigurationException {
-        String coreLibraryVersionProperty = "library.version";
+    private static Map<String, String> getConnectCoreVersions() {
+        String connectCoreLibraryVersionProperty = "library.version";
         Map<String, String> connectCoreVersions = new HashMap<String, String>();
         
         InputStream versionPropertiesStream = null;
@@ -344,8 +338,10 @@ public class ExtensionLoader{
                 PropertiesConfiguration versionConfig = PropertiesConfigurationUtil.create(versionPropertiesStream);
                 
                 String coreLibraryName = coreLibraryVersionPropertiesFilename.substring(0, coreLibraryVersionPropertiesFilename.indexOf("."));
-                String coreLibraryVersion = versionConfig.getString(coreLibraryVersionProperty);
+                String coreLibraryVersion = versionConfig.getString(connectCoreLibraryVersionProperty);
                 connectCoreVersions.put(coreLibraryName, coreLibraryVersion);
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
             } finally {
                 ResourceUtil.closeResourceQuietly(versionPropertiesStream);
             }
@@ -360,13 +356,11 @@ public class ExtensionLoader{
      * @param pluginPath    Plugin name
      * @param pluginVersion Plugin version
      * @return Map<String, String> == Map<coreLibaryName, pluginMaxCoreLibraryVersion>
-     * @throws FileNotFoundException
-     * @throws ConfigurationException
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion) throws FileNotFoundException, ConfigurationException, JsonMappingException, JsonProcessingException {
-        Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();        
+    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion) throws JsonMappingException, JsonProcessingException {
+        Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
 
         if (!StringUtils.isEmpty(extensionsCoreVersionsS3File)) {
             ObjectMapper mapper = new ObjectMapper();

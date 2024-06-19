@@ -285,6 +285,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.useAuthentication = useAuthentication;
     }
 
+    @Override
     public String getAuthenticationType() {
         return authenticationType;
     }
@@ -293,6 +294,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.authenticationType = authenticationType;
     }
 
+    @Override
     public boolean isUsePreemptiveAuthentication() {
         return usePreemptiveAuthentication;
     }
@@ -328,6 +330,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.content = content;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }
@@ -345,6 +348,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.dataTypeBinary = dataTypeBinary;
     }
 
+    @Override
     public String getCharset() {
         return charset;
     }

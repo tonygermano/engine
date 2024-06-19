@@ -37,10 +37,9 @@
 	<classpathentry kind="lib" path="/Core-models/lib/xpp3-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="/Core-models/lib/xstream-1.4.20.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-util"/>
-	<classpathentry kind="lib" path="/Core-util/lib/bcpkix-jdk18on-171.jar"/>
-	<classpathentry kind="lib" path="/Core-util/lib/bcprov-ext-jdk18on-171.jar"/>
-	<classpathentry kind="lib" path="/Core-util/lib/bcprov-jdk18on-171.jar"/>
-	<classpathentry kind="lib" path="/Core-util/lib/bcutil-jdk18on-171.jar"/>
+	<classpathentry kind="lib" path="/Core-util/lib/bcpkix-jdk18on-1.78.1.jar"/>
+	<classpathentry kind="lib" path="/Core-util/lib/bcprov-jdk18on-1.78.1.jar"/>
+	<classpathentry kind="lib" path="/Core-util/lib/bcutil-jdk18on-1.78.1.jar"/>
 	<classpathentry kind="lib" path="/Core-util/lib/commons/commons-cli-1.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://commons.apache.org/cli/api-release/"/>
@@ -63,9 +62,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-server-plugins"/>
 	<classpathentry kind="lib" path="/Core-server-plugins/lib/commons/commons-dbutils-1.7.jar"/>
 	<classpathentry kind="lib" path="/Core-server-plugins/lib/guice-4.1.0.jar"/>
-	<classpathentry kind="lib" path="/Core-server-plugins/lib/javax/javax.servlet-api-3.1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-base"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/javassist-3.29.2-GA.jar"/>
+	<classpathentry kind="lib" path="/Core-client-base/lib/javax/javax.servlet-api-3.1.0.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/slf4j-api-1.7.30.jar"/>
 	<classpathentry kind="lib" path="/Core-client-base/lib/slf4j-log4j12-1.7.30.jar"/>
 	<classpathentry kind="lib" path="lib/database/derby-10.10.2.0.jar"/>

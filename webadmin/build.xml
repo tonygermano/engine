@@ -5,7 +5,7 @@
 	<property name="donkey.setup" value="../donkey/setup" />
 	<property name="core.lib" value="${server}/core-lib" />
 	
-	<property name="javax.home" value="${server}/lib/javax" />
+	<property name="javax.home" value="${core.lib}/shared/javax" />
 	<property name="jetty.home" value="${server}/lib/jetty" />
 	<property name="jsp.home" value="${jetty.home}/jsp" />
 	<property name="build" value="build" />

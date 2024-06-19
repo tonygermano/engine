@@ -93,6 +93,7 @@ import com.mirth.commons.encryption.Encryptor;
 import com.mirth.commons.encryption.KeyEncryptor;
 import com.mirth.commons.encryption.Output;
 import com.mirth.connect.client.core.ControllerException;
+import com.mirth.connect.connectors.http.HttpDispatcherProperties;
 import com.mirth.connect.donkey.model.DatabaseConstants;
 import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
 import com.mirth.connect.donkey.server.data.DonkeyStatisticsUpdater;
@@ -1645,6 +1646,7 @@ public class DefaultConfigurationController extends ConfigurationController {
         TransmissionModeProvider.BASIC_MODE_PROVIDER = BasicModeProvider.class;
         BatchStreamReader.DEFAULT_BATCH_STREAM_READER = DefaultBatchStreamReader.class;
         ServerSMTPConnectionFactory.SERVER_SMTP_CONNECTION = ServerSMTPConnection.class;
+        ConfigurationController.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
     }
 
     @Override

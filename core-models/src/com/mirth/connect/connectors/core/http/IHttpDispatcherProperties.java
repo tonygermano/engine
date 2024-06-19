@@ -3,6 +3,8 @@ package com.mirth.connect.connectors.core.http;
 import java.util.List;
 import java.util.Map;
 
+import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
+
 public interface IHttpDispatcherProperties {
     
     String getMethod();
@@ -62,4 +64,28 @@ public interface IHttpDispatcherProperties {
     public String getCharset();
     
     public String getContentType();
+    
+    public DestinationConnectorProperties getDestinationConnectorProperties();
+
+	boolean isUseProxyServer();
+
+	String getProxyAddress();
+
+	String getProxyPort();
+
+	boolean isUseHeadersVariable();
+
+	String getHeadersVariable();
+
+	boolean isResponseXmlBody();
+
+	boolean isResponseParseMultipart();
+
+	boolean isResponseIncludeMetadata();
+
+	String getResponseBinaryMimeTypes();
+
+	boolean isMultipart();
+
+	boolean isDataTypeBinary();
 }

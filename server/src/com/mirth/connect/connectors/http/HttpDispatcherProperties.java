@@ -90,8 +90,8 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.socketTimeout = "30000";
     }
 
-    public HttpDispatcherProperties(HttpDispatcherProperties props) {
-        super(props);
+    public HttpDispatcherProperties(IHttpDispatcherProperties props) {
+        super((HttpDispatcherProperties)props);
         destinationConnectorProperties = new DestinationConnectorProperties(props.getDestinationConnectorProperties());
 
         host = props.getHost();
@@ -142,6 +142,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.host = host;
     }
 
+    @Override
     public boolean isUseProxyServer() {
         return useProxyServer;
     }
@@ -150,6 +151,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.useProxyServer = useProxyServer;
     }
 
+    @Override
     public String getProxyAddress() {
         return proxyAddress;
     }
@@ -158,6 +160,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.proxyAddress = proxyAddress;
     }
 
+    @Override
     public String getProxyPort() {
         return proxyPort;
     }
@@ -179,6 +182,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         return headers;
     }
     
+    @Override
     public boolean isUseHeadersVariable() {
         return useHeadersVariable;
     }
@@ -191,6 +195,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.headers = headers;
     }
 
+    @Override
     public String getHeadersVariable() {
         return this.headersVariable;
     }
@@ -226,6 +231,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.parametersVariable = variableName;
     }
 
+    @Override
     public boolean isResponseXmlBody() {
         return responseXmlBody;
     }
@@ -234,6 +240,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseXmlBody = responseXmlBody;
     }
 
+    @Override
     public boolean isResponseParseMultipart() {
         return responseParseMultipart;
     }
@@ -242,6 +249,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseParseMultipart = responseParseMultipart;
     }
 
+    @Override
     public boolean isResponseIncludeMetadata() {
         return responseIncludeMetadata;
     }
@@ -250,6 +258,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseIncludeMetadata = responseIncludeMetadata;
     }
 
+    @Override
     public String getResponseBinaryMimeTypes() {
         return responseBinaryMimeTypes;
     }
@@ -267,6 +276,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.responseBinaryMimeTypesRegex = responseBinaryMimeTypesRegex;
     }
 
+    @Override
     public boolean isMultipart() {
         return multipart;
     }
@@ -340,6 +350,7 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.contentType = contentType;
     }
 
+    @Override
     public boolean isDataTypeBinary() {
         return dataTypeBinary;
     }

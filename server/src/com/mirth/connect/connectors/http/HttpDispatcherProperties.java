@@ -90,8 +90,8 @@ public class HttpDispatcherProperties extends ConnectorProperties implements Des
         this.socketTimeout = "30000";
     }
 
-    public HttpDispatcherProperties(IHttpDispatcherProperties props) {
-        super((HttpDispatcherProperties)props);
+    public HttpDispatcherProperties(HttpDispatcherProperties props) {
+        super(props);
         destinationConnectorProperties = new DestinationConnectorProperties(props.getDestinationConnectorProperties());
 
         host = props.getHost();

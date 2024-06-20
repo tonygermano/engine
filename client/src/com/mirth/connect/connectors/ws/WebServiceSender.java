@@ -513,6 +513,22 @@ public class WebServiceSender extends ConnectorSettingsPanel implements IWebServ
     }
     
     @Override
+    public String getRequiredInboundDataType() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropConnectorSettingsPanelPlugin) {
+    		return ((InteropConnectorSettingsPanelPlugin) connectorPlugin).getRequiredInboundDataType();
+    	}
+    	return super.getRequiredInboundDataType();
+    }
+    
+    @Override
+    public String getInitialOutboundDataType() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropConnectorSettingsPanelPlugin) {
+    		return ((InteropConnectorSettingsPanelPlugin) connectorPlugin).getInitialOutboundDataType();
+    	}
+    	return super.getInitialOutboundDataType();
+    }
+    
+    @Override
 	public String getInitialInboundResponseDataType() {
     	if (connectorPlugin != null && connectorPlugin instanceof InteropConnectorSettingsPanelPlugin) {
     		return ((InteropConnectorSettingsPanelPlugin) connectorPlugin).getInitialInboundResponseDataType();

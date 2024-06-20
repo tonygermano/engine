@@ -3,7 +3,7 @@ package com.mirth.connect.connectors.core.http;
 import java.util.List;
 import java.util.Map;
 
-import com.mirth.connect.donkey.util.DonkeyElement;
+import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 
 public interface IHttpDispatcherProperties {
     
@@ -25,18 +25,16 @@ public interface IHttpDispatcherProperties {
     
     String getContent();
     
+    void setContent(String string);
+    
     Map<String, Object> getPurgedProperties();
     
-    void migrate3_7_0(DonkeyElement element);
-    
-    void migrate3_9_0(DonkeyElement element);
-
     String getName();
     
     void setSocketTimeout(String socketTimeout);
     
     Map<String, List<String>> getHeadersMap();
-    
+
     void setUseAuthentication(boolean useAuthentication);
     
     void setUsername(String username);
@@ -53,9 +51,41 @@ public interface IHttpDispatcherProperties {
 
     boolean isUseParametersVariable();
 
-    CharSequence getParametersVariable();
+    String getParametersVariable();    
     
     void setContentType(String contentType);
     
     boolean isResponseBinaryMimeTypesRegex();
+    
+    public boolean isUsePreemptiveAuthentication();
+    
+    public String getAuthenticationType() ;
+    
+    public String getCharset();
+    
+    public String getContentType();
+    
+    public DestinationConnectorProperties getDestinationConnectorProperties();
+
+	boolean isUseProxyServer();
+
+	String getProxyAddress();
+
+	String getProxyPort();
+
+	boolean isUseHeadersVariable();
+
+	String getHeadersVariable();
+
+	boolean isResponseXmlBody();
+
+	boolean isResponseParseMultipart();
+
+	boolean isResponseIncludeMetadata();
+
+	String getResponseBinaryMimeTypes();
+
+	boolean isMultipart();
+
+	boolean isDataTypeBinary();
 }

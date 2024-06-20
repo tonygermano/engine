@@ -23,4 +23,8 @@ public interface DestinationConnectorPlugin {
 
     public void onHalt() throws ConnectorTaskException;
     
+    default public String getConfigurationClass() {
+    	return null;
+    }
+    
 }

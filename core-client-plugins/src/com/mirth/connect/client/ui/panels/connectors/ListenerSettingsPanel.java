@@ -84,7 +84,7 @@ public class ListenerSettingsPanel extends JPanel {
     }
 
     private void updateAddressRadio() {
-        if (addressField.getText().equals(new ListenerConnectorProperties(null).getHost())) {
+        if (addressField.getText().equals(new ListenerConnectorProperties((String) null).getHost())) {
             allRadio.setSelected(true);
             allRadioActionPerformed(null);
         } else {
@@ -172,7 +172,7 @@ public class ListenerSettingsPanel extends JPanel {
     }
     
     private void allRadioActionPerformed(java.awt.event.ActionEvent evt) {
-        addressField.setText(new ListenerConnectorProperties(null).getHost());
+        addressField.setText(new ListenerConnectorProperties((String) null).getHost());
         addressField.setEnabled(false);
     }
 

@@ -78,9 +78,9 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         this.template = "${message.encodedData}";
     }
 
-    public TcpDispatcherProperties(TcpDispatcherProperties props) {
-        super(props);
-        destinationConnectorProperties = new DestinationConnectorProperties(props.getDestinationConnectorProperties());
+    public TcpDispatcherProperties(ITcpDispatcherProperties props) {
+        super((ConnectorProperties) props);
+        destinationConnectorProperties = new DestinationConnectorProperties(((DestinationConnectorPropertiesInterface) props).getDestinationConnectorProperties());
 
         transmissionModeProperties = props.getTransmissionModeProperties();
 
@@ -102,10 +102,12 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         template = props.getTemplate();
     }
 
+    @Override
     public TransmissionModeProperties getTransmissionModeProperties() {
         return transmissionModeProperties;
     }
 
+    @Override
     public void setTransmissionModeProperties(TransmissionModeProperties transmissionModeProperties) {
         this.transmissionModeProperties = transmissionModeProperties;
     }
@@ -115,6 +117,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return serverMode;
     }
 
+    @Override
     public void setServerMode(boolean serverMode) {
         this.serverMode = serverMode;
     }
@@ -124,6 +127,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return remoteAddress;
     }
 
+    @Override
     public void setRemoteAddress(String remoteAddress) {
         this.remoteAddress = remoteAddress;
     }
@@ -133,6 +137,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return remotePort;
     }
 
+    @Override
     public void setRemotePort(String remotePort) {
         this.remotePort = remotePort;
     }
@@ -142,6 +147,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return overrideLocalBinding;
     }
 
+    @Override
     public void setOverrideLocalBinding(boolean overrideLocalBinding) {
         this.overrideLocalBinding = overrideLocalBinding;
     }
@@ -151,6 +157,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return localAddress;
     }
 
+    @Override
     public void setLocalAddress(String localAddress) {
         this.localAddress = localAddress;
     }
@@ -160,46 +167,57 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return localPort;
     }
 
+    @Override
     public void setLocalPort(String localPort) {
         this.localPort = localPort;
     }
 
+    @Override
     public String getSendTimeout() {
         return sendTimeout;
     }
 
+    @Override
     public void setSendTimeout(String sendTimeout) {
         this.sendTimeout = sendTimeout;
     }
 
+    @Override
     public String getBufferSize() {
         return bufferSize;
     }
 
+    @Override
     public void setBufferSize(String bufferSize) {
         this.bufferSize = bufferSize;
     }
     
+    @Override
     public String getMaxConnections() {
         return maxConnections;
     }
 
+    @Override
     public void setMaxConnections(String maxConnections) {
         this.maxConnections = maxConnections;
     }
 
+    @Override
     public boolean isKeepConnectionOpen() {
         return keepConnectionOpen;
     }
 
+    @Override
     public void setKeepConnectionOpen(boolean keepConnectionOpen) {
         this.keepConnectionOpen = keepConnectionOpen;
     }
 
+    @Override
     public boolean isCheckRemoteHost() {
         return checkRemoteHost;
     }
 
+    @Override
     public void setCheckRemoteHost(boolean checkRemoteHost) {
         this.checkRemoteHost = checkRemoteHost;
     }
@@ -209,46 +227,57 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return responseTimeout;
     }
 
+    @Override
     public void setResponseTimeout(String responseTimeout) {
         this.responseTimeout = responseTimeout;
     }
 
+    @Override
     public boolean isIgnoreResponse() {
         return ignoreResponse;
     }
 
+    @Override
     public void setIgnoreResponse(boolean ignoreResponse) {
         this.ignoreResponse = ignoreResponse;
     }
 
+    @Override
     public boolean isQueueOnResponseTimeout() {
         return queueOnResponseTimeout;
     }
 
+    @Override
     public void setQueueOnResponseTimeout(boolean queueOnResponseTimeout) {
         this.queueOnResponseTimeout = queueOnResponseTimeout;
     }
 
+    @Override
     public boolean isDataTypeBinary() {
         return dataTypeBinary;
     }
 
+    @Override
     public void setDataTypeBinary(boolean dataTypeBinary) {
         this.dataTypeBinary = dataTypeBinary;
     }
 
+    @Override
     public String getCharsetEncoding() {
         return charsetEncoding;
     }
 
+    @Override
     public void setCharsetEncoding(String charsetEncoding) {
         this.charsetEncoding = charsetEncoding;
     }
 
+    @Override
     public String getTemplate() {
         return template;
     }
 
+    @Override
     public void setTemplate(String template) {
         this.template = template;
     }
@@ -290,6 +319,7 @@ public class TcpDispatcherProperties extends ConnectorProperties implements Dest
         return destinationConnectorProperties;
     }
 
+    @Override
     public void setDestinationConnectorProperties(DestinationConnectorProperties destinationConnectorProperties) {
         this.destinationConnectorProperties = destinationConnectorProperties;
     }

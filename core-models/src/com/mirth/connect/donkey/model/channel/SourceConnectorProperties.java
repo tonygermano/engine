@@ -91,6 +91,20 @@ public class SourceConnectorProperties implements Serializable, Migratable, Purg
         resourceIds.put("Default Resource", "[Default Resource]");
         this.queueBufferSize = 0;
     }
+    
+    public SourceConnectorProperties(SourceConnectorProperties props) {
+    	responseVariable = props.getResponseVariable();
+    	respondAfterProcessing = props.isRespondAfterProcessing();
+    	processBatch = props.isProcessBatch();
+    	firstResponse = props.isFirstResponse();
+    	processingThreads = props.getProcessingThreads();
+    	queueBufferSize = props.getQueueBufferSize();
+    	
+    	resourceIds = new LinkedHashMap<>();
+    	for (String resourceIdKey : props.getResourceIds().keySet()) {
+    		resourceIds.put(resourceIdKey, props.getResourceIds().get(resourceIdKey));
+    	}
+    }
 
     public String getResponseVariable() {
         return responseVariable;

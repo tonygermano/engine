@@ -60,8 +60,9 @@ public abstract class Connector implements IConnector {
         return channel;
     }
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
+    @Override
+    public void setChannel(IChannel channel) {
+        this.channel = (Channel) channel;
     }
 
     @Override
@@ -69,6 +70,7 @@ public abstract class Connector implements IConnector {
         return channelId;
     }
 
+    @Override
     public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
@@ -83,6 +85,7 @@ public abstract class Connector implements IConnector {
         return metaDataId;
     }
 
+    @Override
     public void setMetaDataId(int metaDataId) {
         this.metaDataId = metaDataId;
     }
@@ -92,14 +95,17 @@ public abstract class Connector implements IConnector {
         return inboundDataType;
     }
 
+    @Override
     public void setInboundDataType(DataType inboundDataType) {
         this.inboundDataType = inboundDataType;
     }
 
+    @Override
     public DataType getOutboundDataType() {
         return outboundDataType;
     }
 
+    @Override
     public void setOutboundDataType(DataType outboundDataType) {
         this.outboundDataType = outboundDataType;
     }
@@ -109,6 +115,7 @@ public abstract class Connector implements IConnector {
         return currentState;
     }
 
+    @Override
     public void setCurrentState(DeployedState currentState) {
         this.currentState = currentState;
     }
@@ -118,24 +125,29 @@ public abstract class Connector implements IConnector {
         return connectorProperties;
     }
 
+    @Override
     public void setConnectorProperties(ConnectorProperties connectorProperties) {
         this.connectorProperties = connectorProperties;
     }
 
+    @Override
     public Map<String, Integer> getDestinationIdMap() {
         return destinationIdMap;
     }
 
+    @Override
     public void setDestinationIdMap(Map<String, Integer> destinationIdMap) {
         this.destinationIdMap = destinationIdMap;
     }
 
+    @Override
     public FilterTransformerExecutor getFilterTransformerExecutor() {
         return filterTransformerExecutor;
     }
 
-    public void setFilterTransformerExecutor(FilterTransformerExecutor filterTransformerExecutor) {
-        this.filterTransformerExecutor = filterTransformerExecutor;
+    @Override
+    public void setFilterTransformerExecutor(Object filterTransformerExecutor) {
+        this.filterTransformerExecutor = (FilterTransformerExecutor) filterTransformerExecutor;
     }
 
     @Override
@@ -143,11 +155,13 @@ public abstract class Connector implements IConnector {
         return resourceIds;
     }
 
+    @Override
     public void setResourceIds(Set<String> resourceIds) {
         this.resourceIds = resourceIds;
     }
 
-    protected String getConfigurationClass() {
+    @Override
+    public String getConfigurationClass() {
         return null;
     }
 }

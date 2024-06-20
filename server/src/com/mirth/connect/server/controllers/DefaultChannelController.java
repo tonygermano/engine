@@ -32,10 +32,15 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.ControllerException;
 import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
+import com.mirth.connect.connectors.core.tcp.ITcpDispatcherProperties;
+import com.mirth.connect.connectors.core.tcp.ITcpReceiverProperties;
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.tcp.TcpDispatcherProperties;
+import com.mirth.connect.connectors.tcp.TcpReceiverProperties;
+import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
-import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
 import com.mirth.connect.donkey.model.channel.Ports;
@@ -1140,4 +1145,30 @@ public class DefaultChannelController extends ChannelController {
     public IHttpDispatcherProperties createHttpDispatcherProperties(IHttpDispatcherProperties props) {
         return new HttpDispatcherProperties((HttpDispatcherProperties) props);
     }
+
+	@Override
+	public IWebServiceDispatcherProperties createWebServiceDispatcherProperties() {
+		return new WebServiceDispatcherProperties();
+	}
+
+	@Override
+	public IWebServiceDispatcherProperties createWebServiceDispatcherProperties(IWebServiceDispatcherProperties props) {
+		return new WebServiceDispatcherProperties(props);
+	}
+	
+	@Override
+	public ITcpReceiverProperties createTcpReceiverProperties() {
+		return new TcpReceiverProperties();
+	}
+	
+	@Override
+	public ITcpDispatcherProperties createTcpDispatcherProperties() {
+		return new TcpDispatcherProperties();
+	}
+	
+	@Override
+	public ITcpDispatcherProperties createTcpDispatcherProperties(ITcpDispatcherProperties props) {
+		return new TcpDispatcherProperties(props);
+	}
+	
 }

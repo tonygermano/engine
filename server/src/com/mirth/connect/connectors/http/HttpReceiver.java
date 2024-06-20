@@ -79,12 +79,14 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.URIUtil;
 import org.eclipse.jetty.util.security.Constraint;
 
+import com.mirth.connect.connectors.core.http.BinaryContentTypeResolver;
 import com.mirth.connect.connectors.core.http.HttpConfiguration;
 import com.mirth.connect.connectors.core.http.HttpRequestMessage;
 import com.mirth.connect.connectors.core.http.HttpSourceConnectorPlugin;
 import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.connectors.core.http.IHttpReceiver;
 import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
+import com.mirth.connect.connectors.core.interop.InteropReceiverPlugin;
 import com.mirth.connect.connectors.core.http.HttpStaticResource.ResourceType;
 import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
@@ -452,8 +454,19 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
             baseRequest.setHandled(true);
         }
     }
+    
+    protected void sendResponse(Object baseRequestObj, HttpServletResponse servletResponse, DispatchResult dispatchResult) throws Exception {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).sendResponse(new RequestWrapper((Request) baseRequestObj), servletResponse, dispatchResult);
+    	} else {
+    		doSendResponse(baseRequestObj, servletResponse, dispatchResult);
+    	}
+    }
 
-    protected void sendResponse(Request baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult) throws Exception {
+    @Override
+    public void doSendResponse(Object baseRequestObj, HttpServletResponse servletResponse, DispatchResult dispatchResult) throws Exception {
+    	Request baseRequest = (Request) baseRequestObj;
+    	
         ContentType contentType = ContentType.parse(replaceValues(((IHttpReceiverProperties) getConnectorProperties()).getResponseContentType(), dispatchResult));
         if (!((IHttpReceiverProperties) getConnectorProperties()).isResponseDataTypeBinary() && contentType.getCharset() == null) {
             /*
@@ -493,8 +506,11 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         return responseHeaders;
     }
 
-    protected void sendResponse(Request baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult, ContentType contentType, Map<String, List<String>> responseHeaders, byte[] responseBytes) throws Exception {
-        servletResponse.setContentType(contentType.toString());
+    @Override
+    public void sendResponse(Object baseRequestObj, HttpServletResponse servletResponse, DispatchResult dispatchResult, ContentType contentType, Map<String, List<String>> responseHeaders, byte[] responseBytes) throws Exception {
+        Request baseRequest = (Request) baseRequestObj;
+    	
+    	servletResponse.setContentType(contentType.toString());
 
         // set the response headers
         for (Entry<String, List<String>> entry : responseHeaders.entrySet()) {
@@ -577,6 +593,8 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     public void sendErrorResponse(Object baseRequest, HttpServletResponse servletResponse, DispatchResult dispatchResult, Throwable t) throws IOException {
     	if (connectorPlugin != null && connectorPlugin instanceof HttpSourceConnectorPlugin) {
     		((HttpSourceConnectorPlugin) connectorPlugin).sendErrorResponse(baseRequest, servletResponse, dispatchResult, t);
+    	} else if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).sendErrorResponse(new RequestWrapper((Request) baseRequest), servletResponse, dispatchResult, t);
     	} else {
     		doSendErrorResponse(baseRequest, servletResponse, dispatchResult, t);
     	}
@@ -606,6 +624,8 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     protected Object getMessage(Request request, Map<String, Object> sourceMap, List<Attachment> attachments) throws Exception {
     	if (connectorPlugin != null && connectorPlugin instanceof HttpSourceConnectorPlugin) {
     		return ((HttpSourceConnectorPlugin) connectorPlugin).getMessage(request, request.getContentType(), sourceMap, attachments);
+    	} else if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		return ((InteropReceiverPlugin) connectorPlugin).getMessage(new RequestWrapper(request), sourceMap, attachments);
     	} else {
     		return doGetMessage(request, sourceMap, attachments);
     	}
@@ -637,7 +657,7 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public HttpRequestMessage createRequestMessage(Object request, boolean ignorePayload) throws IOException, MessagingException {
-        return createRequestMessage((Request) request, ignorePayload, shouldParseMultipart((IHttpReceiverProperties) getConnectorProperties(), (Request) request));
+        return createRequestMessage(request, ignorePayload, shouldParseMultipart((IHttpReceiverProperties) getConnectorProperties(), (Request) request));
     }
     
     protected boolean shouldParseMultipart(IHttpReceiverProperties connectorProperties, Request request) {
@@ -645,7 +665,10 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
     	return connectorProperties.isXmlBody() && connectorProperties.isParseMultipart() && ServletFileUpload.isMultipartContent(request);
     }
 
-    protected HttpRequestMessage createRequestMessage(Request request, boolean ignorePayload, boolean parseMultipart) throws IOException, MessagingException {
+    @Override
+    public HttpRequestMessage createRequestMessage(Object requestObj, boolean ignorePayload, boolean parseMultipart) throws IOException, MessagingException {
+    	Request request = (Request) requestObj;
+    	
         HttpRequestMessage requestMessage = new HttpRequestMessage();
         requestMessage.setMethod(request.getMethod());
         requestMessage.setHeaders(HttpMessageConverter.convertFieldEnumerationToMap(request));
@@ -705,6 +728,15 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
 
     @Override
     public void populateSourceMap(Object request, HttpRequestMessage requestMessage, Map<String, Object> sourceMap) {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).populateSourceMap(new RequestWrapper((Request) request), requestMessage, sourceMap);
+    	} else {
+    		doPopulateSourceMap(request, requestMessage, sourceMap);
+    	}
+    }
+    
+    @Override
+    public void doPopulateSourceMap(Object request, HttpRequestMessage requestMessage, Map<String, Object> sourceMap) {
         sourceMap.put("remoteAddress", requestMessage.getRemoteAddress());
         sourceMap.put("remotePort", ((Request) request).getRemotePort());
         sourceMap.put("localAddress", StringUtils.trimToEmpty(((Request) request).getLocalAddr()));
@@ -870,7 +902,8 @@ public class HttpReceiver extends SourceConnector implements IHttpReceiver, Bina
         }
     }
 
-    protected String replaceValues(String template, DispatchResult dispatchResult) {
+    @Override
+    public String replaceValues(String template, DispatchResult dispatchResult) {
         ConnectorMessage mergedConnectorMessage = null;
 
         if (dispatchResult != null && dispatchResult.getProcessedMessage() != null) {

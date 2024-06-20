@@ -32,6 +32,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.tcp.ITcpDispatcher;
 import com.mirth.connect.connectors.core.tcp.StateAwareSocketInterface;
 import com.mirth.connect.connectors.core.tcp.TcpConfiguration;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
@@ -60,7 +61,7 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.ErrorMessageBuilder;
 import com.mirth.connect.util.TcpUtil;
 
-public class TcpDispatcher extends DestinationConnector {
+public class TcpDispatcher extends DestinationConnector implements ITcpDispatcher {
     // This determines how many client requests can queue up while waiting for the server socket to accept
     private static final int DEFAULT_BACKLOG = 256;
 
@@ -99,6 +100,15 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin!= null) {
+    		connectorPlugin.onDeploy();
+    	} else {
+    		doOnDeploy();
+    	}
+    }
+    
+    @Override
+    public void doOnDeploy() throws ConnectorTaskException {
         connectorProperties = (TcpDispatcherProperties) getConnectorProperties();
 
         String pluginPointName = (String) connectorProperties.getTransmissionModeProperties().getPluginPointName();
@@ -137,12 +147,30 @@ public class TcpDispatcher extends DestinationConnector {
 
         eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.IDLE));
     }
+    
+    @Override
+    public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	} else {
+    		doOnUndeploy();
+    	}
+    }
 
     @Override
-    public void onUndeploy() throws ConnectorTaskException {}
-
+    public void doOnUndeploy() throws ConnectorTaskException {}
+    
     @Override
     public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	} else {
+    		doOnStart();
+    	}
+    }
+
+    @Override
+    public void doOnStart() throws ConnectorTaskException {
         if (connectorProperties.isServerMode()) {
             try {
                 createServerSocket();
@@ -193,9 +221,18 @@ public class TcpDispatcher extends DestinationConnector {
             thread.start();
         }
     }
-
+    
     @Override
     public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	} else {
+    		doOnStop();
+    	}
+    }
+
+    @Override
+    public void doOnStop() throws ConnectorTaskException {
         ConnectorTaskException firstCause = null;
 
         if (connectorProperties.isServerMode()) {
@@ -255,9 +292,18 @@ public class TcpDispatcher extends DestinationConnector {
             throw firstCause;
         }
     }
-
+    
     @Override
     public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	} else {
+    		doOnHalt();
+    	}
+    }
+
+    @Override
+    public void doOnHalt() throws ConnectorTaskException {
         ConnectorTaskException firstCause = null;
 
         if (connectorProperties.isServerMode()) {
@@ -317,9 +363,18 @@ public class TcpDispatcher extends DestinationConnector {
             throw firstCause;
         }
     }
+    
+    @Override
+    public Response send(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.send(connectorProperties, connectorMessage);
+    	} else {
+    		return doSend(connectorProperties, connectorMessage);
+    	}
+    }
 
     @Override
-    public Response send(ConnectorProperties connectorProperties, ConnectorMessage message) {
+    public Response doSend(ConnectorProperties connectorProperties, ConnectorMessage message) {
         TcpDispatcherProperties tcpDispatcherProperties = (TcpDispatcherProperties) connectorProperties;
         Status responseStatus = Status.QUEUED;
         String responseData = null;
@@ -628,6 +683,9 @@ public class TcpDispatcher extends DestinationConnector {
 
     @Override
 	public String getConfigurationClass() {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.getConfigurationClass();
+    	}
         return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
     }
 

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.interop.InteropDispatcherPlugin;
 import com.mirth.connect.donkey.model.DonkeyException;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
@@ -79,6 +80,7 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
     private DonkeyDaoFactory daoFactory;
     private Logger logger = LogManager.getLogger(getClass());
     
+    @Override
     public void initialize(DestinationConnectorPlugin connectorPlugin) {
     	this.connectorPlugin = connectorPlugin;
     }
@@ -131,12 +133,14 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
     	}
     }
 
+    @Override
     public DestinationQueue getQueue() {
         return queue;
     }
 
-    public void setQueue(DestinationQueue queue) {
-        this.queue = queue;
+    @Override
+    public void setQueue(Object queue) {
+        this.queue = (DestinationQueue) queue;
     }
 
     public void setQueueEmptySleepTime(int queueEmptySleepTime) {
@@ -218,6 +222,7 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
         return destinationName;
     }
 
+    @Override
     public void setDestinationName(String destinationName) {
         this.destinationName = destinationName;
     }
@@ -227,34 +232,42 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
         return getDestinationName();
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isForceQueue() {
         return forceQueue.get();
     }
 
+    @Override
     public void setForceQueue(boolean forceQueue) {
         this.forceQueue.set(forceQueue);
     }
 
+    @Override
     public Integer getOrderId() {
         return orderId;
     }
 
+    @Override
     public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
 
+    @Override
     public Serializer getSerializer() {
         return channel.getSerializer();
     }
 
+    @Override
     public MessageMaps getMessageMaps() {
         return channel.getMessageMaps();
     }
@@ -268,36 +281,44 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
         }
     }
 
-    public void setMetaDataReplacer(MetaDataReplacer metaDataReplacer) {
-        this.metaDataReplacer = metaDataReplacer;
+    @Override
+    public void setMetaDataReplacer(Object metaDataReplacer) {
+        this.metaDataReplacer = (MetaDataReplacer) metaDataReplacer;
     }
 
+    @Override
     public void setMetaDataColumns(List<MetaDataColumn> metaDataColumns) {
         this.metaDataColumns = metaDataColumns;
     }
 
+    @Override
     public ResponseValidator getResponseValidator() {
         return responseValidator;
     }
 
+    @Override
     public void setResponseValidator(ResponseValidator responseValidator) {
         this.responseValidator = responseValidator;
     }
 
+    @Override
     public ResponseTransformerExecutor getResponseTransformerExecutor() {
         return responseTransformerExecutor;
     }
 
-    public void setResponseTransformerExecutor(ResponseTransformerExecutor responseTransformerExecutor) {
-        this.responseTransformerExecutor = responseTransformerExecutor;
+    @Override
+    public void setResponseTransformerExecutor(Object responseTransformerExecutor) {
+        this.responseTransformerExecutor = (ResponseTransformerExecutor) responseTransformerExecutor;
     }
 
-    protected void setStorageSettings(StorageSettings storageSettings) {
-        this.storageSettings = storageSettings;
+    @Override
+    public void setStorageSettings(Object storageSettings) {
+        this.storageSettings = (StorageSettings) storageSettings;
     }
 
-    protected void setDaoFactory(DonkeyDaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    @Override
+    public void setDaoFactory(Object daoFactory) {
+        this.daoFactory = (DonkeyDaoFactory) daoFactory;
     }
 
     /**
@@ -310,14 +331,17 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
     /**
      * Tells whether or not queue rotation is enabled
      */
+    @Override
     public boolean isQueueRotate() {
         return (destinationConnectorProperties != null && destinationConnectorProperties.isRotate());
     }
 
+    @Override
     public boolean willAttemptSend() {
         return !isQueueEnabled() || (destinationConnectorProperties.isSendFirst() && queue.size() == 0 && !isForceQueue() && (channel.getQueueHandler() == null || channel.getQueueHandler().allowSendFirst(this)));
     }
 
+    @Override
     public boolean includeFilterTransformerInQueue() {
         return isQueueEnabled() && destinationConnectorProperties.isRegenerateTemplate() && destinationConnectorProperties.isIncludeFilterTransformer();
     }
@@ -327,12 +351,22 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
         return channel.getAttachmentHandlerProvider();
     }
 
+    @Override
     public void updateCurrentState(DeployedState currentState) {
         setCurrentState(currentState);
         channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), destinationName, DeployedStateEventType.getTypeFromDeployedState(currentState)));
     }
-
+    
     public void start() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).start();
+    	} else {
+    		doStart();
+    	}
+    }
+
+    @Override
+    public void doStart() throws ConnectorTaskException, InterruptedException {
         updateCurrentState(DeployedState.STARTING);
 
         // If multiple processing threads are allowed, create the unique ID stack
@@ -355,8 +389,17 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
 
         updateCurrentState(DeployedState.STARTED);
     }
-
+    
     public void startQueue() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).startQueue();
+    	} else {
+    		doStartQueue();
+    	}
+    }
+
+    @Override
+    public void doStartQueue() {
         stopQueue.set(false);
 
         if (isQueueEnabled() && (channel.getQueueHandler() == null || channel.getQueueHandler().canStartDestinationQueue(this))) {
@@ -393,8 +436,17 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
             }
         }
     }
-
+    
     public void stop() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).stop();
+    	} else {
+    		doStop();
+    	}
+    }
+
+    @Override
+    public void doStop() throws ConnectorTaskException, InterruptedException {
         updateCurrentState(DeployedState.STOPPING);
         stopQueue.set(true);
 
@@ -425,8 +477,17 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
             }
         }
     }
-
+    
     public void halt() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).halt();
+    	} else {
+    		doHalt();
+    	}
+    }
+
+    @Override
+    public void doHalt() throws ConnectorTaskException, InterruptedException {
         updateCurrentState(DeployedState.STOPPING);
         stopQueue.set(true);
 
@@ -462,8 +523,18 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
         String content = channel.getSerializer().serialize(connectorProperties);
         return new MessageContent(message.getChannelId(), message.getMessageId(), message.getMetaDataId(), ContentType.SENT, content, null, false);
     }
+    
+    public void transform(Object daoObj, ConnectorMessage message, Status previousStatus, boolean initialAttempt) throws InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).transform(daoObj, message, previousStatus, initialAttempt);
+    	} else {
+    		doTransform(daoObj, message, previousStatus, initialAttempt);
+    	}
+    }
 
-    public void transform(DonkeyDao dao, ConnectorMessage message, Status previousStatus, boolean initialAttempt) throws InterruptedException {
+    @Override
+    public void doTransform(Object daoObj, ConnectorMessage message, Status previousStatus, boolean initialAttempt) throws InterruptedException {
+    	DonkeyDao dao = (DonkeyDao) daoObj;
         try {
             getFilterTransformerExecutor().processConnectorMessage(message);
         } catch (DonkeyException e) {
@@ -532,6 +603,22 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
             }
         }
     }
+    
+    /**
+     * Process a transformed message. Attempt to send the message unless the destination connector
+     * is configured to immediately queue messages.
+     * 
+     * @return The status of the message at the end of processing. If the message was placed in the
+     *         destination connector queue, then QUEUED is returned.
+     * @throws InterruptedException
+     */
+    public void process(Object daoObj, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).process(daoObj, message, previousStatus);
+    	} else {
+    		doProcess(daoObj, message, previousStatus);
+    	}
+    }
 
     /**
      * Process a transformed message. Attempt to send the message unless the destination connector
@@ -541,7 +628,9 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
      *         destination connector queue, then QUEUED is returned.
      * @throws InterruptedException
      */
-    public void process(DonkeyDao dao, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    @Override
+    public void doProcess(Object daoObj, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    	DonkeyDao dao = (DonkeyDao) daoObj;
         ConnectorProperties connectorProperties = null;
 
         ThreadUtils.checkInterruptedStatus();
@@ -598,8 +687,18 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
             updateQueuedStatus(dao, message, previousStatus);
         }
     }
+    
+    public void updateQueuedStatus(Object daoObj, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).updateQueuedStatus(daoObj, message, previousStatus);
+    	} else {
+    		doUpdateQueuedStatus(daoObj, message, previousStatus);
+    	}
+    }
 
-    public void updateQueuedStatus(DonkeyDao dao, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    @Override
+    public void doUpdateQueuedStatus(Object daoObj, ConnectorMessage message, Status previousStatus) throws InterruptedException {
+    	DonkeyDao dao = (DonkeyDao) daoObj;
         message.setStatus(Status.QUEUED);
         message.getResponseMap().put("d" + String.valueOf(getMetaDataId()), new Response(Status.QUEUED, "", QUEUED_RESPONSE));
 
@@ -610,13 +709,28 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
 
         dao.updateStatus(message, previousStatus);
     }
+    
+    /**
+     * Process a connector message with PENDING status
+     * 
+     * @throws InterruptedException
+     */
+    public void processPendingConnectorMessage(Object daoObj, ConnectorMessage message) throws InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).processPendingConnectorMessage(daoObj, message);
+    	} else {
+    		doProcessPendingConnectorMessage(daoObj, message);
+    	}
+    }
 
     /**
      * Process a connector message with PENDING status
      * 
      * @throws InterruptedException
      */
-    public void processPendingConnectorMessage(DonkeyDao dao, ConnectorMessage message) throws InterruptedException {
+    @Override
+    public void doProcessPendingConnectorMessage(Object daoObj, ConnectorMessage message) throws InterruptedException {
+    	DonkeyDao dao = (DonkeyDao) daoObj;
         Serializer serializer = channel.getSerializer();
         Response response = serializer.deserialize(message.getResponse().getContent(), Response.class);
 

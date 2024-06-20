@@ -88,9 +88,9 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         this.soapAction = "";
     }
 
-    public WebServiceDispatcherProperties(WebServiceDispatcherProperties props) {
-        super(props);
-        destinationConnectorProperties = new DestinationConnectorProperties(props.getDestinationConnectorProperties());
+    public WebServiceDispatcherProperties(IWebServiceDispatcherProperties props) {
+        super((ConnectorProperties) props);
+        destinationConnectorProperties = new DestinationConnectorProperties(((DestinationConnectorPropertiesInterface) props).getDestinationConnectorProperties());
 
         wsdlUrl = props.getWsdlUrl();
         operation = props.getOperation();
@@ -127,22 +127,27 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return wsdlUrl;
     }
 
+    @Override
     public void setWsdlUrl(String wsdlUrl) {
         this.wsdlUrl = wsdlUrl;
     }
 
+    @Override
     public String getService() {
         return service;
     }
 
+    @Override
     public void setService(String service) {
         this.service = service;
     }
 
+    @Override
     public String getPort() {
         return port;
     }
 
+    @Override
     public void setPort(String port) {
         this.port = port;
     }
@@ -152,6 +157,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return locationURI;
     }
 
+    @Override
     public void setLocationURI(String locationURI) {
         this.locationURI = locationURI;
     }
@@ -161,22 +167,27 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return socketTimeout;
     }
 
+    @Override
     public void setSocketTimeout(String socketTimeout) {
         this.socketTimeout = socketTimeout;
     }
 
+    @Override
     public String getOperation() {
         return operation;
     }
 
+    @Override
     public void setOperation(String operation) {
         this.operation = operation;
     }
 
+    @Override
     public boolean isUseAuthentication() {
         return useAuthentication;
     }
 
+    @Override
     public void setUseAuthentication(boolean useAuthentication) {
         this.useAuthentication = useAuthentication;
     }
@@ -186,6 +197,7 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
@@ -195,94 +207,117 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public String getEnvelope() {
         return envelope;
     }
 
+    @Override
     public void setEnvelope(String envelope) {
         this.envelope = envelope;
     }
 
+    @Override
     public boolean isOneWay() {
         return oneWay;
     }
 
+    @Override
     public void setOneWay(boolean oneWay) {
         this.oneWay = oneWay;
     }
 
+    @Override
     public String getHeadersVariable() {
         return headersVariable;
     }
 
+    @Override
     public void setHeadersVariable(String headersVariable) {
         this.headersVariable = headersVariable;
     }
 
+    @Override
     public boolean isUseHeadersVariable() {
         return isUseHeadersVariable;
     }
 
+    @Override
     public void setUseHeadersVariable(boolean isUseHeadersVariable) {
         this.isUseHeadersVariable = isUseHeadersVariable;
     }
 
+    @Override
     public Map<String, List<String>> getHeadersMap() {
         return headers;
     }
 
+    @Override
     public void setHeadersMap(Map<String, List<String>> headers) {
         this.headers = headers;
     }
 
+    @Override
     public boolean isUseMtom() {
         return useMtom;
     }
 
+    @Override
     public void setUseMtom(boolean useMtom) {
         this.useMtom = useMtom;
     }
 
+    @Override
     public String getAttachmentsVariable() {
         return attachmentsVariable;
     }
 
+    @Override
     public void setAttachmentsVariable(String attachmentsVariable) {
         this.attachmentsVariable = attachmentsVariable;
     }
 
+    @Override
     public List<String> getAttachmentNames() {
         return attachmentNames;
     }
 
+    @Override
     public void setAttachmentNames(List<String> attachmentNames) {
         this.attachmentNames = attachmentNames;
     }
 
+    @Override
     public List<String> getAttachmentContents() {
         return attachmentContents;
     }
 
+    @Override
     public void setAttachmentContents(List<String> attachmentContents) {
         this.attachmentContents = attachmentContents;
     }
 
+    @Override
     public List<String> getAttachmentTypes() {
         return attachmentTypes;
     }
 
+    @Override
     public void setAttachmentTypes(List<String> attachmentTypes) {
         this.attachmentTypes = attachmentTypes;
     }
 
+    @Override
     public boolean isUseAttachmentsVariable() {
         return isUseAttachmentsVariable;
     }
 
+    @Override
     public void setUseAttachmentsVariable(boolean isUseAttachmentsVariable) {
         this.isUseAttachmentsVariable = isUseAttachmentsVariable;
     }
@@ -292,14 +327,17 @@ public class WebServiceDispatcherProperties extends ConnectorProperties implemen
         return soapAction;
     }
 
+    @Override
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
 
+    @Override
     public DefinitionServiceMap getWsdlDefinitionMap() {
         return wsdlDefinitionMap;
     }
 
+    @Override
     public void setWsdlDefinitionMap(DefinitionServiceMap wsdlDefinitionMap) {
         this.wsdlDefinitionMap = wsdlDefinitionMap;
     }

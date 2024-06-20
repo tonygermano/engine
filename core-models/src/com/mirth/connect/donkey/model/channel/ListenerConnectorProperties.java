@@ -24,6 +24,11 @@ public class ListenerConnectorProperties implements Serializable, Migratable {
         host = "0.0.0.0";
         port = defaultPort;
     }
+    
+    public ListenerConnectorProperties(ListenerConnectorProperties props) {
+    	host = props.getHost();
+    	port = props.getPort();
+    }
 
     public String getHost() {
         return host;

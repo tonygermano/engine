@@ -85,6 +85,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         return sourceConnectorProperties;
     }
 
+    @Override
     public void setSourceConnectorProperties(SourceConnectorProperties sourceConnectorProperties) {
         this.sourceConnectorProperties = sourceConnectorProperties;
     }
@@ -94,6 +95,7 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         return listenerConnectorProperties;
     }
 
+    @Override
     public void setListenerConnectorProperties(ListenerConnectorProperties listenerConnectorProperties) {
         this.listenerConnectorProperties = listenerConnectorProperties;
     }
@@ -150,10 +152,12 @@ public class TcpReceiverProperties extends ConnectorProperties implements Listen
         this.reconnectInterval = reconnectInterval;
     }
 
+    @Override
     public String getReceiveTimeout() {
         return receiveTimeout;
     }
 
+    @Override
     public void setReceiveTimeout(String receiveTimeout) {
         this.receiveTimeout = receiveTimeout;
     }

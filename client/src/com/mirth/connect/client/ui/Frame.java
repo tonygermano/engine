@@ -5149,6 +5149,7 @@ public class Frame extends FrameBase {
         }
     }
 
+    @Override
     public List<ResourceProperties> getResources() {
         if (settingsPane == null) {
             settingsPane = new SettingsPane();

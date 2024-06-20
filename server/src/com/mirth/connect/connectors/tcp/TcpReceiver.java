@@ -41,6 +41,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.tcp.ITcpReceiver;
 import com.mirth.connect.connectors.core.tcp.StateAwareSocketInterface;
 import com.mirth.connect.connectors.core.tcp.TcpConfiguration;
 import com.mirth.connect.donkey.model.channel.DeployedState;
@@ -77,7 +78,7 @@ import com.mirth.connect.util.CharsetUtils;
 import com.mirth.connect.util.ErrorMessageBuilder;
 import com.mirth.connect.util.TcpUtil;
 
-public class TcpReceiver extends SourceConnector {
+public class TcpReceiver extends SourceConnector implements ITcpReceiver {
     // This determines how many client requests can queue up while waiting for the server socket to accept
     private static final int DEFAULT_BACKLOG = 256;
 
@@ -106,6 +107,15 @@ public class TcpReceiver extends SourceConnector {
 
     @Override
     public void onDeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onDeploy();
+    	} else {
+    		doOnDeploy();
+    	}
+    }
+    
+    @Override
+    public void doOnDeploy() throws ConnectorTaskException {
         connectorProperties = (TcpReceiverProperties) getConnectorProperties();
 
         if (connectorProperties.isDataTypeBinary() && isProcessBatch()) {
@@ -156,12 +166,30 @@ public class TcpReceiver extends SourceConnector {
 
         eventController.dispatchEvent(new ConnectorCountEvent(getChannelId(), getMetaDataId(), getSourceName(), ConnectionStatusEventType.IDLE, null, maxConnections));
     }
+    
+    @Override
+    public void onUndeploy() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onUndeploy();
+    	} else {
+    		doOnUndeploy();
+    	}
+    }
 
     @Override
-    public void onUndeploy() throws ConnectorTaskException {}
+    public void doOnUndeploy() throws ConnectorTaskException {}
 
     @Override
     public void onStart() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStart();
+    	} else {
+    		doOnStart();
+    	}
+    }
+    
+    @Override
+    public void doOnStart() throws ConnectorTaskException {
         disposing.set(false);
         results.clear();
         clientReaders.clear();
@@ -271,6 +299,15 @@ public class TcpReceiver extends SourceConnector {
 
     @Override
     public void onStop() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onStop();
+    	} else {
+    		doOnStop();
+    	}
+    }
+    
+    @Override
+    public void doOnStop() throws ConnectorTaskException {
         ConnectorTaskException firstCause = null;
 
         synchronized (clientReaders) {
@@ -386,6 +423,15 @@ public class TcpReceiver extends SourceConnector {
 
     @Override
     public void onHalt() throws ConnectorTaskException {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.onHalt();
+    	} else {
+    		doOnHalt();
+    	}
+    }
+    
+    @Override
+    public void doOnHalt() throws ConnectorTaskException {
         ConnectorTaskException firstCause = null;
 
         synchronized (clientReaders) {
@@ -475,9 +521,18 @@ public class TcpReceiver extends SourceConnector {
             throw firstCause;
         }
     }
-
+    
     @Override
     public void handleRecoveredResponse(DispatchResult dispatchResult) {
+    	if (connectorPlugin != null) {
+    		connectorPlugin.handleRecoveredResponse(dispatchResult);
+    	} else {
+    		doHandleRecoveredResponse(dispatchResult);
+    	}
+    }
+
+    @Override
+    public void doHandleRecoveredResponse(DispatchResult dispatchResult) {
         try {
             if (dispatchResult.getSelectedResponse() != null) {
                 // Only if we're responding on a new connection can we handle recovered responses

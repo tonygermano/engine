@@ -7,7 +7,7 @@
  * been included with this distribution in the LICENSE.txt file.
  */
 
-package com.mirth.connect.connectors.http;
+package com.mirth.connect.connectors.core.http;
 
 import org.apache.http.entity.ContentType;
 

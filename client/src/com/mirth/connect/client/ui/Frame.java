@@ -130,6 +130,7 @@ import com.mirth.connect.client.ui.tag.SettingsPanelTags;
 import com.mirth.connect.client.ui.util.DisplayUtil;
 import com.mirth.connect.connectors.core.http.Constants;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
+import com.mirth.connect.connectors.http.HttpReceiverProperties;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
@@ -337,6 +338,7 @@ public class Frame extends FrameBase {
     	MIRTH_R_TEXT_SCROLL_PANE = MirthRTextScrollPane.class;
         ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
         Constants.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
+        Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
     }
 
     @Override

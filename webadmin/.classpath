@@ -10,11 +10,11 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/displaytag-1.2.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/stripes.jar"/>
-	<classpathentry kind="lib" path="/Server/lib/javax/javax.servlet-api-3.1.0.jar"/>
 	<classpathentry kind="lib" path="/Server/lib/jetty/jsp/org.mortbay.jasper.apache-jsp-8.5.70.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-client-base"/>
+	<classpathentry kind="lib" path="/Core-client-base/lib/javax/javax.servlet-api-3.1.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-models"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Core-util"/>
 	<classpathentry kind="output" path="build/classes"/>

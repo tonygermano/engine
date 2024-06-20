@@ -265,12 +265,12 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     	if (connectorPlugin != null) {
     		return connectorPlugin.send(connectorProperties, connectorMessage);
     	} else {
-    		return doSend(connectorProperties, connectorMessage);
+    		return doSend((IHttpDispatcherProperties) connectorProperties, connectorMessage);
     	}
     }
-
+    
     @Override
-    public Response doSend(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
+    public Response doSend(IHttpDispatcherProperties connectorProperties, ConnectorMessage connectorMessage) {
         HttpDispatcherProperties httpDispatcherProperties = (HttpDispatcherProperties) connectorProperties;
         eventController.dispatchEvent(new ConnectionStatusEvent(getChannelId(), getMetaDataId(), getDestinationName(), ConnectionStatusEventType.WRITING));
 

@@ -241,7 +241,7 @@ public class HttpDispatcher extends DestinationConnector implements IHttpDispatc
     }
 
     @Override
-    public void doReplaceConnectorProperties(IHttpDispatcherProperties connectorProperties, ConnectorMessage connectorMessage) {
+    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
         HttpDispatcherProperties httpDispatcherProperties = (HttpDispatcherProperties) connectorProperties;
 
         // Replace all values in connector properties

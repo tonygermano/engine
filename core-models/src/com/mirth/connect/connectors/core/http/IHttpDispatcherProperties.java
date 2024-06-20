@@ -3,7 +3,7 @@ package com.mirth.connect.connectors.core.http;
 import java.util.List;
 import java.util.Map;
 
-import com.mirth.connect.donkey.util.DonkeyElement;
+import com.mirth.connect.donkey.model.channel.DestinationConnectorProperties;
 
 public interface IHttpDispatcherProperties {
     
@@ -56,4 +56,36 @@ public interface IHttpDispatcherProperties {
     void setContentType(String contentType);
     
     boolean isResponseBinaryMimeTypesRegex();
+    
+    public boolean isUsePreemptiveAuthentication();
+    
+    public String getAuthenticationType() ;
+    
+    public String getCharset();
+    
+    public String getContentType();
+    
+    public DestinationConnectorProperties getDestinationConnectorProperties();
+
+	boolean isUseProxyServer();
+
+	String getProxyAddress();
+
+	String getProxyPort();
+
+	boolean isUseHeadersVariable();
+
+	String getHeadersVariable();
+
+	boolean isResponseXmlBody();
+
+	boolean isResponseParseMultipart();
+
+	boolean isResponseIncludeMetadata();
+
+	String getResponseBinaryMimeTypes();
+
+	boolean isMultipart();
+
+	boolean isDataTypeBinary();
 }

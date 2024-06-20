@@ -46,6 +46,7 @@ public abstract class ConfigurationController extends Controller {
     public static final int STATUS_UNAVAILABLE = 1;
     public static final int STATUS_ENGINE_STARTING = 2;
     public static final int STATUS_INITIAL_DEPLOY = 3;
+    public static Class<?> HTTP_DISPATCHER_PROPERTIES_CLASS;
 
     public static ConfigurationController getInstance() {
         return ControllerFactory.getFactory().createConfigurationController();

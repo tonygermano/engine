@@ -133,7 +133,7 @@ public class MirthLauncher {
             versionProperties.load(mirthServerJarFile.getInputStream(mirthServerJarFile.getJarEntry("version.properties")));
             String currentVersion = versionProperties.getProperty("mirth.version");
             
-            // Get the current Connect core library versions            
+            // Get the current Connect Core library versions
             initializeCoreVersionsFields(manifestConnectCoreLibs);
 
             addManifestToClasspath(manifest, classpathUrls);
@@ -323,7 +323,7 @@ public class MirthLauncher {
             try {
                 extensionMinCoreVersions = getExtensionMinCoreVersions(rootElement);
             } catch (Exception e) {
-                logger.error("An error occurred while attempting to determine the extension Core versions.", e);
+                logger.error("An error occurred while attempting to determine the extension's Core versions.", e);
                 return false;
             }
             
@@ -395,6 +395,12 @@ public class MirthLauncher {
         connectCoreVersions = getConnectCoreVersions(manifestEntries);
     }
     
+    /**
+     * Get the Connect Core library versions by going through each Core library's *.jar file,
+     * loading its *.version.properties file, and getting its library.version property.
+     * @param manifestEntries An array of directories where the Connect Core library *.jar files are located
+     * @return Map<String, String> == Map<coreLibaryName, coreLibraryVersion>
+     */
     private static Map<String, String> getConnectCoreVersions(ManifestEntry[] manifestEntries) {
         Map<String, String> connectCoreVersions = new HashMap<String, String>();
         
@@ -446,6 +452,11 @@ public class MirthLauncher {
         return connectCoreVersions;
     }
     
+    /**
+     * Get an extension's minimum supported Connect Core library version.
+     * @param rootElement The DOM of an extension's metadata *.xml file
+     * @return Map<String, String> == Map<coreLibaryName, coreLibraryVersion>
+     */
     private static Map<String, String> getExtensionMinCoreVersions(Element rootElement) {
         Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();
         

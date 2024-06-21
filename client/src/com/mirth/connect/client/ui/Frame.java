@@ -128,6 +128,8 @@ import com.mirth.connect.client.ui.extensionmanager.ExtensionManagerPanel;
 import com.mirth.connect.client.ui.reference.ReferenceListFactory;
 import com.mirth.connect.client.ui.tag.SettingsPanelTags;
 import com.mirth.connect.client.ui.util.DisplayUtil;
+import com.mirth.connect.connectors.core.Constants;
+import com.mirth.connect.connectors.http.HttpDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
 import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
@@ -336,8 +338,9 @@ public class Frame extends FrameBase {
     	TransmissionModeClientProvider.BASIC_MODE_CLIENT_PROVIDER_CLASS = BasicModeClientProvider.class;
     	MIRTH_R_TEXT_SCROLL_PANE = MirthRTextScrollPane.class;
         ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
-        com.mirth.connect.connectors.core.Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
-        com.mirth.connect.connectors.core.Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
+        Constants.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
+        Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
+        Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
     }
 
     @Override

@@ -11,24 +11,37 @@ package com.mirth.connect.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.jar.JarFile;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.semver4j.Semver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.mirth.connect.donkey.util.ResourceUtil;
 import com.mirth.connect.model.ConnectorMetaData;
@@ -39,6 +52,8 @@ import com.mirth.connect.model.PluginMetaData;
 import com.mirth.connect.model.converters.ObjectXMLSerializer;
 import com.mirth.connect.server.extprops.ExtensionStatuses;
 import com.mirth.connect.server.tools.ClassPathResource;
+import com.mirth.connect.util.HttpUtil;
+import com.mirth.connect.util.MirthSSLUtil;
 import com.mirth.connect.util.PropertiesConfigurationUtil;
 
 public class ExtensionLoader{
@@ -49,6 +64,12 @@ public class ExtensionLoader{
         return instance;
     }
     
+    private static final String EXTENSIONS_CORE_VERSIONS_S3_FILE_URL = "https://s3.amazonaws.com/downloads.mirthcorp.com/connect/extensions-core-versions/extensionsCoreVersions.json";
+    private static final int TIMEOUT = 30000;
+    private static final boolean HOSTNAME_VERIFICATION = true;
+    private static Map<String, String> connectCoreVersions = new HashMap<String, String>();
+    private static String extensionsCoreVersionsS3File;
+    
     private Map<String, ConnectorMetaData> connectorMetaDataMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
@@ -58,6 +79,22 @@ public class ExtensionLoader{
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
 
     private ExtensionLoader() {}
+    
+    public static Map<String, String> getConnectCoreVersions() {
+        return connectCoreVersions;
+    }
+
+    public static void setConnectCoreVersions(Map<String, String> connectCoreVersions) {
+        ExtensionLoader.connectCoreVersions = connectCoreVersions;
+    }
+
+    public static String getExtensionsCoreVersionsS3File() {
+        return extensionsCoreVersionsS3File;
+    }
+
+    public static void setExtensionsCoreVersionsS3File(String extensionsCoreVersionsS3File) {
+        ExtensionLoader.extensionsCoreVersionsS3File = extensionsCoreVersionsS3File;
+    }
     
     public Map<String, ConnectorMetaData> getConnectorMetaData() {
         loadExtensions();
@@ -140,30 +177,70 @@ public class ExtensionLoader{
     }
 
     public boolean isExtensionCompatible(MetaData metaData) {
-        String serverMirthVersion;
-        try {
-            serverMirthVersion = getServerVersion();
-        } catch (Exception e) {
-            logger.error("An error occurred while attempting to determine the current server version.", e);
+        if (!MapUtils.isEmpty(metaData.getMinCoreVersions())) {
+            // validate extension the new way for commercial extensions
+            Map<String, String> extensionMinCoreVersions = new HashMap<String, String>();
+            Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
+            try {
+                extensionMinCoreVersions = metaData.getMinCoreVersions();
+                extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion(), extensionMinCoreVersions);
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the extension's Core versions.", e);
+                return false;
+            }
+            
+            logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: extensionMinCoreVersions=" + StringUtils.join(extensionMinCoreVersions) + " extensionMaxCoreVersions=" + StringUtils.join(extensionMaxCoreVersions) + ", connectCoreVersions=" + StringUtils.join(connectCoreVersions));
+            
+            // connectCoreVersions      Connect Core library versions
+            // extensionMinCoreVersions minimum coreVersions for an extension
+            // extensionMaxCoreVersions maximum coreVersions for an extension
+            // For an extension to be valid, extensionMinCoreVersions <= connectCoreVersions <= extensionMaxCoreVersions
+            // must be true for all map entries.
+            for (Map.Entry<String, String> connectCoreVersionEntry : connectCoreVersions.entrySet()) {
+                Semver connectCoreVersion = new Semver(connectCoreVersionEntry.getValue());
+                if (extensionMinCoreVersions.containsKey(connectCoreVersionEntry.getKey())) {                    
+                    if (connectCoreVersion.isLowerThan(extensionMinCoreVersions.get(connectCoreVersionEntry.getKey()))) {
+                        return false;
+                    }
+                }
+                
+                if (!MapUtils.isEmpty(extensionMaxCoreVersions)) {
+                    if (extensionMaxCoreVersions.containsKey(connectCoreVersionEntry.getKey())) { 
+                        if (!StringUtils.isEmpty(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey())) && connectCoreVersion.isGreaterThan(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            
+            return true;
+        } else {
+            // validate extension the old way for non-commercial extensions
+            String serverMirthVersion;
+            try {
+                serverMirthVersion = getServerVersion();
+            } catch (Exception e) {
+                logger.error("An error occurred while attempting to determine the current server version.", e);
+                return false;
+            }
+            
+            String[] extensionMirthVersions = metaData.getMirthVersion().split(",");
+
+            logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: versions=" + ArrayUtils.toString(extensionMirthVersions) + ", server=" + serverMirthVersion);
+
+            // if there is no build version, just use the patch version
+            if (serverMirthVersion.split("\\.").length == 4) {
+                serverMirthVersion = serverMirthVersion.substring(0, serverMirthVersion.lastIndexOf('.'));
+            }
+
+            for (int i = 0; i < extensionMirthVersions.length; i++) {
+                if (extensionMirthVersions[i].trim().equals(serverMirthVersion)) {
+                    return true;
+                }
+            }
+
             return false;
         }
-
-        String[] extensionMirthVersions = metaData.getMirthVersion().split(",");
-
-        logger.debug("checking extension \"" + metaData.getName() + "\" version compatability: versions=" + ArrayUtils.toString(extensionMirthVersions) + ", server=" + serverMirthVersion);
-
-        // if there is no build version, just use the patch version
-        if (serverMirthVersion.split("\\.").length == 4) {
-            serverMirthVersion = serverMirthVersion.substring(0, serverMirthVersion.lastIndexOf('.'));
-        }
-
-        for (int i = 0; i < extensionMirthVersions.length; i++) {
-            if (extensionMirthVersions[i].trim().equals(serverMirthVersion)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -174,10 +251,27 @@ public class ExtensionLoader{
     private synchronized void loadExtensions() {
         if (!loadedExtensions) {
             try {
+                ManifestDirectory coreLibServerDirMirthLibs = new ManifestDirectory("core-lib/server");
+                coreLibServerDirMirthLibs.setIncludePrefix("mirth-core-");
+                ManifestDirectory coreLibSharedDirMirthLibs = new ManifestDirectory("core-lib/shared");
+                coreLibSharedDirMirthLibs.setIncludePrefix("mirth-core-");
+                ManifestDirectory coreLibUiDirMirthLibs = new ManifestDirectory("core-lib/ui");
+                coreLibUiDirMirthLibs.setIncludePrefix("mirth-core-");
+                
+                List<ManifestEntry> manifestListConnectCoreLibs = new ArrayList<ManifestEntry>();
+                manifestListConnectCoreLibs.add(coreLibServerDirMirthLibs);
+                manifestListConnectCoreLibs.add(coreLibSharedDirMirthLibs);
+                manifestListConnectCoreLibs.add(coreLibUiDirMirthLibs);
+                
+                ManifestEntry[] manifestConnectCoreLibs = manifestListConnectCoreLibs.toArray(new ManifestEntry[manifestListConnectCoreLibs.size()]);
+                
+                // Get the current Connect Core library versions
+                initializeCoreVersionsFields(manifestConnectCoreLibs);
+                
                 // match all of the file names for the extension
                 IOFileFilter nameFileFilter = new NameFileFilter(new String[] { "plugin.xml",
                         "source.xml", "destination.xml" });
-                // this is probably not needed, but we dont want to pick up directories,
+                // this is probably not needed, but we don't want to pick up directories,
                 // so we AND the two filters
                 IOFileFilter andFileFilter = new AndFileFilter(nameFileFilter, FileFilterUtils.fileFileFilter());
                 // this is directory where extensions are located
@@ -246,5 +340,124 @@ public class ExtensionLoader{
         }
         
         return versionConfig.getString("mirth.version");
+    }
+    
+    private static void initializeCoreVersionsFields(ManifestEntry[] manifestEntries) {        
+        connectCoreVersions = getConnectCoreVersions(manifestEntries);
+        
+        // get extensions Core versions JSON from S3
+        extensionsCoreVersionsS3File = getExtensionsCoreVersionsFileFromS3();
+    }
+
+    /**
+     * Get the Connect Core library versions by going through each Core library's *.jar file,
+     * loading its *.version.properties file, and getting its library.version property.
+     * @param manifestEntries An array of directories where the Connect Core library *.jar files are located
+     * @return Map<String, String> == Map<coreLibaryName, coreLibraryVersion>
+     */
+    private static Map<String, String> getConnectCoreVersions(ManifestEntry[] manifestEntries) {
+        Map<String, String> connectCoreVersions = new HashMap<String, String>();
+        
+        for (ManifestEntry manifestEntry : manifestEntries) {
+            File manifestEntryFile = new File(manifestEntry.getName());
+            
+            if (manifestEntryFile.exists()) {
+                if (manifestEntryFile.isDirectory()) {
+                    ManifestDirectory manifestDir = (ManifestDirectory) manifestEntry;
+                    IOFileFilter fileFilter = FileFilterUtils.fileFileFilter();
+                    
+                    if (manifestDir.getIncludePrefix() != null) {
+                        fileFilter = FileFilterUtils.and(fileFilter, new PrefixFileFilter(manifestDir.getIncludePrefix()));
+                    }
+                    
+                    Collection<File> pathFiles = FileUtils.listFiles(manifestEntryFile, fileFilter, FileFilterUtils.trueFileFilter());
+                    
+                    for (File pathFile : pathFiles) {
+                        JarFile connectCoreLibraryJarFile = null;
+                        try {
+                            // e.g. mirth-core-server-plugins-4.6.0
+                            String pathFilename = FilenameUtils.getBaseName(pathFile.toString());
+                            // e.g. mirth-core-server-plugins
+                            String connectCoreLibraryVersionPropertiesFileName = pathFilename.substring(0, pathFilename.length() - 6);
+                            String connectCoreLibraryVersionProperty = "library.version";
+                            connectCoreLibraryJarFile = new JarFile(pathFile);
+                            
+                            Properties connectCoreLibraryVersionProperties = new Properties();
+                            connectCoreLibraryVersionProperties.load(connectCoreLibraryJarFile.getInputStream(connectCoreLibraryJarFile.getJarEntry(connectCoreLibraryVersionPropertiesFileName + ".version.properties")));
+                            connectCoreVersions.put(connectCoreLibraryVersionPropertiesFileName, connectCoreLibraryVersionProperties.getProperty(connectCoreLibraryVersionProperty));
+                        } catch (IOException e) {
+                            logger.error("An error occurred while attempting to determine the Connect Core versions.", e);
+                        } finally {
+                            try {
+                                if (connectCoreLibraryJarFile != null) {
+                                    connectCoreLibraryJarFile.close();
+                                }
+                            } catch (IOException e) {
+                                logger.error("Error closing connectCoreLibraryJarFile.", e);
+                            }
+                        }
+                    }
+                }
+            } else {
+                logger.warn("manifest path not found: " + manifestEntryFile.getAbsolutePath());
+            }
+        }
+        
+        return connectCoreVersions;
+    }
+    
+    /**
+     * Get the max Core library versions for an extension. If the max doesn't exist for an extension's Core library, then set its max entry to its min entry.
+     * 
+     * @param pluginPath                Plugin name
+     * @param pluginVersion             Plugin version
+     * @param extensionMinCoreVersions  Extension min Core versions to use as max Core versions if max is empty or missing from the manifest .json file
+     * @return Map<String, String> == Map<coreLibaryName, pluginMaxCoreLibraryVersion>
+     * @throws JsonProcessingException
+     * @throws JsonMappingException
+     */
+    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion, Map<String, String> extensionMinCoreVersions) throws JsonMappingException, JsonProcessingException {
+        Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
+
+        if (!StringUtils.isEmpty(extensionsCoreVersionsS3File)) {
+            ObjectMapper mapper = new ObjectMapper();
+            
+            JsonNode extensionsCoreVersionsS3FileTree = mapper.readTree(extensionsCoreVersionsS3File);
+            
+            if (extensionsCoreVersionsS3FileTree.has("extensionsData") &&
+                extensionsCoreVersionsS3FileTree.get("extensionsData").has(pluginPath) &&
+                extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).has(pluginVersion) &&
+                extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).has("coreVersions")) {
+                // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
+                Iterator<Map.Entry<String, JsonNode>> extensionCoreVersionsS3FileIt = extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
+                while(extensionCoreVersionsS3FileIt.hasNext()) {
+                    Map.Entry<String, JsonNode> extensionCoreVersionS3FileEntry = extensionCoreVersionsS3FileIt.next();
+
+                    String extensionCoreVersionS3FileEntryValue = "";
+                    if (extensionCoreVersionS3FileEntry.getValue().has("max") && !StringUtils.isEmpty(extensionCoreVersionS3FileEntry.getValue().get("max").textValue())) {
+                        extensionCoreVersionS3FileEntryValue = extensionCoreVersionS3FileEntry.getValue().get("max").textValue();
+                    } else {
+                        extensionCoreVersionS3FileEntryValue = extensionMinCoreVersions.get(extensionCoreVersionS3FileEntry.getKey());
+                    }
+                    
+                    extensionMaxCoreVersions.put(extensionCoreVersionS3FileEntry.getKey(), extensionCoreVersionS3FileEntryValue);
+                }
+            } else {
+                extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
+            }
+        } else {
+            extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
+        }
+        
+        return extensionMaxCoreVersions;
+    }
+    
+    /**
+     * Get the JSON manifest file that contains all extensions' Core libraries min and max versions.
+     * 
+     * @return String JSON manifest file from S3 or "" on error
+     */
+    private static String getExtensionsCoreVersionsFileFromS3() {
+        return HttpUtil.executeGetRequest(EXTENSIONS_CORE_VERSIONS_S3_FILE_URL, TIMEOUT, HOSTNAME_VERIFICATION, MirthSSLUtil.DEFAULT_HTTPS_CLIENT_PROTOCOLS, MirthSSLUtil.DEFAULT_HTTPS_CIPHER_SUITES);
     }
 }

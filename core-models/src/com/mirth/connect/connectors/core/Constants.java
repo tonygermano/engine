@@ -1,4 +1,4 @@
-package com.mirth.connect.connectors.core.http;
+package com.mirth.connect.connectors.core;
 
 public class Constants {
     

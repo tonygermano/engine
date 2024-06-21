@@ -336,8 +336,8 @@ public class Frame extends FrameBase {
     	TransmissionModeClientProvider.BASIC_MODE_CLIENT_PROVIDER_CLASS = BasicModeClientProvider.class;
     	MIRTH_R_TEXT_SCROLL_PANE = MirthRTextScrollPane.class;
         ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
-        com.mirth.connect.connectors.core.http.Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
-        com.mirth.connect.connectors.core.http.Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
+        com.mirth.connect.connectors.core.Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
+        com.mirth.connect.connectors.core.Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
     }
 
     @Override

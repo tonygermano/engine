@@ -427,7 +427,7 @@ public class ExtensionLoader{
             if (extensionsCoreVersionsS3FileTree.has("extensionsData") &&
                 extensionsCoreVersionsS3FileTree.get("extensionsData").has(pluginPath) &&
                 extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).has(pluginVersion) &&
-                extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).has("coreVersions")) {                
+                extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).has("coreVersions")) {
                 // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
                 Iterator<Map.Entry<String, JsonNode>> extensionCoreVersionsS3FileIt = extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
                 while(extensionCoreVersionsS3FileIt.hasNext()) {
@@ -442,7 +442,11 @@ public class ExtensionLoader{
                     
                     extensionMaxCoreVersions.put(extensionCoreVersionS3FileEntry.getKey(), extensionCoreVersionS3FileEntryValue);
                 }
+            } else {
+                extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
             }
+        } else {
+            extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
         }
         
         return extensionMaxCoreVersions;

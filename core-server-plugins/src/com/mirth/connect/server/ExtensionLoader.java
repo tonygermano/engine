@@ -183,7 +183,7 @@ public class ExtensionLoader{
             Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
             try {
                 extensionMinCoreVersions = metaData.getMinCoreVersions();
-                extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion());
+                extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion(), extensionMinCoreVersions);
             } catch (Exception e) {
                 logger.error("An error occurred while attempting to determine the extension's Core versions.", e);
                 return false;
@@ -407,15 +407,16 @@ public class ExtensionLoader{
     }
     
     /**
-     * Get the max Core library versions for an extension.
+     * Get the max Core library versions for an extension. If the max doesn't exist for an extension's Core library, then set its max entry to its min entry.
      * 
-     * @param pluginPath    Plugin name
-     * @param pluginVersion Plugin version
+     * @param pluginPath                Plugin name
+     * @param pluginVersion             Plugin version
+     * @param extensionMinCoreVersions  Extension min Core versions to use as max Core versions if max is empty or missing from the manifest .json file
      * @return Map<String, String> == Map<coreLibaryName, pluginMaxCoreLibraryVersion>
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion) throws JsonMappingException, JsonProcessingException {
+    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion, Map<String, String> extensionMinCoreVersions) throws JsonMappingException, JsonProcessingException {
         Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
 
         if (!StringUtils.isEmpty(extensionsCoreVersionsS3File)) {
@@ -428,10 +429,18 @@ public class ExtensionLoader{
                 extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).has(pluginVersion) &&
                 extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).has("coreVersions")) {                
                 // Map.Entry<String, JsonNode> == Map.Entry<coreLibraryName, JsonNode(min, max)>
-                Iterator<Map.Entry<String, JsonNode>> extensionCoreVersions = extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
-                while(extensionCoreVersions.hasNext()) {
-                    Map.Entry<String, JsonNode> extensionCoreVersionEntry = extensionCoreVersions.next();
-                    extensionMaxCoreVersions.put(extensionCoreVersionEntry.getKey(), extensionCoreVersionEntry.getValue().has("max") ? extensionCoreVersionEntry.getValue().get("max").textValue() : "");
+                Iterator<Map.Entry<String, JsonNode>> extensionCoreVersionsS3FileIt = extensionsCoreVersionsS3FileTree.get("extensionsData").get(pluginPath).get(pluginVersion).get("coreVersions").fields();        
+                while(extensionCoreVersionsS3FileIt.hasNext()) {
+                    Map.Entry<String, JsonNode> extensionCoreVersionS3FileEntry = extensionCoreVersionsS3FileIt.next();
+
+                    String extensionCoreVersionS3FileEntryValue = "";
+                    if (extensionCoreVersionS3FileEntry.getValue().has("max") && !StringUtils.isEmpty(extensionCoreVersionS3FileEntry.getValue().get("max").textValue())) {
+                        extensionCoreVersionS3FileEntryValue = extensionCoreVersionS3FileEntry.getValue().get("max").textValue();
+                    } else {
+                        extensionCoreVersionS3FileEntryValue = extensionMinCoreVersions.get(extensionCoreVersionS3FileEntry.getKey());
+                    }
+                    
+                    extensionMaxCoreVersions.put(extensionCoreVersionS3FileEntry.getKey(), extensionCoreVersionS3FileEntryValue);
                 }
             }
         }

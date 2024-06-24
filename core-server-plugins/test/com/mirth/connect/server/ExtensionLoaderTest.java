@@ -11,13 +11,11 @@ package com.mirth.connect.server;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,13 +44,11 @@ public class ExtensionLoaderTest {
         
         try {
             URL extensionsCoreVersionsJSONFilePath = ExtensionLoaderTest.class.getResource("extensionsCoreVersions.json");
-            File extensionsCoreVersionsJSONFile = new File(extensionsCoreVersionsJSONFilePath.getFile());
-            extensionsCoreVersionsS3File = FileUtils.readFileToString(extensionsCoreVersionsJSONFile, Charset.defaultCharset()).trim();
+            extensionsCoreVersionsS3File = IOUtils.toString(extensionsCoreVersionsJSONFilePath, "UTF-8");
             ExtensionLoader.setExtensionsCoreVersionsS3File(extensionsCoreVersionsS3File);
             
             URL sslExtensionMetaDataFilePath = ExtensionLoaderTest.class.getResource("plugin.xml");
-            File sslExtensionMetaDataFile = new File(sslExtensionMetaDataFilePath.getFile());
-            sslExtensionMetaData = (MetaData) serializer.deserialize(FileUtils.readFileToString(sslExtensionMetaDataFile, Charset.defaultCharset()).trim(), MetaData.class);
+            sslExtensionMetaData = (MetaData) serializer.deserialize(IOUtils.toString(sslExtensionMetaDataFilePath, "UTF-8"), MetaData.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

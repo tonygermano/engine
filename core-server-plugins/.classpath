@@ -16,6 +16,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Core-models/lib/commons/commons-text-1.10.0.jar"/>
+	<classpathentry kind="lib" path="/Core-models/lib/extensions/file/jcifs-ng-2.1.10.jar"/>
 	<classpathentry kind="lib" path="/Core-models/lib/log4j/log4j-1.2-api-2.17.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="https://logging.apache.org/log4j/2.x/log4j-1.2-api/apidocs/"/>
@@ -97,7 +98,6 @@
 	<classpathentry kind="lib" path="lib/aws/apache-client-2.15.28.jar"/>
 	<classpathentry kind="lib" path="lib/aws/sdk-core-2.15.28.jar"/>
 	<classpathentry kind="lib" path="lib/aws/utils-2.15.28.jar"/>
-	<classpathentry kind="lib" path="/Core-models/lib/extensions/file/jcifs-ng-2.1.8.jar"/>
 	<classpathentry kind="lib" path="lib/extensions/file/webdavclient4j-core-0.92.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/javax/jaxws/javax.xml.soap-api-1.4.0.jar"/>

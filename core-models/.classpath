@@ -3,6 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="lib/aws/regions-2.15.28.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-beanutils-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-codec-1.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons/commons-collections4-4.4.jar"/>
@@ -15,6 +16,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/commons/commons-text-1.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/extensions/file/jcifs-ng-2.1.10.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j-1.2-api-2.17.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="https://logging.apache.org/log4j/2.x/log4j-1.2-api/apidocs/"/>
@@ -37,7 +39,5 @@
 	<classpathentry kind="lib" path="testlib/junit-4.8.1.jar"/>
 	<classpathentry kind="lib" path="testlib/mockito-core-2.7.9.jar"/>
 	<classpathentry kind="lib" path="testlib/objenesis-2.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/aws/regions-2.15.28.jar"/>
-	<classpathentry kind="lib" path="lib/extensions/file/jcifs-ng-2.1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

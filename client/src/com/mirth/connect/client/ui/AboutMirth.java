@@ -79,7 +79,7 @@ public class AboutMirth extends MirthDialog {
         content.append("This product includes the jTDS JDBC driver, licensed under the LGPL version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html).\n\n");
         content.append("This product includes software developed by the JDOM Project (http://www.jdom.org/).\n\n");
         content.append("This product includes software developed by the SAXPath Project (http://www.saxpath.org/).\n\n");
-        content.append("This product includes the JCIFS SMB client library in Java version 1.3.17, copyright (C) 2002  \"Michael B. Allen\" <jcifs at samba dot org> and \"Eric Glass\" <jcifs at samba dot org>, licensed under the LGPL version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html).\n\n");
+        content.append("This product includes the jcifs-ng SMB client library version 2.1.10, copyright (C) 2023 \"Moritz Bechler\" (https://mbechler.github.io). Based on the original jCIFS library, copyright (C) 2002  \"Michael B. Allen\" <jcifs at samba dot org> and \"Eric Glass\" <jcifs at samba dot org>. Licensed under the LGPL version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html).\n\n");
         content.append("This product includes the Pdf-renderer library (https://java.net/projects/pdf-renderer/), portions copyright Sun Microsystems, Inc., Pirion Systems Pty Ltd, intarsys consulting GmbH and Adobe Systems Incorporated. It is licensed under the LGPL version 2.1 (http://www.gnu.org/licenses/lgpl-2.1.html).\n\n");
         content.append("This product includes software developed by the JDOM Project (http://www.jdom.org/).\n\n");
         content.append("This product includes software developed by xerial.org (Taro L. Saito) (https://github.com/xerial/sqlite-jdbc).\n\n");

@@ -13,6 +13,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Core-models/lib/commons/commons-text-1.10.0.jar"/>
+	<classpathentry kind="lib" path="/Core-models/lib/extensions/file/jcifs-ng-2.1.10.jar"/>
 	<classpathentry kind="lib" path="/Core-models/lib/log4j/log4j-1.2-api-2.17.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="https://logging.apache.org/log4j/2.x/log4j-1.2-api/apidocs/"/>
@@ -111,7 +112,6 @@
 	<classpathentry kind="lib" path="lib/javax.activation-api-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-api-2.4.0-b180725.0427.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-runtime-2.4.0-b180725.0644.jar"/>
-	<classpathentry kind="lib" path="lib/jcifs-ng-2.1.8.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-util-9.4.53.v20231009.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/language_support.jar"/>

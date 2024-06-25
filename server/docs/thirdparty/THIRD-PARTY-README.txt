@@ -260,7 +260,7 @@ https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.3.0-1.sl15.s
 --------------------------------------------------------------------------------
 
 
-Mirth Connect includes the jcifs-ng SMB client library in Java version 2.1.8. This
+Mirth Connect includes the jcifs-ng SMB client library in Java version 2.1.10. This
 library and its use are covered by the LGPL version 2.1 (see LGPL-2.1.txt). The
 library source code is available at https://github.com/AgNO3/jcifs-ng/.
 	

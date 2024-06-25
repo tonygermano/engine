@@ -113,7 +113,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Returns a List of attachment IDs associated with the current channel / message.
+     * Returns a list of attachment IDs associated with the current connector message.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
@@ -127,7 +127,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Returns a List of attachment IDs associated with the current channel / message.
+     * Returns a list of attachment IDs associated with the current channel / message.
      * 
      * @param channelId
      *            The ID of the channel the attachments are associated with.
@@ -142,7 +142,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves all attachments associated with a connector message.
+     * Retrieves a list of all attachments associated with a connector message.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
@@ -156,7 +156,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves all attachments associated with a connector message.
+     * Retrieves a list of all attachments associated with a connector message with an additional option to Base64 decode the content.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
@@ -173,7 +173,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves all attachments associated with a specific channel/message ID.
+     * Retrieves a list of all attachments associated with a specific channel/message ID.
      * 
      * @param channelId
      *            The ID of the channel to retrieve the attachments from.
@@ -189,7 +189,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves all attachments associated with a specific channel/message ID.
+     * Retrieves a list of all attachments associated with a specific channel/message ID with an additional option to Base64 decode the content.
      * 
      * @param channelId
      *            The ID of the channel to retrieve the attachments from.
@@ -208,7 +208,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from the current channel/message ID.
+     * Retrieves an attachment associated with a given connector message and attachment ID.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
@@ -225,7 +225,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from the current channel/message ID.
+     * Retrieves an attachment associated with a given connector message and attachment ID with an additional option to Base64 decode the content.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
@@ -245,7 +245,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from a specific channel/message ID.
+     * Retrieves an attachment associated with a given channel/message/attachment ID.
      * 
      * @param channelId
      *            The ID of the channel to retrieve the attachment from.
@@ -264,7 +264,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from a specific channel/message ID.
+     * Retrieves an attachment associated with a given channel/message/attachment ID with an additional option to Base64 decode the content.
      * 
      * @param channelId
      *            The ID of the channel to retrieve the attachment from.
@@ -286,7 +286,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from an upstream channel that sent a message to the current channel.
+     * Retrieves a list of attachments from an upstream channel that sent a message to the current channel.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message. The channel ID and message ID
@@ -301,7 +301,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Retrieves an attachment from an upstream channel that sent a message to the current channel.
+     * Retrieves a list of attachments from an upstream channel that sent a message to the current channel with an additional option to Base64 decode the content.
      * 
      * @param connectorMessage
      *            The ConnectorMessage associated with this message. The channel ID and message ID
@@ -339,7 +339,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Creates an Attachment and adds it to the provided list.
+     * Creates an attachment and adds it to the provided list.
      * 
      * @param attachments
      *            The list of attachments to add to.
@@ -356,7 +356,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Creates an Attachment and adds it to the provided list.
+     * Creates an attachment and adds it to the provided list with an additional option to Base64 encode the content.
      * 
      * @param attachments
      *            The list of attachments to add to.
@@ -379,8 +379,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Creates an attachment associated with a given connector message, and inserts it into the
-     * database.
+     * Creates an attachment associated with a given connector message and inserts it into the database.
      * 
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
@@ -397,8 +396,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Creates an attachment associated with a given connector message, and inserts it into the
-     * database.
+     * Creates an attachment associated with a given connector message with an additional option to Base64 encode the content and inserts it into the database.
      * 
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
@@ -421,8 +419,8 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
-     * 
+     * Updates an attachment associated with a given connector message and attachment ID.
+     *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
      * @param attachmentId
@@ -441,8 +439,8 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
-     * 
+     * Updates an attachment associated with a given connector message and attachment ID with an additional option to Base64 encode the content.
+     *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
      * @param attachmentId
@@ -464,8 +462,8 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
-     * 
+     * Updates a specified connector message with a given attachment.
+     *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
      * @param attachment
@@ -480,8 +478,8 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
-     * 
+     * Updates a specified connector message with a given attachment with an additional option to Base64 encode the content.
+     *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
      * @param attachment
@@ -499,7 +497,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
+     * Updates a specific channel/message ID with a given attachment.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.
@@ -517,8 +515,8 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
-     * 
+     * Updates a specific channel/message ID with a given attachment with an additional option to Base64 encode the content.
+     *
      * @param channelId
      *            The ID of the channel the attachment is associated with.
      * @param messageId
@@ -538,7 +536,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
+     * Updates a specific channel/message/attachment ID with given content.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.
@@ -560,7 +558,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates an attachment associated with a given connector message.
+     * Updates a specific channel/message/attachment ID with given content with an additional option to Base64 encode the content.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.

@@ -78,6 +78,7 @@
 		
 		<copy todir="${test_classes}">
 			<fileset dir="${test}">
+				<include name="**/*.json" />
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>

@@ -25,6 +25,7 @@ public class EncryptedData {
     /**
      * Returns the meta-information about the encrypted data. Includes the algorithm and
      * initialization vector used.
+     * @return The header
      */
     public String getHeader() {
         return header;
@@ -32,6 +33,7 @@ public class EncryptedData {
 
     /**
      * Returns the encrypted data as a byte array.
+     * @return The encrypted data
      */
     public byte[] getEncryptedData() {
         return encryptedData;

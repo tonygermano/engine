@@ -21,4 +21,6 @@ public interface ConnectorSettingsPanelBase {
 	
 	void doResetInvalidProperties();
 	
+	ConnectorProperties getFilledProperties();
+	
 }

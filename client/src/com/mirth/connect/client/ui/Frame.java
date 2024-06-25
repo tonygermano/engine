@@ -128,9 +128,10 @@ import com.mirth.connect.client.ui.extensionmanager.ExtensionManagerPanel;
 import com.mirth.connect.client.ui.reference.ReferenceListFactory;
 import com.mirth.connect.client.ui.tag.SettingsPanelTags;
 import com.mirth.connect.client.ui.util.DisplayUtil;
-import com.mirth.connect.connectors.core.http.Constants;
+import com.mirth.connect.connectors.core.Constants;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.DestinationConnectorPropertiesInterface;
@@ -339,6 +340,7 @@ public class Frame extends FrameBase {
         ALERT_ACTION_PANE_CLASS = AlertActionPane.class;
         Constants.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
         Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
+        Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
     }
 
     @Override
@@ -5154,6 +5156,7 @@ public class Frame extends FrameBase {
         }
     }
 
+    @Override
     public List<ResourceProperties> getResources() {
         if (settingsPane == null) {
             settingsPane = new SettingsPane();

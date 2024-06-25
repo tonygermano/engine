@@ -30,6 +30,7 @@ import com.mirth.connect.model.ChannelTag;
 import com.mirth.connect.model.ConnectorMetaData;
 import com.mirth.connect.model.DashboardStatus;
 import com.mirth.connect.model.PluginMetaData;
+import com.mirth.connect.model.ResourceProperties;
 import com.mirth.connect.model.User;
 
 @SuppressWarnings("serial")
@@ -332,5 +333,7 @@ public abstract class FrameBase extends JXFrame {
     public abstract void editAlert();
     
     public abstract void importAlert(String alertString, boolean showAlerts);
+    
+    public abstract List<ResourceProperties> getResources();
     
 }

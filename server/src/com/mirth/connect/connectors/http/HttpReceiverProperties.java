@@ -18,7 +18,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
-import com.mirth.connect.connectors.core.http.HttpStaticResource;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorProperties;
 import com.mirth.connect.donkey.model.channel.ListenerConnectorPropertiesInterface;
@@ -66,6 +65,29 @@ public class HttpReceiverProperties extends ConnectorProperties implements Liste
         this.staticResources = new ArrayList<HttpStaticResource>();
         this.responseHeadersVariable = "";
         this.useResponseHeadersVariable = false;
+    }
+    
+    public HttpReceiverProperties(IHttpReceiverProperties props) {
+    	super((ConnectorProperties) props);
+    	
+    	listenerConnectorProperties = new ListenerConnectorProperties(((ListenerConnectorPropertiesInterface) props).getListenerConnectorProperties());
+    	sourceConnectorProperties = new SourceConnectorProperties(((SourceConnectorPropertiesInterface) props).getSourceConnectorProperties());
+    	
+    	xmlBody = props.isXmlBody();
+    	parseMultipart = props.isParseMultipart();
+    	includeMetadata = props.isIncludeMetadata();
+        binaryMimeTypes = props.getBinaryMimeTypes();
+        binaryMimeTypesRegex = props.isBinaryMimeTypesRegex();
+        responseContentType = props.getResponseContentType();
+        responseDataTypeBinary = props.isResponseDataTypeBinary();
+        responseStatusCode = props.getResponseStatusCode(); 
+        responseHeaders = props.getResponseHeadersMap();
+        charset = props.getCharset();
+        contextPath = props.getContextPath(); 
+        timeout = props.getTimeout();
+        staticResources = props.getStaticResources();
+        responseHeadersVariable = props.getResponseHeadersVariable(); 
+        useResponseHeadersVariable = props.isUseHeadersVariable();
     }
 
     @Override

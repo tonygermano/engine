@@ -11,7 +11,7 @@ import com.mirth.connect.donkey.server.channel.IDestinationConnector;
 public interface IHttpDispatcher extends IDestinationConnector {
     
     public RegistryBuilder<ConnectionSocketFactory> getSocketFactoryRegistry();
-    
+
     public Response doSend(IHttpDispatcherProperties connectorProperties, ConnectorMessage message);
     
     public void doOnDeploy() throws ConnectorTaskException;

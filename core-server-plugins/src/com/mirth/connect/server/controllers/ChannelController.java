@@ -19,8 +19,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.mirth.connect.client.core.ControllerException;
 import com.mirth.connect.connectors.core.http.IHttpReceiverProperties;
+import com.mirth.connect.connectors.core.tcp.ITcpDispatcherProperties;
+import com.mirth.connect.connectors.core.tcp.ITcpReceiverProperties;
+import com.mirth.connect.connectors.core.ws.IWebServiceDispatcherProperties;
 import com.mirth.connect.connectors.core.http.IHttpDispatcherProperties;
-import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.channel.MetaDataColumn;
 import com.mirth.connect.donkey.model.channel.Ports;
@@ -34,8 +36,6 @@ import com.mirth.connect.model.DeployedChannelInfo;
 import com.mirth.connect.model.ServerEventContext;
 
 public abstract class ChannelController extends Controller {
-
-    private Logger logger = LogManager.getLogger(this.getClass());
 
     public static ChannelController getInstance() {
         return ControllerFactory.getFactory().createChannelController();
@@ -113,5 +113,14 @@ public abstract class ChannelController extends Controller {
 
     public abstract IHttpDispatcherProperties createHttpDispatcherProperties(IHttpDispatcherProperties props);
 
-
+    public abstract IWebServiceDispatcherProperties createWebServiceDispatcherProperties();
+    
+    public abstract IWebServiceDispatcherProperties createWebServiceDispatcherProperties(IWebServiceDispatcherProperties props);
+    
+    public abstract ITcpReceiverProperties createTcpReceiverProperties();
+    
+    public abstract ITcpDispatcherProperties createTcpDispatcherProperties();
+    
+    public abstract ITcpDispatcherProperties createTcpDispatcherProperties(ITcpDispatcherProperties props);
+    
 }

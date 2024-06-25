@@ -22,6 +22,10 @@ public interface ConnectorSettingsPanelPlugin {
 	
 	String getInitialOutboundDataType();
 	
+	String getInitialInboundResponseDataType();
+	
+	String getInitialOutboundResponseDataType();
+	
 	void initComponents();
 	
 	void initLayout();

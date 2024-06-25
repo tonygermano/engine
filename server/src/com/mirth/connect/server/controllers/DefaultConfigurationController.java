@@ -93,9 +93,13 @@ import com.mirth.commons.encryption.Encryptor;
 import com.mirth.commons.encryption.KeyEncryptor;
 import com.mirth.commons.encryption.Output;
 import com.mirth.connect.client.core.ControllerException;
-import com.mirth.connect.connectors.core.http.Constants;
+import com.mirth.connect.connectors.core.Constants;
+import com.mirth.connect.connectors.core.http.HttpMessageConverter;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.tcp.TcpDispatcher;
+import com.mirth.connect.connectors.tcp.TcpReceiver;
+import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.donkey.model.DatabaseConstants;
 import com.mirth.connect.donkey.model.message.batch.BatchStreamReader;
 import com.mirth.connect.donkey.server.data.DonkeyStatisticsUpdater;
@@ -1648,8 +1652,12 @@ public class DefaultConfigurationController extends ConfigurationController {
         TransmissionModeProvider.BASIC_MODE_PROVIDER = BasicModeProvider.class;
         BatchStreamReader.DEFAULT_BATCH_STREAM_READER = DefaultBatchStreamReader.class;
         ServerSMTPConnectionFactory.SERVER_SMTP_CONNECTION = ServerSMTPConnection.class;
+        HttpMessageConverter.HTTP_MESSAGE_CONVERTER_CLASS = com.mirth.connect.connectors.core.http.HttpMessageConverter.class;
         Constants.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
         Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
+        Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
+        Constants.TCP_DISPATCHER_CLASS = TcpDispatcher.class;
+        Constants.TCP_RECEIVER_CLASS = TcpReceiver.class;
     }
 
     @Override

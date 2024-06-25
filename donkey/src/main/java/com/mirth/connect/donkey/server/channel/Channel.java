@@ -151,10 +151,12 @@ public class Channel implements IChannel, Runnable {
         this.debugOptions = debugOptions;
     }
     
+    @Override
     public String getChannelId() {
         return channelId;
     }
 
+    @Override
     public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
@@ -235,6 +237,7 @@ public class Channel implements IChannel, Runnable {
         eventDispatcher.dispatchEvent(new DeployedStateEvent(channelId, name, null, null, DeployedStateEventType.getTypeFromDeployedState(currentState)));
     }
 
+    @Override
     public StorageSettings getStorageSettings() {
         return storageSettings;
     }
@@ -243,6 +246,7 @@ public class Channel implements IChannel, Runnable {
         this.storageSettings = storageSettings;
     }
 
+    @Override
     public DonkeyDaoFactory getDaoFactory() {
         return daoFactory;
     }
@@ -259,6 +263,7 @@ public class Channel implements IChannel, Runnable {
         return serializer;
     }
 
+    @Override
     public MessageMaps getMessageMaps() {
         return messageMaps;
     }
@@ -275,6 +280,7 @@ public class Channel implements IChannel, Runnable {
         this.attachmentHandlerProvider = attachmentHandlerProvider;
     }
 
+    @Override
     public List<MetaDataColumn> getMetaDataColumns() {
         return metaDataColumns;
     }
@@ -283,6 +289,7 @@ public class Channel implements IChannel, Runnable {
         this.metaDataColumns = metaDataColumns;
     }
 
+    @Override
     public SourceConnector getSourceConnector() {
         return sourceConnector;
     }

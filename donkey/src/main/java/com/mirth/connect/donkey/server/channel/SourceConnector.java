@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mirth.connect.connectors.core.interop.InteropReceiverPlugin;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.event.ConnectionStatusEventType;
 import com.mirth.connect.donkey.model.event.DeployedStateEventType;
@@ -93,26 +94,32 @@ public class SourceConnector extends Connector implements ISourceConnector {
     	}
     }
 
+    @Override
     public boolean isRespondAfterProcessing() {
         return respondAfterProcessing;
     }
 
+    @Override
     public void setRespondAfterProcessing(boolean respondAfterProcessing) {
         this.respondAfterProcessing = respondAfterProcessing;
     }
 
+    @Override
     public MetaDataReplacer getMetaDataReplacer() {
         return metaDataReplacer;
     }
 
-    public void setMetaDataReplacer(MetaDataReplacer metaDataReplacer) {
-        this.metaDataReplacer = metaDataReplacer;
+    @Override
+    public void setMetaDataReplacer(Object metaDataReplacer) {
+        this.metaDataReplacer = (MetaDataReplacer) metaDataReplacer;
     }
 
+    @Override
     public BatchAdaptorFactory getBatchAdaptorFactory() {
         return batchAdaptorFactory;
     }
 
+    @Override
     public void setBatchAdaptorFactory(BatchAdaptorFactory batchAdaptorFactory) {
         this.batchAdaptorFactory = batchAdaptorFactory;
     }
@@ -122,6 +129,7 @@ public class SourceConnector extends Connector implements ISourceConnector {
         return sourceName;
     }
 
+    @Override
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
@@ -130,21 +138,55 @@ public class SourceConnector extends Connector implements ISourceConnector {
     public String getConnectorName() {
         return getSourceName();
     }
+    
+    @Override
+    public DeployedState getCurrentState() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		return ((InteropReceiverPlugin) connectorPlugin).getCurrentState();
+    	}
+    	return doGetCurrentState();
+    }
+    
+    @Override
+    public DeployedState doGetCurrentState() {
+    	return super.getCurrentState();
+    }
 
+    @Override
     public void updateCurrentState(DeployedState currentState) {
-        setCurrentState(currentState);
-        channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), sourceName, DeployedStateEventType.getTypeFromDeployedState(currentState)));
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).updateCurrentState(currentState);
+    	} else {
+    		doUpdateCurrentState(currentState);
+    	}
+    }
+    
+    @Override
+    public void doUpdateCurrentState(DeployedState currentState) {
+		setCurrentState(currentState);
+		channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), sourceName, DeployedStateEventType.getTypeFromDeployedState(currentState)));    	
     }
 
     @Override
     public boolean isProcessBatch() {
         return batchAdaptorFactory != null;
     }
-
+    
     /**
      * Start the connector
      */
     public void start() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).start();
+    	} else {
+    		doStart();
+    	}
+    }
+
+    /**
+     * Start the connector
+     */
+    public void doStart() throws ConnectorTaskException, InterruptedException {
         updateCurrentState(DeployedState.STARTING);
 
         if (isProcessBatch()) {
@@ -154,11 +196,22 @@ public class SourceConnector extends Connector implements ISourceConnector {
 
         updateCurrentState(DeployedState.STARTED);
     }
-
+    
     /**
      * Stop the connector
      */
     public void stop() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).stop();
+    	} else {
+    		doStop();
+    	}
+    }
+
+    /**
+     * Stop the connector
+     */
+    public void doStop() throws ConnectorTaskException, InterruptedException {
         //TODO make this happen before the poll connector's stop method
         updateCurrentState(DeployedState.STOPPING);
 
@@ -190,11 +243,22 @@ public class SourceConnector extends Connector implements ISourceConnector {
             }
         }
     }
-
+    
     /**
      * Stop the connector
      */
     public void halt() throws ConnectorTaskException, InterruptedException {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).halt();
+    	} else {
+    		doHalt();
+    	}    	
+    }
+
+    /**
+     * Stop the connector
+     */
+    public void doHalt() throws ConnectorTaskException, InterruptedException {
         //TODO make this happen before the poll connector's stop method
         updateCurrentState(DeployedState.STOPPING);
 

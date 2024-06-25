@@ -85,6 +85,14 @@ public interface IDestinationConnector extends IConnector {
     
     public void setForceQueue(boolean forceQueue);
     
+    public void doSetForceQueue(boolean forceQueue);
+    
+    public DeployedState doGetCurrentState();
+    
     public void updateCurrentState(DeployedState currentState);
+    
+    public void doUpdateCurrentState(DeployedState currentState);
+    
+    public void doRun();
     
 }

@@ -34,7 +34,11 @@ public interface ISourceConnector extends IConnector {
 	
 	public void setSourceName(String sourceName);
 	
+	public DeployedState doGetCurrentState();
+	
 	public void updateCurrentState(DeployedState currentState);
+	
+	public void doUpdateCurrentState(DeployedState currentState);
 
 	public boolean isProcessBatch();
 	

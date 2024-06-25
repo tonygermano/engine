@@ -132,6 +132,19 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
     		connectorPlugin.onHalt();
     	}
     }
+    
+    @Override
+    public DeployedState getCurrentState() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		return ((InteropDispatcherPlugin) connectorPlugin).getCurrentState();
+    	}
+    	return doGetCurrentState();
+    }
+    
+    @Override
+    public DeployedState doGetCurrentState() {
+    	return super.getCurrentState();
+    }
 
     @Override
     public DestinationQueue getQueue() {
@@ -249,7 +262,16 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
 
     @Override
     public void setForceQueue(boolean forceQueue) {
-        this.forceQueue.set(forceQueue);
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).setForceQueue(forceQueue);
+    	} else {
+    		doSetForceQueue(forceQueue);
+    	}
+    }
+    
+    @Override
+    public void doSetForceQueue(boolean forceQueue) {
+    	this.forceQueue.set(forceQueue);
     }
 
     @Override
@@ -353,8 +375,17 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
 
     @Override
     public void updateCurrentState(DeployedState currentState) {
-        setCurrentState(currentState);
-        channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), destinationName, DeployedStateEventType.getTypeFromDeployedState(currentState)));
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).updateCurrentState(currentState);
+    	} else {
+    		doUpdateCurrentState(currentState);
+    	}
+    }
+    
+    @Override
+    public void doUpdateCurrentState(DeployedState currentState) {
+		setCurrentState(currentState);
+		channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), destinationName, DeployedStateEventType.getTypeFromDeployedState(currentState)));    	
     }
     
     public void start() throws ConnectorTaskException, InterruptedException {
@@ -781,9 +812,18 @@ public class DestinationConnector extends Connector implements Runnable, IDestin
 
         afterResponse(dao, message, response, message.getStatus());
     }
-
+    
     @Override
     public void run() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropDispatcherPlugin) {
+    		((InteropDispatcherPlugin) connectorPlugin).run();
+    	} else {
+    		doRun();
+    	}
+    }
+
+    @Override
+    public void doRun() {
         DonkeyDao dao = null;
         boolean commitSuccess = false;
         Serializer serializer = channel.getSerializer();

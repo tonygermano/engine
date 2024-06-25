@@ -8,4 +8,8 @@ public class Constants {
     
     public static Class<?> WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS;
     
+    public static Class<?> TCP_DISPATCHER_CLASS;
+    
+    public static Class<?> TCP_RECEIVER_CLASS;
+    
 }

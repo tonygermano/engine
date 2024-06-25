@@ -3,11 +3,9 @@ package com.mirth.connect.donkey.server.channel;
 import java.util.Map;
 import java.util.Set;
 
-import com.mirth.connect.donkey.model.channel.ConnectorPluginProperties;
 import com.mirth.connect.donkey.model.channel.ConnectorProperties;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.message.DataType;
-import com.mirth.connect.donkey.server.ConnectorTaskException;
 
 public interface IConnector {
 	

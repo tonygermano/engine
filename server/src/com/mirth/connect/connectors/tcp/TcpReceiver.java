@@ -562,6 +562,9 @@ public class TcpReceiver extends SourceConnector implements ITcpReceiver {
 
     @Override
 	public String getConfigurationClass() {
+    	if (connectorPlugin != null) {
+    		return connectorPlugin.getConfigurationClass();
+    	}
         return configurationController.getProperty(connectorProperties.getProtocol(), "tcpConfigurationClass");
     }
 

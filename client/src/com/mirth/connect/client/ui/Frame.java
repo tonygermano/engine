@@ -131,6 +131,8 @@ import com.mirth.connect.client.ui.util.DisplayUtil;
 import com.mirth.connect.connectors.core.Constants;
 import com.mirth.connect.connectors.http.HttpDispatcherProperties;
 import com.mirth.connect.connectors.http.HttpReceiverProperties;
+import com.mirth.connect.connectors.tcp.TcpDispatcher;
+import com.mirth.connect.connectors.tcp.TcpReceiver;
 import com.mirth.connect.connectors.ws.WebServiceDispatcherProperties;
 import com.mirth.connect.donkey.model.channel.DebugOptions;
 import com.mirth.connect.donkey.model.channel.DeployedState;
@@ -341,6 +343,8 @@ public class Frame extends FrameBase {
         Constants.HTTP_DISPATCHER_PROPERTIES_CLASS = HttpDispatcherProperties.class;
         Constants.HTTP_RECEIVER_PROPERTIES_CLASS = HttpReceiverProperties.class;
         Constants.WEB_SERVICE_DISPATCHER_PROPERTIES_CLASS = WebServiceDispatcherProperties.class;
+        Constants.TCP_DISPATCHER_CLASS = TcpDispatcher.class;
+        Constants.TCP_RECEIVER_CLASS = TcpReceiver.class;
     }
 
     @Override

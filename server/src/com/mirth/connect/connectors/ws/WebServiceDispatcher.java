@@ -467,9 +467,14 @@ public class WebServiceDispatcher extends DestinationConnector implements IWebSe
             throw new Exception("Unable to load WSDL at URL \"" + wsdlUrl + "\": " + String.valueOf(responseStatusLine));
         }
     }
-
+    
     @Override
     public void replaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
+    	doReplaceConnectorProperties(connectorProperties, connectorMessage);
+    }
+
+    @Override
+    public void doReplaceConnectorProperties(ConnectorProperties connectorProperties, ConnectorMessage connectorMessage) {
         IWebServiceDispatcherProperties webServiceDispatcherProperties = (IWebServiceDispatcherProperties) connectorProperties;
 
         // Replace all values in connector properties

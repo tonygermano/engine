@@ -138,11 +138,33 @@ public class SourceConnector extends Connector implements ISourceConnector {
     public String getConnectorName() {
         return getSourceName();
     }
+    
+    @Override
+    public DeployedState getCurrentState() {
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		return ((InteropReceiverPlugin) connectorPlugin).getCurrentState();
+    	}
+    	return doGetCurrentState();
+    }
+    
+    @Override
+    public DeployedState doGetCurrentState() {
+    	return super.getCurrentState();
+    }
 
     @Override
     public void updateCurrentState(DeployedState currentState) {
-        setCurrentState(currentState);
-        channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), sourceName, DeployedStateEventType.getTypeFromDeployedState(currentState)));
+    	if (connectorPlugin != null && connectorPlugin instanceof InteropReceiverPlugin) {
+    		((InteropReceiverPlugin) connectorPlugin).updateCurrentState(currentState);
+    	} else {
+    		doUpdateCurrentState(currentState);
+    	}
+    }
+    
+    @Override
+    public void doUpdateCurrentState(DeployedState currentState) {
+		setCurrentState(currentState);
+		channel.getEventDispatcher().dispatchEvent(new DeployedStateEvent(getChannelId(), channel.getName(), getMetaDataId(), sourceName, DeployedStateEventType.getTypeFromDeployedState(currentState)));    	
     }
 
     @Override

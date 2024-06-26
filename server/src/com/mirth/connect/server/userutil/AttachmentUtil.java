@@ -462,7 +462,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specified connector message with a given attachment.
+     * Updates an attachment associated with a given connector message.
      *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
@@ -478,7 +478,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specified connector message with a given attachment with an additional option to Base64 encode the content.
+     * Updates an attachment associated with a given connector message with an additional option to Base64 encode the content.
      *
      * @param connectorMessage
      *            The connector message to be associated with the attachment.
@@ -497,7 +497,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specific channel/message ID with a given attachment.
+     * Updates an attachment associated with a specific channel/message ID.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.
@@ -515,7 +515,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specific channel/message ID with a given attachment with an additional option to Base64 encode the content.
+     * Updates an attachment associated with a specific channel/message ID with an additional option to Base64 encode the content.
      *
      * @param channelId
      *            The ID of the channel the attachment is associated with.
@@ -536,7 +536,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specific channel/message/attachment ID with given content.
+     * Updates an attachment associated with a specific channel/message/attachment ID with given content.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.
@@ -558,7 +558,7 @@ public class AttachmentUtil {
     }
 
     /**
-     * Updates a specific channel/message/attachment ID with given content with an additional option to Base64 encode the content.
+     * Updates an attachment associated with a specific channel/message/attachment ID with given content with an additional option to Base64 encode the content.
      * 
      * @param channelId
      *            The ID of the channel the attachment is associated with.

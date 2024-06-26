@@ -284,7 +284,7 @@ public class MirthLauncher {
                 		Element rootElement = document.getDocumentElement();
                 		
                         boolean enabled = extensionStatuses.isEnabled(rootElement.getElementsByTagName("name").item(0).getTextContent());
-                        boolean compatible = isExtensionCompatible(rootElement.getElementsByTagName("pluginVersion").item(0).getTextContent(), currentVersion, rootElement);
+                        boolean compatible = isExtensionCompatible(rootElement.getElementsByTagName("mirthVersion").item(0).getTextContent(), currentVersion, rootElement);
 
                         // Only add libraries from extensions that are not disabled and are compatible with the current version
                         if (enabled && compatible) {

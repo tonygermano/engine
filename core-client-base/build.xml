@@ -92,7 +92,7 @@
 		<jacoco:coverage destfile="${code-coverage-reports}/jacoco.exec" xmlns:jacoco="antlib:org.jacoco.ant" exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader" >
 			<junit haltonfailure="false" fork="true" forkmode="once">
 				<jvmarg value="-Xms128m" />
-				<jvmarg value="-Xmx1024m" />
+				<jvmarg value="-Xmx2048m" />
 				<!-- Uncomment the following and add additional dashes in front of the arguments to allow Java 9+
 					<jvmarg value="-add-opens=java.base/java.util=ALL-UNNAMED" />
 					<jvmarg value="-add-opens=java.base/java.lang=ALL-UNNAMED" />

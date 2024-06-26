@@ -2,7 +2,9 @@
 	<name>Web Service Sender</name>
 	<author>NextGen Healthcare</author>
 	<pluginVersion>@mirthversion</pluginVersion>
-	<mirthVersion>4.6.0</mirthVersion>
+	<mirthVersion>@mirthversion</mirthVersion>
+	<pluginBuildNumber>@pluginbuildnumber</pluginBuildNumber>
+	<coreExtension>true</coreExtension>
 	<url>http://www.nextgen.com</url>
 	<description>This connector allows Mirth Connect to invoke remote Web Services over HTTP.</description>
 	<clientClassName>com.mirth.connect.connectors.ws.WebServiceSender</clientClassName>

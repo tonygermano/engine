@@ -1,5 +1,9 @@
 <project name="mirth-connect" basedir="." default="build">
 	<target name="init">
+		<property environment="env" />
+		<condition property="buildnumber" value="${env.BUILD_NUMBER}" else="">
+	        <isset property="env.BUILD_NUMBER" />
+	    </condition>
 		<property file="mirth-build.properties" />
 		<property name="donkey.setup" value="${donkey}/setup" />
 		<property name="server.setup" value="${server}/setup" />

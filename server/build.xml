@@ -399,6 +399,9 @@
 		<replace dir="${extensions}" token="@mirthversion" value="${version}">
 			<include name="**/*.xml" />
 		</replace>
+		<replace dir="${extensions}" token="@pluginbuildnumber" value="${buildnumber}">
+			<include name="**/*.xml" />
+		</replace>
 	</target>
 
 	<target name="create-plugins" depends="create-connectors">
@@ -906,6 +909,9 @@
 
 		<!-- set the version on all plugins -->
 		<replace dir="${extensions}" token="@mirthversion" value="${version}">
+			<include name="**/*.xml" />
+		</replace>
+		<replace dir="${extensions}" token="@pluginbuildnumber" value="${buildnumber}">
 			<include name="**/*.xml" />
 		</replace>
 	</target>

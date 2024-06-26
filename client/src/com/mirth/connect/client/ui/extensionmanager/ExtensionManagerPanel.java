@@ -14,6 +14,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.prefs.Preferences;
 
 import javax.swing.ImageIcon;
@@ -21,10 +22,13 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import com.mirth.connect.client.core.ClientException;
+import com.mirth.connect.client.core.Version;
 import com.mirth.connect.client.ui.CellData;
 import com.mirth.connect.client.ui.Frame;
 import com.mirth.connect.client.ui.ImageCellRenderer;
@@ -36,6 +40,7 @@ import com.mirth.connect.client.ui.components.MirthTable;
 import com.mirth.connect.model.ConnectorMetaData;
 import com.mirth.connect.model.MetaData;
 import com.mirth.connect.model.PluginMetaData;
+import com.mirth.connect.util.MigrationUtil;
 
 public class ExtensionManagerPanel extends javax.swing.JPanel {
 
@@ -43,10 +48,13 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
     private final String PLUGIN_NAME_COLUMN_NAME = "Name";
     private final String PLUGIN_AUTHOR_COLUMN_NAME = "Author";
     private final String PLUGIN_URL_COLUMN_NAME = "URL";
-    private final String PLUGIN_VERSION_COLUMN_NAME = "Version";
+    private final String PLUGIN_VERSION_COLUMN_NAME = "Extension Version";
+    private final String PLUGIN_BUILD_COLUMN_NAME = "Extension Build";
+    private final String MC_VERSIONS_COLUMN_NAME = "MC Versions";
+    private final String CORE_COLUMN_NAME = "Core";
     private final int PLUGIN_STATUS_COLUMN_NUMBER = 0;
     private final int PLUGIN_NAME_COLUMN_NUMBER = 1;
-    private final int NUMBER_OF_COLUMNS = 5;
+    private final int NUMBER_OF_COLUMNS = 8;
     private int lastConnectorRow = -1;
     private int lastPluginRow = -1;
     private final String ENABLED_STATUS = "Enabled";
@@ -159,6 +167,17 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
         loadedConnectorsTable.getColumnExt(PLUGIN_VERSION_COLUMN_NAME).setPreferredWidth(100);
         loadedConnectorsTable.getColumnExt(PLUGIN_VERSION_COLUMN_NAME).setMinWidth(75);
 
+        loadedConnectorsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setMaxWidth(150);
+        loadedConnectorsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setPreferredWidth(100);
+        loadedConnectorsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setMinWidth(75);
+
+        loadedConnectorsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setMaxWidth(150);
+        loadedConnectorsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setPreferredWidth(100);
+        loadedConnectorsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setMinWidth(75);
+
+        loadedConnectorsTable.getColumnExt(CORE_COLUMN_NAME).setMaxWidth(40);
+        loadedConnectorsTable.getColumnExt(CORE_COLUMN_NAME).setMinWidth(40);
+
         loadedConnectorsTable.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setMaxWidth(UIConstants.MAX_WIDTH);
         loadedConnectorsTable.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setMinWidth(UIConstants.MIN_WIDTH);
 
@@ -193,6 +212,9 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
                 }
             }
         });
+
+        setToolTipTexts(loadedConnectorsTable);
+
         loadedConnectorsTable.addMouseWheelListener(new MouseWheelListener() {
 
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -200,6 +222,17 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
             }
         });
         loadedConnectorsScrollPane.setViewportView(loadedConnectorsTable);
+    }
+
+    private void setToolTipTexts(MirthTable table) {
+        table.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setToolTipText("Shows whether this extension is currently enabled or not.");
+        table.getColumnExt(PLUGIN_NAME_COLUMN_NUMBER).setToolTipText("The name of this extension.");
+        table.getColumnExt(PLUGIN_AUTHOR_COLUMN_NAME).setToolTipText("The author of this extension.");
+        table.getColumnExt(PLUGIN_URL_COLUMN_NAME).setToolTipText("A website you can visit to learn more about this extension.");
+        table.getColumnExt(PLUGIN_VERSION_COLUMN_NAME).setToolTipText("The version of this extension.");
+        table.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setToolTipText("<html>The specific build number of this extension, if applicable.<br/>For \"core\" extensions that come bundled with Mirth Connect by default,<br/>this build number will equal the build number of Mirth Connect itself.</html>");
+        table.getColumnExt(MC_VERSIONS_COLUMN_NAME).setToolTipText("<html>The version(s) of Mirth Connect that this version of this<br/>extension is compatible with. This may be a single version,<br/>a range from min-max, or a comma-separated list of versions.</html>");
+        table.getColumnExt(CORE_COLUMN_NAME).setToolTipText("<html>Indicates whether this extension is a \"core\" extension<br/>that comes bundled with Mirth Connect by default.</html>");
     }
 
     public void setConnectorData(Map<String, ConnectorMetaData> connectorData) {
@@ -234,6 +267,9 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
                 tableData[i][2] = metaData.getAuthor();
                 tableData[i][3] = metaData.getUrl();
                 tableData[i][4] = metaData.getPluginVersion();
+                tableData[i][5] = StringUtils.defaultIfBlank(metaData.getPluginBuildNumber(), "");
+                tableData[i][6] = getSupportedMCVersions(metaData);
+                tableData[i][7] = metaData.isCoreExtension() != null && metaData.isCoreExtension();
 
                 i++;
             }
@@ -247,9 +283,10 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
             loadedConnectorsTable = new MirthTable();
             loadedConnectorsTable.setModel(new RefreshTableModel(tableData, new String[] {
                     PLUGIN_STATUS_COLUMN_NAME, PLUGIN_NAME_COLUMN_NAME, PLUGIN_AUTHOR_COLUMN_NAME,
-                    PLUGIN_URL_COLUMN_NAME, PLUGIN_VERSION_COLUMN_NAME }) {
+                    PLUGIN_URL_COLUMN_NAME, PLUGIN_VERSION_COLUMN_NAME, PLUGIN_BUILD_COLUMN_NAME,
+                    MC_VERSIONS_COLUMN_NAME, CORE_COLUMN_NAME }) {
 
-                boolean[] canEdit = new boolean[] { false, false, false, false, false, false };
+                boolean[] canEdit = new boolean[] { false, false, false, false, false, false, false, false };
 
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return canEdit[columnIndex];
@@ -330,6 +367,17 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
         loadedPluginsTable.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setMaxWidth(UIConstants.MAX_WIDTH);
         loadedPluginsTable.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setMinWidth(UIConstants.MIN_WIDTH);
 
+        loadedPluginsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setMaxWidth(150);
+        loadedPluginsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setPreferredWidth(100);
+        loadedPluginsTable.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setMinWidth(75);
+
+        loadedPluginsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setMaxWidth(150);
+        loadedPluginsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setPreferredWidth(100);
+        loadedPluginsTable.getColumnExt(MC_VERSIONS_COLUMN_NAME).setMinWidth(75);
+
+        loadedPluginsTable.getColumnExt(CORE_COLUMN_NAME).setMaxWidth(40);
+        loadedPluginsTable.getColumnExt(CORE_COLUMN_NAME).setMinWidth(40);
+
         loadedPluginsTable.getColumnExt(PLUGIN_STATUS_COLUMN_NAME).setCellRenderer(new ImageCellRenderer());
 
         if (Preferences.userNodeForPackage(Mirth.class).getBoolean("highlightRows", true)) {
@@ -361,6 +409,8 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
                 }
             }
         });
+
+        setToolTipTexts(loadedPluginsTable);
 
         loadedPluginsTable.addMouseWheelListener(new MouseWheelListener() {
 
@@ -403,6 +453,9 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
                 tableData[i][2] = metaData.getAuthor();
                 tableData[i][3] = metaData.getUrl();
                 tableData[i][4] = metaData.getPluginVersion();
+                tableData[i][5] = StringUtils.defaultIfBlank(metaData.getPluginBuildNumber(), "");
+                tableData[i][6] = getSupportedMCVersions(metaData);
+                tableData[i][7] = metaData.isCoreExtension() != null && metaData.isCoreExtension();
 
                 i++;
             }
@@ -416,9 +469,10 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
             loadedPluginsTable = new MirthTable();
             loadedPluginsTable.setModel(new RefreshTableModel(tableData, new String[] {
                     PLUGIN_STATUS_COLUMN_NAME, PLUGIN_NAME_COLUMN_NAME, PLUGIN_AUTHOR_COLUMN_NAME,
-                    PLUGIN_URL_COLUMN_NAME, PLUGIN_VERSION_COLUMN_NAME }) {
+                    PLUGIN_URL_COLUMN_NAME, PLUGIN_VERSION_COLUMN_NAME, PLUGIN_BUILD_COLUMN_NAME,
+                    MC_VERSIONS_COLUMN_NAME, CORE_COLUMN_NAME }) {
 
-                boolean[] canEdit = new boolean[] { false, false, false, false, false, false };
+                boolean[] canEdit = new boolean[] { false, false, false, false, false, false, false, false };
 
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return canEdit[columnIndex];
@@ -438,6 +492,35 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
             loadedPluginsTable.setHighlighters(highlighter);
         }
 
+    }
+
+    private String getSupportedMCVersions(MetaData metaData) {
+        // Default to the mirth version in the metadata
+        String supportedMCVersions = metaData.getMirthVersion();
+
+        // If core library min versions are specified, derive a range of supported versions
+        if (MapUtils.isNotEmpty(metaData.getMinCoreVersions())) {
+            // Assume the minimum supported MC version is the highest core library version
+            String minSupportedMCVersion = null;
+            for (Entry<String, String> minCoreVersionEntry : metaData.getMinCoreVersions().entrySet()) {
+                if (minSupportedMCVersion == null || MigrationUtil.compareVersions(minSupportedMCVersion, minCoreVersionEntry.getValue()) < 0) {
+                    minSupportedMCVersion = minCoreVersionEntry.getValue();
+                }
+            }
+
+            if (minSupportedMCVersion != null) {
+                supportedMCVersions = minSupportedMCVersion;
+
+                // Assume the highest supported MC version is the current version
+                // TODO: Get this from server-side
+                Version matchingMinVersion = Version.fromString(minSupportedMCVersion);
+                if (matchingMinVersion != null && matchingMinVersion != Version.getLatest()) {
+                    supportedMCVersions += " - " + Version.getLatest().toString();
+                }
+            }
+        }
+
+        return supportedMCVersions;
     }
 
     /** The action called when a plugin is selected. Sets tasks as well. */

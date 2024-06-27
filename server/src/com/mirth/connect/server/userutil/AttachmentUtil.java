@@ -118,7 +118,7 @@ public class AttachmentUtil {
      * @param connectorMessage
      *            The ConnectorMessage associated with this message, used to identify the
      *            channel/message ID.
-     * @return A List of attachment IDs associated with the current channel / message.
+     * @return A List of attachment IDs associated with the current channel/message.
      * @throws MessageSerializerException
      *             If the attachment IDs could be retrieved.
      */
@@ -127,13 +127,13 @@ public class AttachmentUtil {
     }
 
     /**
-     * Returns a list of attachment IDs associated with the current channel / message.
+     * Returns a list of attachment IDs associated with the current channel/message.
      * 
      * @param channelId
      *            The ID of the channel the attachments are associated with.
      * @param messageId
      *            The ID of the message the attachments are associated with.
-     * @return A List of attachment IDs associated with the current channel / message.
+     * @return A List of attachment IDs associated with the current channel/message.
      * @throws MessageSerializerException
      *             If the attachment IDs could be retrieved.
      */

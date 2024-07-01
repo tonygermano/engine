@@ -102,6 +102,16 @@ public interface ExtensionServletInterface extends BaseServletInterface {
     public Map<String, PluginMetaData> getPluginMetaData() throws ClientException;
 
     @GET
+    @Path("/maxcoreversions")
+    @Operation(summary = "Returns max core library versions for loaded extensions.")
+    @MirthOperation(name = "getExtensionMaxCoreVersions", display = "Get extension max core versions", auditable = false)
+    @ApiResponse(content = { @Content(mediaType = MediaType.APPLICATION_XML, examples = {
+            @ExampleObject(name = "extensionMaxCoreVersions", ref = "../apiexamples/extension_maxcoreversions_map_xml") }),
+            @Content(mediaType = MediaType.APPLICATION_JSON, examples = {
+                    @ExampleObject(name = "extensionMaxCoreVersions", ref = "../apiexamples/extension_maxcoreversions_map_json") }) })
+    public Map<String, Map<String, String>> getExtensionMaxCoreVersions() throws ClientException;
+
+    @GET
     @Path("/{extensionName}/enabled")
     @Operation(summary = "Returns the enabled status of an extension.")
     @ApiResponse(content = { @Content(mediaType = MediaType.APPLICATION_XML, examples = {

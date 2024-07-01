@@ -325,6 +325,8 @@ public class SwaggerExamplesServlet extends HttpServlet implements ISwaggerExamp
             requestedObject = getPasswordRequirementListExample();
         } else if (exampleRequested.equals("plugin_metadata_map")) {
             requestedObject = getPluginMetaDataMapExample();
+        } else if (exampleRequested.equals("extension_maxcoreversions_map")) {
+            requestedObject = getExtensionMaxCoreVersionsExample();
         } else if (exampleRequested.equals("properties")) {
             requestedObject = getPropertiesExample();
         } else if (exampleRequested.equals("protocols_and_cipher_suites_map")) {
@@ -1198,9 +1200,24 @@ public class SwaggerExamplesServlet extends HttpServlet implements ISwaggerExamp
 	    Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<>();
 	    pluginMetaDataMap.put("Name", getPluginMetaDataExample());
 	    return pluginMetaDataMap;
-	}
-	
-	private Properties getPropertiesExample() {
+    }
+
+    private Map<String, Map<String, String>> getExtensionMaxCoreVersionsExample() {
+        Map<String, Map<String, String>> extensionMaxCoreVersions = new HashMap<>();
+        Map<String, String> versionsMap = new HashMap<>();
+        versionsMap.put("mirth-core-client", Version.getLatest().toString());
+        versionsMap.put("mirth-core-client-api", Version.getLatest().toString());
+        versionsMap.put("mirth-core-client-base", Version.getLatest().toString());
+        versionsMap.put("mirth-core-client-plugins", Version.getLatest().toString());
+        versionsMap.put("mirth-core-models", Version.getLatest().toString());
+        versionsMap.put("mirth-core-server-plugins", Version.getLatest().toString());
+        versionsMap.put("mirth-core-ui", Version.getLatest().toString());
+        versionsMap.put("mirth-core-util", Version.getLatest().toString());
+        extensionMaxCoreVersions.put("Name", versionsMap);
+        return extensionMaxCoreVersions;
+    }
+
+    private Properties getPropertiesExample() {
 	    Properties properties = new Properties();
 	    properties.setProperty("exampleKey1", "exampleValue1");
 	    properties.setProperty("exampleKey2", "exampleValue2");

@@ -157,6 +157,11 @@ public abstract class ExtensionController extends Controller {
 
     public abstract Map<String, MetaData> getInvalidMetaData();
 
+    /**
+     * Returns max core library versions for loaded extensions.
+     */
+    public abstract Map<String, Map<String, String>> getExtensionMaxCoreVersions();
+
     // ************************************************************
     // Connectors
     // ************************************************************

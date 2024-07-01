@@ -28,7 +28,6 @@ import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import com.mirth.connect.client.core.ClientException;
-import com.mirth.connect.client.core.Version;
 import com.mirth.connect.client.ui.CellData;
 import com.mirth.connect.client.ui.Frame;
 import com.mirth.connect.client.ui.ImageCellRenderer;
@@ -60,6 +59,7 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
     private final String ENABLED_STATUS = "Enabled";
     private Map<String, PluginMetaData> pluginData = null;
     private Map<String, ConnectorMetaData> connectorData = null;
+    private Map<String, Map<String, String>> extensionMaxCoreVersions = null;
     private Frame parent;
 
     public ExtensionManagerPanel() {
@@ -68,6 +68,10 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
         setRestartRequired(false);
         makeLoadedConnectorsTable();
         makeLoadedPluginsTable();
+    }
+
+    public void setExtensionMaxCoreVersions(Map<String, Map<String, String>> extensionMaxCoreVersions) {
+        this.extensionMaxCoreVersions = extensionMaxCoreVersions;
     }
 
     /**
@@ -231,7 +235,7 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
         table.getColumnExt(PLUGIN_URL_COLUMN_NAME).setToolTipText("A website you can visit to learn more about this extension.");
         table.getColumnExt(PLUGIN_VERSION_COLUMN_NAME).setToolTipText("The version of this extension.");
         table.getColumnExt(PLUGIN_BUILD_COLUMN_NAME).setToolTipText("<html>The specific build number of this extension, if applicable.<br/>For \"core\" extensions that come bundled with Mirth Connect by default,<br/>this build number will equal the build number of Mirth Connect itself.</html>");
-        table.getColumnExt(MC_VERSIONS_COLUMN_NAME).setToolTipText("<html>The version(s) of Mirth Connect that this version of this<br/>extension is compatible with. This may be a single version,<br/>a range from min-max, or a comma-separated list of versions.</html>");
+        table.getColumnExt(MC_VERSIONS_COLUMN_NAME).setToolTipText("<html>The version(s) of Mirth Connect that this version of this<br/>extension is compatible with. This may be a single version,<br/>a range from min-max, or a comma-separated list of versions.<br/><br/>If a \"+\" appears at the end, it means that there is not<br/>yet any known max version specified, so this plugin should<br/>be fully compatible with higher versions of Mirth Connect.</html>");
         table.getColumnExt(CORE_COLUMN_NAME).setToolTipText("<html>Indicates whether this extension is a \"core\" extension<br/>that comes bundled with Mirth Connect by default.</html>");
     }
 
@@ -500,23 +504,43 @@ public class ExtensionManagerPanel extends javax.swing.JPanel {
 
         // If core library min versions are specified, derive a range of supported versions
         if (MapUtils.isNotEmpty(metaData.getMinCoreVersions())) {
-            // Assume the minimum supported MC version is the highest core library version
-            String minSupportedMCVersion = null;
-            for (Entry<String, String> minCoreVersionEntry : metaData.getMinCoreVersions().entrySet()) {
-                if (minSupportedMCVersion == null || MigrationUtil.compareVersions(minSupportedMCVersion, minCoreVersionEntry.getValue()) < 0) {
-                    minSupportedMCVersion = minCoreVersionEntry.getValue();
+            try {
+                // Assume the minimum supported MC version is the highest core library version
+                String minSupportedMCVersion = null;
+                for (Entry<String, String> minCoreVersionEntry : metaData.getMinCoreVersions().entrySet()) {
+                    if (minSupportedMCVersion == null || MigrationUtil.compareVersions(minSupportedMCVersion, minCoreVersionEntry.getValue()) < 0) {
+                        minSupportedMCVersion = minCoreVersionEntry.getValue();
+                    }
                 }
-            }
 
-            if (minSupportedMCVersion != null) {
-                supportedMCVersions = minSupportedMCVersion;
+                if (minSupportedMCVersion != null) {
+                    supportedMCVersions = minSupportedMCVersion;
 
-                // Assume the highest supported MC version is the current version
-                // TODO: Get this from server-side
-                Version matchingMinVersion = Version.fromString(minSupportedMCVersion);
-                if (matchingMinVersion != null && matchingMinVersion != Version.getLatest()) {
-                    supportedMCVersions += " - " + Version.getLatest().toString();
+                    String maxSupportedMCVersion = null;
+
+                    // Get max version from the server-side map, if available
+                    if (MapUtils.isNotEmpty(extensionMaxCoreVersions)) {
+                        Map<String, String> maxVersions = extensionMaxCoreVersions.get(metaData.getPath());
+                        if (MapUtils.isNotEmpty(maxVersions)) {
+                            for (Entry<String, String> maxCoreVersionEntry : maxVersions.entrySet()) {
+                                if (StringUtils.isNotBlank(maxCoreVersionEntry.getValue()) && (maxSupportedMCVersion == null || MigrationUtil.compareVersions(maxSupportedMCVersion, maxCoreVersionEntry.getValue()) > 0)) {
+                                    maxSupportedMCVersion = maxCoreVersionEntry.getValue();
+                                }
+                            }
+                        }
+                    }
+
+                    if (maxSupportedMCVersion != null) {
+                        if (MigrationUtil.compareVersions(minSupportedMCVersion, maxSupportedMCVersion) < 0) {
+                            supportedMCVersions += " - " + maxSupportedMCVersion;
+                        }
+                    } else {
+                        supportedMCVersions += "+";
+                    }
                 }
+            } catch (Exception e) {
+                // Ignore, and just use the mirthVersion from the metadata
+                e.printStackTrace();
             }
         }
 

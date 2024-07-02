@@ -2589,6 +2589,16 @@ public class Client implements UserServletInterface, ConfigurationServletInterfa
     }
 
     /**
+     * Returns max core library versions for loaded extensions.
+     * 
+     * @see ExtensionServletInterface#getExtensionMaxCoreVersions
+     */
+    @Override
+    public Map<String, Map<String, String>> getExtensionMaxCoreVersions() throws ClientException {
+        return getServlet(ExtensionServletInterface.class).getExtensionMaxCoreVersions();
+    }
+
+    /**
      * Returns the enabled status of an extension.
      * 
      * @see ExtensionServletInterface#isExtensionEnabled

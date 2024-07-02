@@ -248,6 +248,7 @@ public class Frame extends FrameBase {
     public LinkedHashMap<String, String> displayNameToDataType;
     private Map<String, PluginMetaData> loadedPlugins;
     private Map<String, ConnectorMetaData> loadedConnectors;
+    private Map<String, Map<String, String>> extensionMaxCoreVersions;
     private Map<String, Integer> safeErrorFailCountMap = new HashMap<String, Integer>();
     private Map<Component, String> componentTaskMap = new HashMap<Component, String>();
     private boolean acceleratorKeyPressed = false;
@@ -827,6 +828,7 @@ public class Frame extends FrameBase {
     private void loadExtensionMetaData() throws ClientException {
         loadedPlugins = mirthClient.getPluginMetaData();
         loadedConnectors = mirthClient.getConnectorMetaData();
+        extensionMaxCoreVersions = mirthClient.getExtensionMaxCoreVersions();
 
         // Register extension JAX-RS providers with the client
         Set<String> apiProviderPackages = new HashSet<String>();
@@ -4759,6 +4761,7 @@ public class Frame extends FrameBase {
     }
 
     public void refreshExtensions() {
+        extensionsPanel.setExtensionMaxCoreVersions(getExtensionMaxCoreVersions());
         extensionsPanel.setPluginData(getPluginMetaData());
         extensionsPanel.setConnectorData(getConnectorMetaData());
     }
@@ -5006,6 +5009,11 @@ public class Frame extends FrameBase {
     @Override
     public Map<String, ConnectorMetaData> getConnectorMetaData() {
         return this.loadedConnectors;
+    }
+
+    @Override
+    public Map<String, Map<String, String>> getExtensionMaxCoreVersions() {
+        return this.extensionMaxCoreVersions;
     }
 
     public String getSelectedChannelIdFromDashboard() {

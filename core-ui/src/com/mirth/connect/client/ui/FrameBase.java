@@ -115,9 +115,11 @@ public abstract class FrameBase extends JXFrame {
     public abstract void setVisibleTasks(JXTaskPane pane, JPopupMenu menu, int startIndex, int endIndex, boolean visible);
     
     public abstract Map<String, PluginMetaData> getPluginMetaData();
-    
+
     public abstract Map<String, ConnectorMetaData> getConnectorMetaData();
-    
+
+    public abstract Map<String, Map<String, String>> getExtensionMaxCoreVersions();
+
     /**
      * Enables the save button for needed page.
      */

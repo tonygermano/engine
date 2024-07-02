@@ -74,6 +74,7 @@ public class ExtensionLoader{
     private Map<String, PluginMetaData> pluginMetaDataMap = new HashMap<String, PluginMetaData>();
     private Map<String, ConnectorMetaData> connectorProtocolsMap = new HashMap<String, ConnectorMetaData>();
     private Map<String, MetaData> invalidMetaDataMap = new HashMap<String, MetaData>();
+    private Map<String, Map<String, String>> allExtensionMaxCoreVersions = new HashMap<String, Map<String, String>>();
     private boolean loadedExtensions = false;
     private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
     private static Logger logger = LogManager.getLogger(ExtensionLoader.class);
@@ -114,6 +115,11 @@ public class ExtensionLoader{
     public Map<String, MetaData> getInvalidMetaData() {
         loadExtensions();
         return invalidMetaDataMap;
+    }
+
+    public Map<String, Map<String, String>> getExtensionMaxCoreVersions() {
+        loadExtensions();
+        return allExtensionMaxCoreVersions;
     }
 
     @SuppressWarnings("unchecked")
@@ -183,7 +189,7 @@ public class ExtensionLoader{
             Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
             try {
                 extensionMinCoreVersions = metaData.getMinCoreVersions();
-                extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion(), extensionMinCoreVersions);
+                extensionMaxCoreVersions = getExtensionMaxCoreVersions(metaData.getPath(), metaData.getPluginVersion());
             } catch (Exception e) {
                 logger.error("An error occurred while attempting to determine the extension's Core versions.", e);
                 return false;
@@ -206,13 +212,14 @@ public class ExtensionLoader{
                 
                 if (!MapUtils.isEmpty(extensionMaxCoreVersions)) {
                     if (extensionMaxCoreVersions.containsKey(connectCoreVersionEntry.getKey())) { 
-                        if (!StringUtils.isEmpty(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey())) && connectCoreVersion.isGreaterThan(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()))) {
+                        if (StringUtils.isNotBlank(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey())) && connectCoreVersion.isGreaterThan(extensionMaxCoreVersions.get(connectCoreVersionEntry.getKey()))) {
                             return false;
                         }
                     }
                 }
             }
             
+            allExtensionMaxCoreVersions.put(metaData.getPath(), extensionMaxCoreVersions);
             return true;
         } else {
             // validate extension the old way for non-commercial extensions
@@ -416,7 +423,7 @@ public class ExtensionLoader{
      * @throws JsonProcessingException
      * @throws JsonMappingException
      */
-    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion, Map<String, String> extensionMinCoreVersions) throws JsonMappingException, JsonProcessingException {
+    private Map<String, String> getExtensionMaxCoreVersions(String pluginPath, String pluginVersion) throws JsonMappingException, JsonProcessingException {
         Map<String, String> extensionMaxCoreVersions = new HashMap<String, String>();
 
         if (!StringUtils.isEmpty(extensionsCoreVersionsS3File)) {
@@ -433,20 +440,11 @@ public class ExtensionLoader{
                 while(extensionCoreVersionsS3FileIt.hasNext()) {
                     Map.Entry<String, JsonNode> extensionCoreVersionS3FileEntry = extensionCoreVersionsS3FileIt.next();
 
-                    String extensionCoreVersionS3FileEntryValue = "";
-                    if (extensionCoreVersionS3FileEntry.getValue().has("max") && !StringUtils.isEmpty(extensionCoreVersionS3FileEntry.getValue().get("max").textValue())) {
-                        extensionCoreVersionS3FileEntryValue = extensionCoreVersionS3FileEntry.getValue().get("max").textValue();
-                    } else {
-                        extensionCoreVersionS3FileEntryValue = extensionMinCoreVersions.get(extensionCoreVersionS3FileEntry.getKey());
+                    if (extensionCoreVersionS3FileEntry.getValue().has("max") && StringUtils.isNotBlank(extensionCoreVersionS3FileEntry.getValue().get("max").textValue())) {
+                        extensionMaxCoreVersions.put(extensionCoreVersionS3FileEntry.getKey(), extensionCoreVersionS3FileEntry.getValue().get("max").textValue());
                     }
-                    
-                    extensionMaxCoreVersions.put(extensionCoreVersionS3FileEntry.getKey(), extensionCoreVersionS3FileEntryValue);
                 }
-            } else {
-                extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
             }
-        } else {
-            extensionMaxCoreVersions.putAll(extensionMinCoreVersions);
         }
         
         return extensionMaxCoreVersions;

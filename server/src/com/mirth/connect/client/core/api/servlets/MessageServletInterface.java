@@ -613,4 +613,18 @@ public interface MessageServletInterface extends BaseServletInterface {
     @MirthOperation(name = "auditQueriedPHIMessage", display = "Queried PHI")
     public void auditQueriedPHIMessage(
             @Param("auditMessageAttributesMap") @Parameter(description = "The attributes map of the channel messages filter.", required = false) Map<String, String> auditMessageAttributesMap) throws ClientException;
+
+    @POST
+    @Path("/_auditExportMessages")
+    @Operation(summary = "Audit that the user has exported channel messages.")
+    @MirthOperation(name = "auditExportMessages", display = "Export all messages")
+    public void auditExportMessages(
+            @Param("auditMessageAttributesMap") @Parameter(description = "The attributes map of the channel messages export.", required = false) Map<String, String> auditMessageAttributesMap) throws ClientException;
+
+    @POST
+    @Path("/_auditExportMessagesSuccess")
+    @Operation(summary = "Audit that the user has successfully exported channel messages.")
+    @MirthOperation(name = "auditExportMessagesSuccess", display = "Successfully exported messages")
+    public void auditExportMessagesSuccess(
+            @Param("auditMessageAttributesMap") @Parameter(description = "The attributes map of the channel messages export.", required = false) Map<String, String> auditMessageAttributesMap) throws ClientException;
 }

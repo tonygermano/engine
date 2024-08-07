@@ -13,6 +13,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -20,6 +21,7 @@ import javax.swing.JSeparator;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -147,6 +149,8 @@ public class MessageExportDialog extends MirthDialog {
 
         try {
             if (!isChannelMessagesPanelFirstLoadSearch) {
+                LinkedHashMap<String, String> auditMessageAttributesMap = new LinkedHashMap<String, String>();
+                parent.mirthClient.auditExportMessages(auditMessageAttributesMap);
                 if (messageExportPanel.isExportLocal()) {                    
                     PaginatedMessageList messageList = messages;
 
@@ -182,7 +186,18 @@ public class MessageExportDialog extends MirthDialog {
                 parent.alertInformation(parent, "There are no messages to export. Please perform a search before exporting.");
             } else if (exportCount == 0) {
                 parent.alertInformation(parent, "There are no messages to export.");
-            } else {
+            } else {                
+                LinkedHashMap<String, String> auditMessageAttributesMap = new LinkedHashMap<String, String>();
+                auditMessageAttributesMap.put("rootPath", writerOptions.getRootFolder());
+                auditMessageAttributesMap.put("filePattern", writerOptions.getFilePattern());
+                auditMessageAttributesMap.put("exportCount", String.valueOf(exportCount));
+                auditMessageAttributesMap.put("contentType", writerOptions.getContentType() != null ? writerOptions.getContentType().toString() : "");
+                auditMessageAttributesMap.put("encrypted", String.valueOf(writerOptions.isEncrypt()));
+                auditMessageAttributesMap.put("includeAttachments", String.valueOf(writerOptions.includeAttachments()));
+                auditMessageAttributesMap.put("compressionFormat", writerOptions.getArchiveFormat() !=  null ? getArchiveExtension(writerOptions.getArchiveFormat(), writerOptions.getCompressFormat()) : "");
+                auditMessageAttributesMap.put("passwordProtected", String.valueOf(writerOptions.isPasswordEnabled()));
+                parent.mirthClient.auditExportMessagesSuccess(auditMessageAttributesMap);
+                
                 parent.alertInformation(parent, exportCount + " message" + ((exportCount == 1) ? " has" : "s have") + " been successfully exported to: " + writerOptions.getRootFolder());
             }
         } catch (Exception e) {
@@ -196,6 +211,18 @@ public class MessageExportDialog extends MirthDialog {
         // Single channel server export
         writerOptions.setIncludeAttachments(messageExportPanel.isIncludeAttachments());
         return parent.mirthClient.exportMessagesServer(channelId, messageFilter, pageSize, writerOptions);
+    }
+    
+    private String getArchiveExtension(String archiver, String compressor) {
+        if (compressor == null) {
+            return archiver;
+        }
+
+        if (compressor.equals(CompressorStreamFactory.BZIP2)) {
+            compressor = "bz2";
+        }
+
+        return archiver + "." + compressor;
     }
 
     protected MessageExportPanel messageExportPanel;

@@ -357,6 +357,18 @@ public class MessageServlet extends MirthServlet implements MessageServletInterf
         sendServerEventWithAttributes(auditMessageAttributesMap);
     }
     
+    @Override
+    @DontCheckAuthorized
+    public void auditExportMessages(Map<String, String> auditMessageAttributesMap) {
+        sendServerEventWithAttributes(auditMessageAttributesMap);
+    }
+    
+    @Override
+    @DontCheckAuthorized
+    public void auditExportMessagesSuccess(Map<String, String> auditMessageAttributesMap) {
+        sendServerEventWithAttributes(auditMessageAttributesMap);
+    }
+    
     @DontCheckAuthorized
     private void sendServerEventWithAttributes(Map<String, String> attributes) {
         // manually audit the server event

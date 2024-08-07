@@ -2084,6 +2084,26 @@ public class Client implements UserServletInterface, ConfigurationServletInterfa
     public synchronized void auditQueriedPHIMessage(Map<String, String> auditMessageAttributesMap) throws ClientException {
         getServlet(MessageServletInterface.class).auditQueriedPHIMessage(auditMessageAttributesMap);
     }
+    
+    /**
+     * Audit that the user has exported channel messages.
+     * 
+     * @see MessageServletInterface#auditExportMessages
+     */
+    @Override
+    public synchronized void auditExportMessages(Map<String, String> auditMessageAttributesMap) throws ClientException {
+        getServlet(MessageServletInterface.class).auditExportMessages(auditMessageAttributesMap);
+    }
+    
+    /**
+     * Audit that the user has successfully exported channel messages.
+     * 
+     * @see MessageServletInterface#auditExportMessagesSuccess
+     */
+    @Override
+    public synchronized void auditExportMessagesSuccess(Map<String, String> auditMessageAttributesMap) throws ClientException {
+        getServlet(MessageServletInterface.class).auditExportMessagesSuccess(auditMessageAttributesMap);
+    }
 
     /*****************
      * Event Servlet *

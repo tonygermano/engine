@@ -68,7 +68,7 @@ public class AboutMirth extends MirthDialog {
 
         content.append("Java version: " + System.getProperty("java.version") + "\n\n");
 
-        content.append("(c) 2005-" + Calendar.getInstance().get(Calendar.YEAR) + " NextGen Healthcare. All rights reserved. Visit http://www.nextgen.com\n\n");
+        content.append("(c) 2005-2024 NextGen Healthcare. All rights reserved. Visit http://www.nextgen.com\n\n");
         content.append("The following is a list of acknowledgements for third-party software that is included with Mirth Connect:\n\n");
         content.append("This product includes software developed by the Apache Software Foundation (http://www.apache.org/).\n\n");
         content.append("This product includes all or a portion of the HL7 Vocabulary database, or is derived from the HL7 Vocabulary database, subject to a license from Health Level Seven, Inc.\n\n");

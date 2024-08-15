@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.mirth.connect.client.ui.UIConstants;
 import com.mirth.connect.donkey.model.message.attachment.Attachment;
-import com.mirth.connect.donkey.util.Base64Util;
 import com.mirth.connect.plugins.AttachmentViewer;
 
 public class TextViewer extends AttachmentViewer {
@@ -53,9 +52,7 @@ public class TextViewer extends AttachmentViewer {
             final Attachment attachment = parent.mirthClient.getAttachment(channelId, messageId, attachmentId);
 
             boolean isRTF = attachment.getType().toLowerCase().contains("rtf");
-            // base64 encode attachment content
-            byte[] textViewerAttachmentContentBase64Encoded = Base64.isBase64(attachment.getContent()) ? attachment.getContent() : Base64Util.encodeBase64(attachment.getContent());
-            final JEditorPane jEditorPane = new JEditorPane(isRTF ? "text/rtf" : "text/plain", org.apache.commons.codec.binary.StringUtils.newStringUtf8(Base64.decodeBase64(textViewerAttachmentContentBase64Encoded)));
+            final JEditorPane jEditorPane = new JEditorPane(isRTF ? "text/rtf" : "text/plain", Base64.isBase64(attachment.getContent()) ? org.apache.commons.codec.binary.StringUtils.newStringUtf8(Base64.decodeBase64(attachment.getContent())) : org.apache.commons.codec.binary.StringUtils.newStringUtf8(attachment.getContent()));
 
             jEditorPane.setEditable(false);
             JScrollPane scrollPane = new javax.swing.JScrollPane();
@@ -64,21 +61,24 @@ public class TextViewer extends AttachmentViewer {
             final JCheckBox base64CheckBox = new JCheckBox("Decode Base64 Data");
             base64CheckBox.setBackground(frame.getBackground());
             base64CheckBox.setToolTipText("Check this option if the attachment data is Base64 encoded.");
-            base64CheckBox.setSelected(true);
+            if (Base64.isBase64(attachment.getContent())) {
+                base64CheckBox.setSelected(true);
+            } else {
+                base64CheckBox.setSelected(false);
+            }
             base64CheckBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     try {
                         jEditorPane.setText("");
-                        // base64 encode attachment content
-                        byte[] textViewerAttachmentContentBase64Encoded = Base64.isBase64(attachment.getContent()) ? attachment.getContent() : Base64Util.encodeBase64(attachment.getContent());
                         if (base64CheckBox.isSelected()) {
-                            jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(Base64.decodeBase64(textViewerAttachmentContentBase64Encoded)));
+                            jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(Base64.decodeBase64(attachment.getContent())));
                         } else {
-                            jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(textViewerAttachmentContentBase64Encoded));
+                            jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(attachment.getContent()));
                         }
                         jEditorPane.setCaretPosition(0);
                     } catch(Exception e) {
+                        base64CheckBox.setSelected(false);
                         parent.alertThrowable(parent, e);
                     }
                 }

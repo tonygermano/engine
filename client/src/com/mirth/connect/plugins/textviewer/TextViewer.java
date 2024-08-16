@@ -53,7 +53,7 @@ public class TextViewer extends AttachmentViewer {
 
             boolean isRTF = attachment.getType().toLowerCase().contains("rtf");
             boolean isBase64Encoded = Base64.isBase64(attachment.getContent());
-            final byte[] attachmentContent = isBase64Encoded ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent();
+            byte[] attachmentContent = isBase64Encoded ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent();
             final JEditorPane jEditorPane = new JEditorPane(isRTF ? "text/rtf" : "text/plain", org.apache.commons.codec.binary.StringUtils.newStringUtf8(attachmentContent));
 
             jEditorPane.setEditable(false);
@@ -68,13 +68,11 @@ public class TextViewer extends AttachmentViewer {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
                     try {
-                        jEditorPane.setText("");
                         jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(base64CheckBox.isSelected() ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent()));
                         jEditorPane.setCaretPosition(0);
                     } catch(Exception e) {
-                        // reset the check box and text back
+                        // reset the check box
                         base64CheckBox.setSelected(!base64CheckBox.isSelected());
-                        jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(base64CheckBox.isSelected() ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent()));
                         parent.alertThrowable(parent, e);
                     }
                 }

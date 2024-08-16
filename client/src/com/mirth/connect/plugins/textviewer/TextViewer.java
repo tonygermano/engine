@@ -53,8 +53,8 @@ public class TextViewer extends AttachmentViewer {
 
             boolean isRTF = attachment.getType().toLowerCase().contains("rtf");
             boolean isBase64Encoded = Base64.isBase64(attachment.getContent());
-            final byte[] attachmentContentBase64Decoded = Base64.decodeBase64(attachment.getContent());
-            final JEditorPane jEditorPane = new JEditorPane(isRTF ? "text/rtf" : "text/plain", org.apache.commons.codec.binary.StringUtils.newStringUtf8(isBase64Encoded ? attachmentContentBase64Decoded : attachment.getContent()));
+            final byte[] attachmentContent = isBase64Encoded ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent();
+            final JEditorPane jEditorPane = new JEditorPane(isRTF ? "text/rtf" : "text/plain", org.apache.commons.codec.binary.StringUtils.newStringUtf8(attachmentContent));
 
             jEditorPane.setEditable(false);
             JScrollPane scrollPane = new javax.swing.JScrollPane();
@@ -69,15 +69,20 @@ public class TextViewer extends AttachmentViewer {
                 public void actionPerformed(ActionEvent evt) {
                     try {
                         jEditorPane.setText("");
-                        jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(base64CheckBox.isSelected() ? attachmentContentBase64Decoded : attachment.getContent()));
+                        jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(base64CheckBox.isSelected() ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent()));
                         jEditorPane.setCaretPosition(0);
                     } catch(Exception e) {
+                        // reset the check box and text back
                         base64CheckBox.setSelected(!base64CheckBox.isSelected());
+                        jEditorPane.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(base64CheckBox.isSelected() ? Base64.decodeBase64(attachment.getContent()) : attachment.getContent()));
                         parent.alertThrowable(parent, e);
                     }
                 }
             });
 
+            if (!isBase64Encoded) {
+                base64CheckBox.setVisible(false);
+            }
             frame.add(base64CheckBox, "gapleft 6, gaptop 6");
             frame.add(scrollPane, "newline, grow, push");
 

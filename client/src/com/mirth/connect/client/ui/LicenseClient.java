@@ -58,7 +58,7 @@ public class LicenseClient {
 
             if (licenseInfo.getReason() != null) {
                 invalidLicense = true;
-                builder.append(licenseInfo.getReason()).append("<br/>");
+                builder.append(licenseInfo.getReason().replace("\n", "<br/>")).append("<br/>");
             }
             if ((licenseInfo.getExpirationDate() != null && licenseInfo.getExpirationDate() > 0)) {
 

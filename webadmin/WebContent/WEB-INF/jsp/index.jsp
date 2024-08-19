@@ -115,7 +115,7 @@
             </div>
         </div>
         <div id="smallSubPage">
-        	<p>&copy; 2021 NextGen Healthcare | Mirth Connect</p>
+        	<p>&copy; 2024 NextGen Healthcare | Mirth Connect</p>
         </div>
     
         <script type="text/javascript">

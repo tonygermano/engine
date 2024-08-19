@@ -2670,4 +2670,9 @@ public class Client implements UserServletInterface, ConfigurationServletInterfa
     public void setPluginProperties(String extensionName, Properties properties, boolean mergeProperties) throws ClientException {
         getServlet(ExtensionServletInterface.class).setPluginProperties(extensionName, properties, mergeProperties);
     }
+
+    @Override
+    public String getProperty(String group, String name) throws ClientException {
+        return getServlet(ConfigurationServletInterface.class).getProperty(group, name);
+    }
 }

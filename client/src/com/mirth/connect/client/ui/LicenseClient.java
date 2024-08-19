@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 
 import com.mirth.connect.client.core.ClientException;
 import com.mirth.connect.model.LicenseInfo;
@@ -52,6 +53,7 @@ public class LicenseClient {
     private static void check() {
         try {
             LicenseInfo licenseInfo = PlatformUI.MIRTH_FRAME.mirthClient.getLicenseInfo();
+            String property = PlatformUI.MIRTH_FRAME.mirthClient.getProperty("padlock", "padlockMessage");
             final ZonedDateTime now = ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
             StringBuilder builder = new StringBuilder("<html> ");
             boolean invalidLicense = false;
@@ -99,7 +101,15 @@ public class LicenseClient {
                     }
                 });
             }
-
+            
+            if (!StringUtil.isBlank(property)) {
+                PlatformUI.MIRTH_FRAME.updatePadlockWarning(property);
+            } else {
+                if (StringUtils.isBlank(property) && !StringUtils.isBlank(PlatformUI.MIRTH_FRAME.getPadlockWarning())) {
+                    PlatformUI.MIRTH_FRAME.updatePadlockWarning(null);
+                }
+            }
+            
         } catch (ClientException e) {
             // Ignore
         }

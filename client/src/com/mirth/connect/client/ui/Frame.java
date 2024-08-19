@@ -17,6 +17,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
+import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -225,6 +226,7 @@ public class Frame extends JXFrame {
     public JPopupMenu globalScriptsPopupMenu;
     public JXTaskPane extensionsTasks;
     public JPopupMenu extensionsPopupMenu;
+    public JLabel padlockWarning;
 
     public JXTitledPanel rightContainer;
     private ExecutorService statusUpdaterExecutor = Executors.newSingleThreadExecutor();
@@ -605,21 +607,7 @@ public class Frame extends JXFrame {
         buildContentPanel(rightContainer, contentPane, false);
 
         // Determine background color from user preference if available
-        Color backgroundColor = PlatformUI.DEFAULT_BACKGROUND_COLOR;
-        try {
-            if (currentUser != null) {
-                String backgroundColorStr = mirthClient.getUserPreference(currentUser.getId(), UIConstants.USER_PREF_KEY_BACKGROUND_COLOR);
-                if (StringUtils.isNotBlank(backgroundColorStr)) {
-                    Color backgroundColorPreference = ObjectXMLSerializer.getInstance().deserialize(backgroundColorStr, Color.class);
-                    if (backgroundColorPreference != null) {
-                        backgroundColor = backgroundColorPreference;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            alertThrowable(this, e);
-        }
-        setupBackgroundPainters(backgroundColor);
+        getUserPreferenceBG(currentUser);
 
         splitPane.add(rightContainer, JSplitPane.RIGHT);
         splitPane.add(taskPane, JSplitPane.LEFT);
@@ -772,6 +760,12 @@ public class Frame extends JXFrame {
         container.setBorder(null);
         container.setTitleFont(new Font("Tahoma", Font.BOLD, 18));
         container.setTitleForeground(UIConstants.HEADER_TITLE_TEXT_COLOR);
+
+        padlockWarning = new JLabel();
+        padlockWarning.setText("    ");
+        padlockWarning.setFont(new Font("Tahoma", Font.BOLD, 14));
+        padlockWarning.setForeground(Color.WHITE);
+        
         JLabel mirthConnectImage = new JLabel();
         ImageIcon imageIcon = UIConstants.MIRTHCONNECT_LOGO_GRAY; // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it
@@ -787,10 +781,21 @@ public class Frame extends JXFrame {
                 BareBonesBrowserLaunch.openURL(UIConstants.MIRTHCONNECT_URL);
             }
         });
-       
-        mirthConnectImage.setBorder(BorderFactory.createEmptyBorder(5,0,4,20));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 0;
+        gbc.weightx = 20;
+        gbc.weighty = 1;
+        gbc.gridwidth = 1200;
+        gbc.fill = GridBagConstraints.BOTH;
 
-        ((JPanel) container.getComponent(0)).add(mirthConnectImage);
+        padlockWarning.setBorder(BorderFactory.createEmptyBorder(5,  0, 4, 0));
+        mirthConnectImage.setBorder(BorderFactory.createEmptyBorder(5,  0, 4, 20));
+        
+        JPanel top = (JPanel) container.getComponent(0);
+        top.add(padlockWarning, gbc);
+        top.add(mirthConnectImage);
 
         component.setBorder(new LineBorder(Color.GRAY, 1));
         component.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -5084,5 +5089,45 @@ public class Frame extends JXFrame {
                 }
             }
         }
+    }
+    
+    public void updatePadlockWarning(String message) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (StringUtils.isBlank(message)) {
+                    padlockWarning.setText("     ");
+                    getUserPreferenceBG(getCurrentUser(PlatformUI.MIRTH_FRAME));
+                } else {
+                    padlockWarning.setText(message);
+                    Color backgroundColor = Color.decode("#D40E21");
+                    setupBackgroundPainters(backgroundColor);
+                    padlockWarning.repaint();
+                }
+
+            }});
+    }
+    
+    public String getPadlockWarning() {
+    	return this.padlockWarning.getText();
+    }
+    
+    public void getUserPreferenceBG(User currentUser) {
+	    Color backgroundColor = PlatformUI.DEFAULT_BACKGROUND_COLOR;
+	    try {
+	        if (currentUser != null) {
+	            String backgroundColorStr = mirthClient.getUserPreference(currentUser.getId(), UIConstants.USER_PREF_KEY_BACKGROUND_COLOR);
+	            if (StringUtils.isNotBlank(backgroundColorStr)) {
+	                Color backgroundColorPreference = ObjectXMLSerializer.getInstance().deserialize(backgroundColorStr, Color.class);
+	                if (backgroundColorPreference != null) {
+	                    backgroundColor = backgroundColorPreference;
+	                }
+	            }
+	        }
+	    } catch (Exception e) {
+	        alertThrowable(this, e);
+	    }
+	    setupBackgroundPainters(backgroundColor);
     }
 }

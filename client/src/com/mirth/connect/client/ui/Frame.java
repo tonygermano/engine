@@ -607,7 +607,7 @@ public class Frame extends JXFrame {
         buildContentPanel(rightContainer, contentPane, false);
 
         // Determine background color from user preference if available
-        getUserPreferenceBG(currentUser);
+        updateBackgroundColor(currentUser);
 
         splitPane.add(rightContainer, JSplitPane.RIGHT);
         splitPane.add(taskPane, JSplitPane.LEFT);
@@ -5098,10 +5098,10 @@ public class Frame extends JXFrame {
             public void run() {
                 if (StringUtils.isBlank(message)) {
                     padlockWarning.setText("     ");
-                    getUserPreferenceBG(getCurrentUser(PlatformUI.MIRTH_FRAME));
+                    updateBackgroundColor(getCurrentUser(PlatformUI.MIRTH_FRAME));
                 } else {
                     padlockWarning.setText(message);
-                    Color backgroundColor = Color.decode("#D40E21");
+                    Color backgroundColor = PlatformUI.BOLD_RED_BACKGROUND_COLOR;
                     setupBackgroundPainters(backgroundColor);
                     padlockWarning.repaint();
                 }
@@ -5113,7 +5113,7 @@ public class Frame extends JXFrame {
     	return this.padlockWarning.getText();
     }
     
-    public void getUserPreferenceBG(User currentUser) {
+    public void updateBackgroundColor(User currentUser) {
 	    Color backgroundColor = PlatformUI.DEFAULT_BACKGROUND_COLOR;
 	    try {
 	        if (currentUser != null) {

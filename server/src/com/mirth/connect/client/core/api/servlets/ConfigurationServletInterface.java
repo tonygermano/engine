@@ -198,7 +198,17 @@ public interface ConfigurationServletInterface extends BaseServletInterface {
                     @ExampleObject(name = "publicServerSettings", ref = "../apiexamples/public_server_settings_json") }) })
     @MirthOperation(name = "getPublicServerSettings", display = "Get public server settings", auditable = false)
     public PublicServerSettings getPublicServerSettings() throws ClientException;
-
+    
+    @GET
+    @Path("/property")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Operation(summary = "Returns a property from the configuration table.")
+    @MirthOperation(name = "getProperty", display = "Get property", auditable = false)
+    public String getProperty(
+            @Param("group") @Parameter(description = "The property group.", required = true, schema = @Schema(type = "string")) @QueryParam("group") String group,
+            @Param("name") @Parameter(description = "The name of the property.", required = true, schema = @Schema(type = "string")) @QueryParam("name") String name
+            ) throws ClientException;
+    
     @GET
     @Path("/encryption")
     @Operation(summary = "Returns an EncryptionSettings object with all encryption settings.")

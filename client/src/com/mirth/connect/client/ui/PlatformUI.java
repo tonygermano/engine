@@ -36,6 +36,7 @@ public class PlatformUI {
     public static String SERVER_VERSION;
     public static String BUILD_DATE;
     public static Color DEFAULT_BACKGROUND_COLOR = ServerSettings.DEFAULT_COLOR;
+    public static Color BOLD_RED_BACKGROUND_COLOR = Color.decode("#D40E21");
     public static String[] HTTPS_PROTOCOLS = MirthSSLUtil.DEFAULT_HTTPS_CLIENT_PROTOCOLS;
     public static String[] HTTPS_CIPHER_SUITES = MirthSSLUtil.DEFAULT_HTTPS_CIPHER_SUITES;
     public static String[] SERVER_HTTPS_SUPPORTED_PROTOCOLS = MirthSSLUtil.getSupportedHttpsProtocols();

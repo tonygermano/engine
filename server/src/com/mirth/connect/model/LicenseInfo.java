@@ -23,8 +23,15 @@ public class LicenseInfo implements Serializable {
     private Long warningPeriod;
     private Long gracePeriod;
     private String reason = null;
+    private String reasonCode = null;
+    private boolean padlockWarning = false;
+    private boolean padlock = false;
+    private boolean expired = false;
+    private boolean keyNotFound = false;
     private Set<String> extensions = new HashSet<String>();
     private Set<String> downloadedExtensions = new HashSet<String>();
+    
+    public LicenseInfo() {}    
 
     public String getReason() {
         return reason;
@@ -33,10 +40,48 @@ public class LicenseInfo implements Serializable {
     public void setReason(String reason) {
         this.reason = reason;
     }
+    
+    public String getReasonCode() {
+		return reasonCode;
+	}
 
-    public LicenseInfo() {}
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+	}
 
-    public boolean isActivated() {
+	public boolean isPadlockWarning() {
+		return padlockWarning;
+	}
+
+	public void setPadlockWarning(boolean padlockWarning) {
+		this.padlockWarning = padlockWarning;
+	}
+
+	public boolean isPadlock() {
+		return padlock;
+	}
+
+	public void setPadlock(boolean padlock) {
+		this.padlock = padlock;
+	}
+
+	public boolean isExpired() {
+		return expired;
+	}
+
+	public void setExpired(boolean expired) {
+		this.expired = expired;
+	}
+
+	public boolean isKeyNotFound() {
+		return keyNotFound;
+	}
+
+	public void setKeyNotFound(boolean keyNotFound) {
+		this.keyNotFound = keyNotFound;
+	}
+
+	public boolean isActivated() {
         return activated;
     }
 

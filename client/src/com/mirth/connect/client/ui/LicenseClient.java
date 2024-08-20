@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 
 import com.mirth.connect.client.core.ClientException;
 import com.mirth.connect.model.LicenseInfo;
@@ -52,13 +53,14 @@ public class LicenseClient {
     private static void check() {
         try {
             LicenseInfo licenseInfo = PlatformUI.MIRTH_FRAME.mirthClient.getLicenseInfo();
+            String property = PlatformUI.MIRTH_FRAME.mirthClient.getProperty("padlock", "padlockMessage");
             final ZonedDateTime now = ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
             StringBuilder builder = new StringBuilder("<html> ");
             boolean invalidLicense = false;
 
             if (licenseInfo.getReason() != null) {
                 invalidLicense = true;
-                builder.append(licenseInfo.getReason()).append("<br/>");
+                builder.append(licenseInfo.getReason().replace("\n", "<br/>")).append("<br/>");
             }
             if ((licenseInfo.getExpirationDate() != null && licenseInfo.getExpirationDate() > 0)) {
 
@@ -66,30 +68,21 @@ public class LicenseClient {
 
                 Long warningPeriod = licenseInfo.getWarningPeriod();
                 if (warningPeriod == null) {
-                    warningPeriod = 7L * 24L * 60L * 60L * 1000L;
+                    warningPeriod = 60L * 24L * 60L * 60L * 1000L;	// 60 days
                 }
-
-                Long gracePeriod = licenseInfo.getGracePeriod();
-                if (gracePeriod == null) {
-                    gracePeriod = 7L * 24L * 60L * 60L * 1000L;
-                }
-
+                
                 ZonedDateTime warningStart = expiration.minus(Duration.ofMillis(warningPeriod));
-                ZonedDateTime graceEnd = expiration.plus(Duration.ofMillis(gracePeriod));
 
                 if (now.isAfter(expiration) || now.isAfter(warningStart)) {
                     invalidLicense = true;
                     builder.append("Your NextGen Connect license for the extensions<br/>[").append(StringUtils.join(licenseInfo.getExtensions(), ", ")).append("]<br/>");
-                    Temporal endDate;
 
                     if (now.isAfter(expiration)) {
                         isLicenseExpired = true;
-                        endDate = graceEnd;
-                        builder.append(" has expired and you are now in a grace period. ");
+                        builder.append(" has expired. ");
                     } else {
-                        endDate = expiration;
                         builder.append(" will expire in ");
-                        int days = (int) Math.ceil((double) Duration.between(now, endDate).getSeconds() / 60 / 60 / 24);
+                        int days = (int) Math.ceil((double) Duration.between(now, expiration).getSeconds() / 60 / 60 / 24);
                         builder.append(days).append(" day").append(days == 1 ? "" : "s");
                     }
 
@@ -97,7 +90,7 @@ public class LicenseClient {
 
             }
             if (invalidLicense) {
-                builder.append("<br/>Please create a support ticket through the Success Community client portal<br/>or contact the NextGen Connected Health support team at 800.952.0243 for assistance with your commercial license. </html>");
+                builder.append("<br/>Please create a support ticket through the Success Community client portal<br/>or contact us at mirthconnectsales@nextgen.com for assistance with your commercial license. </html>");
                 final String message = builder.toString();
 
                 SwingUtilities.invokeLater(() -> {
@@ -108,7 +101,15 @@ public class LicenseClient {
                     }
                 });
             }
-
+            
+            if (!StringUtil.isBlank(property)) {
+                PlatformUI.MIRTH_FRAME.updatePadlockWarning(property);
+            } else {
+                if (StringUtils.isBlank(property) && !StringUtils.isBlank(PlatformUI.MIRTH_FRAME.getPadlockWarning())) {
+                    PlatformUI.MIRTH_FRAME.updatePadlockWarning(null);
+                }
+            }
+            
         } catch (ClientException e) {
             // Ignore
         }

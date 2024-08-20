@@ -420,4 +420,9 @@ public class ConfigurationServlet extends MirthServlet implements ConfigurationS
         }
         return languageVersion;
     }
+
+    @Override
+    public String getProperty(String group, String name) throws ClientException {
+        return configurationController.getProperty(group, name);
+    }
 }

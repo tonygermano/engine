@@ -212,7 +212,7 @@ public class SftpConnection implements FileSystemConnection {
         for (Iterator<ChannelSftp.LsEntry> iter = entries.iterator(); iter.hasNext();) {
             ChannelSftp.LsEntry entry = iter.next();
 
-            if (entry.getAttrs().isDir() || entry.getAttrs().isLink()) {
+            if ((entry.getAttrs().isDir() || entry.getAttrs().isLink()) && (!entry.getFilename().equals(".") && !entry.getFilename().equals(".."))) {
                 directories.add(new SftpFileInfo(fromDir, entry).getAbsolutePath());
             }
         }

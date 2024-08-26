@@ -9,11 +9,9 @@
 
 package com.mirth.connect.client.ui;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,41 +58,16 @@ public class LicenseClient {
 
             if (licenseInfo.getReason() != null) {
                 invalidLicense = true;
-                builder.append(licenseInfo.getReason().replace("\n", "<br/>")).append("<br/>");
-            }
-            if ((licenseInfo.getExpirationDate() != null && licenseInfo.getExpirationDate() > 0)) {
-
-                final ZonedDateTime expiration = ZonedDateTime.ofInstant(Instant.ofEpochMilli(licenseInfo.getExpirationDate()), ZoneId.systemDefault());
-
-                Long warningPeriod = licenseInfo.getWarningPeriod();
-                if (warningPeriod == null) {
-                    warningPeriod = 60L * 24L * 60L * 60L * 1000L;	// 60 days
+                if (!licenseInfo.isPadlock()) {
+                    builder.append(licenseInfo.getReason().replace("\n", "<br/>")).append("<br/>");
                 }
-                
-                ZonedDateTime warningStart = expiration.minus(Duration.ofMillis(warningPeriod));
-
-                if (now.isAfter(expiration) || now.isAfter(warningStart)) {
-                    invalidLicense = true;
-                    builder.append("Your NextGen Connect license for the extensions<br/>[").append(StringUtils.join(licenseInfo.getExtensions(), ", ")).append("]<br/>");
-
-                    if (now.isAfter(expiration)) {
-                        isLicenseExpired = true;
-                        builder.append(" has expired. ");
-                    } else {
-                        builder.append(" will expire in ");
-                        int days = (int) Math.ceil((double) Duration.between(now, expiration).getSeconds() / 60 / 60 / 24);
-                        builder.append(days).append(" day").append(days == 1 ? "" : "s");
-                    }
-
-                }
-
             }
+
             if (invalidLicense) {
-                builder.append("<br/>Please create a support ticket through the Success Community client portal<br/>or contact us at mirthconnectsales@nextgen.com for assistance with your commercial license. </html>");
                 final String message = builder.toString();
 
                 SwingUtilities.invokeLater(() -> {
-                    if (isLicenseExpired) {
+                    if (licenseInfo.isExpired() || licenseInfo.isKeyNotFound() || licenseInfo.isUnauthorized()) {
                         PlatformUI.MIRTH_FRAME.alertError(PlatformUI.MIRTH_FRAME, message);
                     } else {
                         PlatformUI.MIRTH_FRAME.alertWarning(PlatformUI.MIRTH_FRAME, message);

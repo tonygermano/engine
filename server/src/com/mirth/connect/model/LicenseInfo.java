@@ -30,6 +30,7 @@ public class LicenseInfo implements Serializable {
     private boolean keyNotFound = false;
     private boolean unauthorized = false;
     private Set<String> extensions = new HashSet<String>();
+    private Set<String> unpermittedExtensions = new HashSet<String>();
     private Set<String> downloadedExtensions = new HashSet<String>();
     
     public LicenseInfo() {}    
@@ -144,6 +145,14 @@ public class LicenseInfo implements Serializable {
 
 	public void setUnauthorized(boolean unauthorized) {
 		this.unauthorized = unauthorized;
+	}
+
+	public Set<String> getUnpermittedExtensions() {
+		return unpermittedExtensions;
+	}
+
+	public void setUnpermittedExtensions(Set<String> unpermittedExtensions) {
+		this.unpermittedExtensions = unpermittedExtensions;
 	}
 
 }

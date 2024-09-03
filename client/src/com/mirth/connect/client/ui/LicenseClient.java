@@ -34,6 +34,7 @@ public class LicenseClient {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+            	Thread.currentThread().setName("daily pop-up warning/error messages");
                 check();
             }
         };
@@ -53,24 +54,34 @@ public class LicenseClient {
             LicenseInfo licenseInfo = PlatformUI.MIRTH_FRAME.mirthClient.getLicenseInfo();
             String property = PlatformUI.MIRTH_FRAME.mirthClient.getProperty("padlock", "padlockMessage");
             final ZonedDateTime now = ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
-            StringBuilder builder = new StringBuilder("<html> ");
+            StringBuilder errorBuilder = new StringBuilder("<html> ");
+            StringBuilder warningBuilder = new StringBuilder("<html> ");
             boolean invalidLicense = false;
 
-            if (licenseInfo.getReason() != null) {
+            if (licenseInfo.getErrorReason() != null) {
                 invalidLicense = true;
                 if (!licenseInfo.isPadlock()) {
-                    builder.append(licenseInfo.getReason().replace("\n", "<br/>")).append("<br/>");
+                    errorBuilder.append(licenseInfo.getErrorReason().replace("\n", "<br/>")).append("<br/>");
+                }
+            }
+            
+            if (licenseInfo.getWarningReason() != null) {
+                invalidLicense = true;
+                if (!licenseInfo.isPadlock()) {
+                    warningBuilder.append(licenseInfo.getWarningReason().replace("\n", "<br/>")).append("<br/>");
                 }
             }
 
             if (invalidLicense) {
-                final String message = builder.toString();
+                final String errorMessage = errorBuilder.toString();
+                final String warningMessage = warningBuilder.toString();
 
                 SwingUtilities.invokeLater(() -> {
-                    if (licenseInfo.isExpired() || licenseInfo.isKeyNotFound() || licenseInfo.isUnauthorized()) {
-                        PlatformUI.MIRTH_FRAME.alertError(PlatformUI.MIRTH_FRAME, message);
-                    } else {
-                        PlatformUI.MIRTH_FRAME.alertWarning(PlatformUI.MIRTH_FRAME, message);
+                    if (licenseInfo.isError()) {
+                        PlatformUI.MIRTH_FRAME.alertError(PlatformUI.MIRTH_FRAME, errorMessage);
+                    } 
+                    if (licenseInfo.isWarning()) {
+                        PlatformUI.MIRTH_FRAME.alertWarning(PlatformUI.MIRTH_FRAME, warningMessage);
                     }
                 });
             }

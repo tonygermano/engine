@@ -22,8 +22,10 @@ public class LicenseInfo implements Serializable {
     private Long expirationDate;
     private Long warningPeriod;
     private Long gracePeriod;
-    private String reason = null;
-    private String reasonCode = null;
+    private boolean error = false;
+    private String errorReason = null;
+    private boolean warning = false;
+    private String warningReason = null;
     private boolean padlockWarning = false;
     private boolean padlock = false;
     private boolean expired = false;
@@ -34,22 +36,6 @@ public class LicenseInfo implements Serializable {
     private Set<String> downloadedExtensions = new HashSet<String>();
     
     public LicenseInfo() {}    
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-    
-    public String getReasonCode() {
-		return reasonCode;
-	}
-
-	public void setReasonCode(String reasonCode) {
-		this.reasonCode = reasonCode;
-	}
 
 	public boolean isPadlockWarning() {
 		return padlockWarning;
@@ -153,6 +139,38 @@ public class LicenseInfo implements Serializable {
 
 	public void setUnpermittedExtensions(Set<String> unpermittedExtensions) {
 		this.unpermittedExtensions = unpermittedExtensions;
+	}
+
+	public String getErrorReason() {
+		return errorReason;
+	}
+
+	public void setErrorReason(String errorReason) {
+		this.errorReason = errorReason;
+	}
+
+	public String getWarningReason() {
+		return warningReason;
+	}
+
+	public void setWarningReason(String warningReason) {
+		this.warningReason = warningReason;
+	}
+
+	public boolean isWarning() {
+		return warning;
+	}
+
+	public void setWarning(boolean warning) {
+		this.warning = warning;
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
 	}
 
 }

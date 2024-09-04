@@ -88,6 +88,8 @@ the same license terms.
 
 	Mozilla Rhino 1.7.13 (source code can be downloaded at:
 	https://developer.mozilla.org/en-US/docs/Rhino)
+	This library was modified to fix some issues in XML processing, and to make
+	the debugger easier to implement.
 
 
 --------------------------------------------------------------------------------
@@ -95,6 +97,9 @@ the same license terms.
 
 Mirth Connect includes the following, which is distributed under the terms of
 the Common Development and Distribution License version 1.1 (see CDDL-1.1.txt):
+
+	AOP Alliance Repackaged 2.4.0 (source code can be downloaded from:
+	https://sourceforge.net/projects/aopalliance/)
 
 	Extended StAX API 1.8 (source code can be downloaded from:
 	https://github.com/javaee/metro-stax-ex/tree/1.8) 
@@ -135,19 +140,20 @@ the Common Development and Distribution License version 1.1 (see CDDL-1.1.txt):
 	JavaBeans Activation Framework API 1.2.0 (source code can be downloaded
 	from: https://github.com/javaee/activation/tree/JAF-1_2_0)
 	
-	JavaMail API 1.5.0 (source code can be downloaded from:
-	http://search.maven.org/remotecontent?filepath=com/sun/mail/javax.mail/1.5.0
-	/javax.mail-1.5.0-sources.jar)
-	
 	JAXB TXW Runtime 2.4.0-b180725.0427 (source code can be downloaded from:
 	https://github.com/javaee/jaxb-v2/tree/master/jaxb-ri/txw)
 	
 	Jersey RESTful Web Services framework 2.22.1 (source code can be downloaded
 	from: https://jersey.java.net/)
+	The WebResourceFactory class was modified to open visibility on methods so
+	that it could be overridden.
 	
-	JSON Processing API (source code can be downloaded from: 
-	https://jsonp.java.net/)
+	JSR 374 JSON Processing API 1.0 (source code can be downloaded from: 
+	http://json-processing-spec.java.net)
 	
+	JSR 374 JSON Processing Default Provider 1.0.4 (source code can be downloaded
+	from: https://jsonp.java.net/)
+
 	Mimepull 1.9.7 (source code can be downloaded from:
 	https://mimepull.java.net/)
 	
@@ -170,6 +176,10 @@ the Common Development and Distribution License version 1.1 (see CDDL-1.1.txt):
 Mirth Connect includes the following, which is distributed under the terms of
 the Common Development and Distribution License version 1.0 (see CDDL-1.0.txt):
 
+	JavaMail API 1.5.0 (source code can be downloaded from:
+	http://search.maven.org/remotecontent?filepath=com/sun/mail/javax.mail/1.5.0
+	/javax.mail-1.5.0-sources.jar)
+
 	Java Servlet API 3.1.0 (source code can be downloaded from: https://java.net
 	/projects/glassfish/sources/svn/show/tags/javax.servlet-api-3.1.0)
 	
@@ -182,8 +192,41 @@ the Common Development and Distribution License version 1.0 (see CDDL-1.0.txt):
 	Java Common Annotations API 1.3 (source code can be downloaded from: 
 	https://github.com/javaee/javax.annotation/tree/1.3)
 	
+	OSGi Resource Locator 1.0.1 (source code can be downloaded from:
+	https://github.com/eclipse-ee4j/glassfish-hk2-extra/tree/master/
+	osgi-resource-locator)
+
 	Web Services Metadata API / JSR-181 (source code can be downloaded from:
 	https://mvnrepository.com/artifact/javax.jws/jsr181-api/1.0-MR1)
+
+
+--------------------------------------------------------------------------------
+
+
+Mirth Connect includes the following, which is distributed under the terms of
+the Eclipse Public License version 2.0 (see EPL-2.0.txt):
+
+	Eclipse Compiler For Java 3.19.0 (source code can be downloaded from:
+	http://www.eclipse.org/jdt)
+
+
+--------------------------------------------------------------------------------
+
+
+Mirth Connect includes the following, which is distributed under the terms of
+the Creative Commons Zero License version 1.0 (see CC0-1.0.txt):
+
+	Backport-util-concurrent API 3.1 (source code can be downloaded from:
+	https://backport-jsr166.sourceforge.net/)
+
+
+--------------------------------------------------------------------------------
+
+
+Mirth Connect includes the following, which is released into public domain:
+
+	ImageJ (source code can be downloaded from:
+	https://imagej.net/ij/download.html)
 
 
 --------------------------------------------------------------------------------
@@ -1178,7 +1221,8 @@ SUCH DAMAGE.
 
 
 The license below pertains to a portion of the software included with
-RSyntaxTextArea, which is included with Mirth Connect.
+RSyntaxTextArea, which is included with Mirth Connect. This library was modified
+to allow easier class overriding.
 
 =================== Beginning of License ===================
 
@@ -1402,6 +1446,30 @@ THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
 IN THE SOFTWARE.
+
+=================== End of License Information ===================
+
+
+--------------------------------------------------------------------------------
+
+
+The license below pertains to the jEdit Syntax package, which is included with
+Mirth Connect. Modifications to this library were made to fix some small issues
+related to syntax highlighting.
+
+=================== Beginning of License Information ===================
+
+The jEdit 2.2.1 syntax highlighting package contains code that is
+Copyright 1998-1999 Slava Pestov, Artur Biesiadowski, Clancy Malcolm,
+Jonathan Revusky, Juha Lindfors and Mike Dillon.
+
+You may use and modify this package for any purpose. Redistribution is
+permitted, in both source and binary form, provided that this notice
+remains intact in all source distributions of this package.
+
+-- Slava Pestov
+25 September 2000
+<sp@gjt.org>
 
 =================== End of License Information ===================
 

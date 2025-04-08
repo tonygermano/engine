@@ -1,7 +1,7 @@
 # Open Integration Engine
 
 [![Website](https://img.shields.io/badge/website-openintegration.org-blue)](https://openintegration.org)
-[![Discord](https://img.shields.io/discord/1358522097667936328?label=Join%20our%20Discord&logo=discord&style=flat)](https://discord.gg/rMg5RS9SZa)
+[![Discord](https://img.shields.io/discord/943670759891554316?label=Join%20our%20Discord&logo=discord&style=flat)](https://discord.gg/azdehW2Zrx)
 [![Docker](https://img.shields.io/badge/docker-openintegrationengine-blue?logo=docker&style=flat)](https://hub.docker.com/u/openintegrationengine)
 [![LinkedIn](https://img.shields.io/badge/linkedin-follow-blue?logo=linkedin&style=flat)](https://www.linkedin.com/company/open-integration-engine)
 

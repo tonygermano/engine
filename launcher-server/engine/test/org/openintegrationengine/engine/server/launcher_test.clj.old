@@ -1,0 +1,234 @@
+(ns org.openintegrationengine.engine.server.launcher-test
+  (:require [clojure.test :refer :all]
+            [clojure.java.io :as io]
+            [clojure.string :as str]
+            ;; Require the namespace under test, aliased for clarity
+            [org.openintegrationengine.engine.server.launcher :as launcher]))
+
+;; === Helper Function for Temp Files ===
+
+(defn create-temp-vmoptions
+  "Creates a temporary file with given content, returns its absolute path.
+   File is marked for deletion on JVM exit."
+  [filename content]
+  (let [temp-file (io/file filename)]
+    (.deleteOnExit temp-file) ; Ensure cleanup even if tests fail
+    (spit temp-file content)
+    (.getAbsolutePath temp-file)))
+
+;; === Fixture for Test Environment ===
+
+(defn env-and-file-fixture
+  "Fixture to mock System/getenv for test isolation."
+  [f]
+  (with-redefs [;; Redefine System/getenv using a simple mock fn that DOES NOT call the original
+                 System/getenv (fn
+                                 ;; Mock for 1-arity call: (System/getenv "VARNAME")
+                                 ([var-name]
+                                  (case var-name ; Return specific values for mocked vars
+                                    "EXISTING_VAR"   "VAR_VALUE"
+                                    "OTHER_VAR"      "OTHER_VALUE"
+                                    "MY_LIB_PATH"    "/path/to/libs"
+                                    "MY_CONFIG_PATH" "/path/to/config"
+                                    ;; Return nil for any variable not explicitly mocked
+                                    nil))
+                                 ;; Mock for 2-arity call: (System/getenv "VARNAME" "default")
+                                 ([var-name default-val]
+                                  (case var-name ; Return specific values for mocked vars
+                                    "EXISTING_VAR"   "VAR_VALUE"
+                                    "OTHER_VAR"      "OTHER_VALUE"
+                                    "MY_LIB_PATH"    "/path/to/libs"
+                                    "MY_CONFIG_PATH" "/path/to/config"
+                                    ;; Return the provided default-val for any variable not explicitly mocked
+                                    default-val)))]
+    (f))) ; Run the actual test function
+
+;; Apply the fixture to all tests in this namespace
+(use-fixtures :each env-and-file-fixture)
+
+;; === Tests for substitute-env-vars ===
+
+;; Note: We use #'launcher/substitute-env-vars to access the private function
+(deftest substitute-env-vars-test
+  (testing "String with no variables"
+    (is (= "hello world" (#'launcher/substitute-env-vars "hello world"))))
+
+  (testing "String with existing variable"
+    (is (= "hello VAR_VALUE" (#'launcher/substitute-env-vars "hello ${EXISTING_VAR}"))))
+
+  (testing "String with multiple existing variables"
+    (is (= "VAR_VALUE meets OTHER_VALUE" (#'launcher/substitute-env-vars "${EXISTING_VAR} meets ${OTHER_VAR}"))))
+
+  (testing "String with non-existent variable"
+    ;; Mock System/getenv returns nil, which clojure.string/replace substitutes with ""
+    (is (= "hello " (#'launcher/substitute-env-vars "hello ${NON_EXISTENT_VAR}"))))
+
+  (testing "String with mixed variables"
+    (is (= "VAR_VALUE and " (#'launcher/substitute-env-vars "${EXISTING_VAR} and ${NON_EXISTENT_VAR}"))))
+
+  (testing "Variable at start and end"
+    (is (= "VAR_VALUE and OTHER_VALUE" (#'launcher/substitute-env-vars "${EXISTING_VAR} and ${OTHER_VAR}"))))
+
+  (testing "Empty string"
+    (is (= "" (#'launcher/substitute-env-vars ""))))
+
+  (testing "String with no variable braces"
+    (is (= "hello $VAR" (#'launcher/substitute-env-vars "hello $VAR"))))
+
+  (testing "Malformed variable syntax"
+    (is (= "hello ${VAR" (#'launcher/substitute-env-vars "hello ${VAR")))))
+
+;; === Tests for parse-vmoptions ===
+
+;; Note: We use #'launcher/parse-vmoptions to access the private function
+(deftest parse-vmoptions-test
+  (testing "Empty file"
+    (let [f (create-temp-vmoptions "empty.vmoptions" "")]
+      (is (= [[] ""] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "File with comments and blank lines"
+    (let [f (create-temp-vmoptions "comments.vmoptions" "# comment\n\n  # another comment\n")]
+      (is (= [[] ""] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "Basic JVM options"
+    (let [f (create-temp-vmoptions "basic.vmoptions" "-Xmx512m\n-Dprop=value")]
+      (is (= [["-Xmx512m" "-Dprop=value"] ""] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "Options with environment variables"
+    (let [f (create-temp-vmoptions "env.vmoptions" "-Xmx${EXISTING_VAR}\n-Dprop=${OTHER_VAR}")]
+      (is (= [["-XmxVAR_VALUE" "-Dprop=OTHER_VALUE"] ""] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "-classpath directive (replace)"
+    (let [f (create-temp-vmoptions "cp.vmoptions" "-classpath /absolute/path\n-Xmx1g")]
+      (is (= [["-Xmx1g"] "/absolute/path"] (#'launcher/parse-vmoptions f "initial/cp")))))
+
+  (testing "-classpath directive with env var"
+    (let [f (create-temp-vmoptions "cp_env.vmoptions" "-classpath ${MY_LIB_PATH}/lib.jar")]
+      (is (= [[] "/path/to/libs/lib.jar"] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "-classpath/a directive (append)"
+    (let [f (create-temp-vmoptions "cpa.vmoptions" "-classpath/a /append/path")
+          ;; Mocking the path-separator var from the launcher namespace itself
+          ;; to ensure ':' is used, matching the code's default if env var isn't set.
+          separator #'launcher/path-separator]
+      (with-redefs [separator ":"]
+        (is (= [[] "initial/cp:/append/path"] (#'launcher/parse-vmoptions f "initial/cp"))))))
+
+  (testing "-classpath/a directive with env var"
+    (let [f (create-temp-vmoptions "cpa_env.vmoptions" "-classpath/a ${MY_CONFIG_PATH}")
+          separator #'launcher/path-separator]
+      (with-redefs [separator ":"]
+        (is (= [[] "initial/cp:/path/to/config"] (#'launcher/parse-vmoptions f "initial/cp"))))))
+
+  (testing "-classpath/a directive with no initial classpath"
+    (let [f (create-temp-vmoptions "cpa_noinit.vmoptions" "-classpath/a /append/path")]
+      (is (= [[] "/append/path"] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "-classpath/p directive (prepend)"
+    (let [f (create-temp-vmoptions "cpp.vmoptions" "-classpath/p /prepend/path")
+          separator #'launcher/path-separator]
+      (with-redefs [separator ":"]
+        (is (= [[] "/prepend/path:initial/cp"] (#'launcher/parse-vmoptions f "initial/cp"))))))
+
+  (testing "-classpath/p directive with env var"
+    (let [f (create-temp-vmoptions "cpp_env.vmoptions" "-classpath/p ${MY_CONFIG_PATH}")
+          separator #'launcher/path-separator]
+      (with-redefs [separator ":"]
+        (is (= [[] "/path/to/config:initial/cp"] (#'launcher/parse-vmoptions f "initial/cp"))))))
+
+  (testing "-classpath/p directive with no initial classpath"
+    (let [f (create-temp-vmoptions "cpp_noinit.vmoptions" "-classpath/p /prepend/path")]
+      (is (= [[] "/prepend/path"] (#'launcher/parse-vmoptions f "")))))
+
+  (testing "-include-options directive"
+    (let [inc-f-path (create-temp-vmoptions "include.vmoptions" "-XincOpt\n-classpath/a /included/path")
+          main-f-path (create-temp-vmoptions "main_inc.vmoptions" (str "-XmainOpt\n"
+                                                                       "-include-options " inc-f-path "\n"
+                                                                       "-classpath/p /main/path"))
+          separator #'launcher/path-separator]
+      ;; Expected: main prepends, then include appends to initial "" -> "/main/path:/included/path"
+      ;; Options are concatenated in order encountered (main opt, then included opts)
+      (with-redefs [separator ":"]
+        (is (= [["-XmainOpt" "-XincOpt"] "/main/path:/included/path"] (#'launcher/parse-vmoptions main-f-path ""))))))
+
+  (testing "Nested includes"
+    (let [inc2-f-path (create-temp-vmoptions "include2.vmoptions" "-XincOpt2")
+          inc1-f-path (create-temp-vmoptions "include1.vmoptions" (str "-include-options " inc2-f-path "\n-XincOpt1"))
+          main-f-path (create-temp-vmoptions "main_nested.vmoptions" (str "-XmainOpt\n-include-options " inc1-f-path))]
+      (is (= [["-XmainOpt" "-XincOpt2" "-XincOpt1"] ""] (#'launcher/parse-vmoptions main-f-path "")))))
+
+  (testing "Included file not found"
+    (let [main-f-path (create-temp-vmoptions "main_missing_inc.vmoptions" "-XmainOpt\n-include-options non_existent.vmoptions")]
+      ;; Should ignore the missing include and process the rest
+      (is (= [["-XmainOpt"] ""] (#'launcher/parse-vmoptions main-f-path "")))))
+
+  (testing "Main file not found"
+    ;; Should return default empty options and original classpath
+    (is (= [[] "initial/cp"] (#'launcher/parse-vmoptions "/non/existent/path.vmoptions" "initial/cp")))))
+
+
+;; === Tests for -main command construction (using mocking) ===
+
+(deftest main-command-construction-test
+  (let [captured-command (atom nil) ; Atom to capture the command list
+        mock-vmoptions-path "/fake/engine.vmoptions"]
+
+    (with-redefs [;; Mock file system interaction for engine.vmoptions
+                  io/file (fn [& args]
+                            (if (= ["." "engine.vmoptions"] (vec args))
+                              ;; Return a File object that returns the mock path for getAbsolutePath
+                              (proxy [java.io.File] [mock-vmoptions-path]
+                                (getAbsolutePath [] mock-vmoptions-path)
+                                (isFile [] true)) ; Assume it exists and is a file for parsing logic
+                              (apply io/file args))) ; Fallback for other calls (e.g., inside launcher/-main for java exec)
+
+                  ;; Mock environment variables needed directly by -main
+                  System/getenv (fn [var-name]
+                                  (case var-name
+                                    "JAVA_HOME" "/mock/java/home" ; Simulate JAVA_HOME is set
+                                    ;; Let path-separator use its default lookup logic within the launcher code
+                                    ;; by returning nil here if it were checked directly in -main
+                                    nil))
+
+                  ;; Mock the private vmoptions parser function to return controlled results
+                  #'launcher/parse-vmoptions (fn [file-path initial-cp]
+                                               (is (= mock-vmoptions-path file-path)) ; Verify correct file is parsed
+                                               (is (= "" initial-cp)) ; Verify initial CP is empty
+                                               ;; Return sample parsed options
+                                               [["-Xmx1g" "-Dtest=true"] ; vm-options
+                                                "/opt/lib1:/opt/lib2"]) ; parsed-classpath
+
+                  ;; Mock the private path-separator var to ensure ':' is used in test assertions
+                  #'launcher/path-separator ":"
+
+                  ;; Mock ProcessBuilder constructor to capture the command list
+                  ProcessBuilder. (fn [^java.util.List command-list]
+                                    (reset! captured-command (vec command-list)) ; Capture the command vector
+                                    ;; Return a dummy Process object that responds to necessary methods
+                                    (reify java.lang.Process
+                                      (start [this] this) ; Dummy start returns self
+                                      (getInputStream [this] (io/input-stream (.getBytes "")))
+                                      (getErrorStream [this] (io/input-stream (.getBytes "")))
+                                      (waitFor [this] 0) ; Simulate immediate successful exit
+                                      ))]
+
+      ;; Call the -main function with some sample arguments
+      (launcher/-main "arg1" "--arg2=val")
+
+      ;; Assert the command captured by the mock ProcessBuilder
+      ;; Aligning vector elements vertically for readability
+      (is (= ["/mock/java/home/bin/java" ; Java executable from mock JAVA_HOME
+              "-Xmx1g"                    ; VM option from mock parse-vmoptions
+              "-Dtest=true"               ; VM option from mock parse-vmoptions
+              "-cp"                       ; Classpath flag
+              "mirth-server-launcher.jar:/opt/lib1:/opt/lib2" ; Final classpath (using mocked separator)
+              "com.mirth.connect.server.launcher.MirthLauncher" ; Main class
+              "arg1"                      ; Passthrough argument
+              "--arg2=val"                ; Passthrough argument
+              ] @captured-command)))))
+
+;; You might add more deftest blocks for -main with different scenarios:
+;; - JAVA_HOME is nil -> should use "java"
+;; - parse-vmoptions returns empty options / empty classpath
+;; - No pass-through arguments
+;; - Mocking path-separator to ";" and asserting correct classpath formation

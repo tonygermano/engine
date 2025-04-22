@@ -18,10 +18,4 @@
                 ;; :opts ["--no-fallback" "--verbose"]
                 }
 
-  :profiles {:dev {:resource-paths ["resources"]}
-             ;; Note: The :env settings in profiles affect `lein run` or tests,
-             ;; but won't directly set environment variables *inside* the
-             ;; native-image build process unless the plugin specifically reads them.
-             ;; The runtime code already handles the default separator.
-             :win {:env {:path-separator ";"}}
-             :unix {:env {:path-separator ":"}}})
+  :profiles {:dev {:resource-paths ["resources"]}})

@@ -1,6 +1,5 @@
 (ns org.openintegrationengine.engine.server.launcher-test
   (:require [clojure.test :refer :all]
-            [clojure.java.io :as io] ; Still needed for File separators potentially
             [clojure.string :as str]
             ;; Require the namespace under test, aliased for clarity
             [org.openintegrationengine.engine.server.launcher :as launcher])
@@ -42,20 +41,27 @@
   ;; Define mock file contents and environment for these tests
   (let [mock-files {"main.vmoptions" (str "-Xmx512m\n"
                                           "-Dprop=${ENV_PROP}\n"
+                                          "-java-bin /specific/java\n"
                                           "-include-options included.vmoptions\n"
                                           "-classpath/a /main/append")
 
                     "included.vmoptions" (str "# A comment\n"
                                               "-XincOpt\n"
+                                              "-java-bin /included/java\n"
                                               "-classpath/p /included/prepend")
 
+                    "override.vmoptions" (str "-include-options included.vmoptions\n" ; Include sets it first
+                                              "-java-bin /override/java") ; Then override
+
+                    "env_java.vmoptions" "-java-bin ${JAVA_BIN_PATH}"
                     "cp_replace.vmoptions" "-classpath /new/path"
                     "cp_append.vmoptions" "-classpath/a /append"
                     "cp_prepend.vmoptions" "-classpath/p /prepend"
                     "empty.vmoptions" ""
                     "only_comments.vmoptions" "# line 1\n   # line 2"}
 
-        mock-env {"ENV_PROP" "env-value"}
+        mock-env {"ENV_PROP" "env-value"
+                  "JAVA_BIN_PATH" "/env/java/path"}
 
         ;; Mock implementations for config map
         mock-read-file (fn [path]
@@ -71,14 +77,30 @@
                      :is-file-fn     mock-is-file
                      :path-separator ":"}]
 
-    (testing "Parsing basic file with includes and substitutions"
+    (testing "Parsing basic file with -java-bin, includes and substitutions"
       (let [result (launcher/parse-vmoptions "main.vmoptions" "initial/cp" test-config)]
         (is (:ok? result))
         (is (= ["-Xmx512m" "-Dprop=env-value" "-XincOpt"] (:options result)))
-        ;; Expected: included prepends, main appends -> /included/prepend:initial/cp:/main/append
         (is (= "/included/prepend:initial/cp:/main/append" (:classpath result)))
-        (is (= 1 (count (:warnings result)))) ; Expect one warning about the include
+        (is (= "/included/java" (:java-bin-path result)))
+        (is (= 1 (count (:warnings result))))
         (is (str/includes? (first (:warnings result)) "Included options from: included.vmoptions"))))
+
+    (testing "Parsing file where override options included -java-bin"
+      (let [result (launcher/parse-vmoptions "override.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (= ["-XincOpt"] (:options result)))
+        (is (= "/included/prepend" (:classpath result)))
+        (is (= "/override/java" (:java-bin-path result)))
+        (is (= 1 (count (:warnings result))))))
+
+    (testing "Parsing file with -java-bin using env var"
+      (let [result (launcher/parse-vmoptions "env_java.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (empty? (:options result)))
+        (is (= "" (:classpath result)))
+        (is (= "/env/java/path" (:java-bin-path result))) ; Path from env var substitution
+        (is (empty? (:warnings result)))))
 
     (testing "Empty file"
       (let [result (launcher/parse-vmoptions "empty.vmoptions" "" test-config)]
@@ -133,6 +155,7 @@
     (testing "Main file not found"
       (let [result (launcher/parse-vmoptions "/non/existent/path.vmoptions" "initial/cp" test-config)]
         (is (false? (:ok? result)))
+        (is (nil? (:java-bin-path result)))
         (is (= :file-not-found (:error result)))
         (is (= "/non/existent/path.vmoptions" (:path result)))
         (is (= "initial/cp" (:classpath result))) ; Returns initial classpath
@@ -157,13 +180,7 @@
     (let [mock-env {}
           mock-exists (constantly true)] ; Assume "java" exists on path
       (is (= "java" ; Should use default
-             (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists File/separator)))))
-
-  (comment (testing "Windows separators"
-             (let [mock-env {"JAVA_HOME" "C:\\Java"}
-                   mock-exists #(= % "C:\\Java\\bin\\java")]
-               (is (= "C:\\Java\\bin\\java"
-                      (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists "\\"))))))) ; Pass "\" separator
+             (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists File/separator))))))
 
 ;; === Tests for build-command-list ===
 

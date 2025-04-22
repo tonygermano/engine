@@ -1,159 +1,238 @@
 (ns org.openintegrationengine.engine.server.launcher
   (:require [clojure.string :as str]
             [clojure.java.io :as io])
-  ;; Import TimeUnit for the optional timed waitFor in the shutdown hook
-  (:import [java.util.concurrent TimeUnit])
+  (:import [java.util.concurrent TimeUnit]
+           [java.io File FileNotFoundException IOException])
   (:gen-class))
 
-;; Define the path separator based on environment or default to Unix style
-(def ^:private path-separator (or (System/getenv "path-separator") ":"))
+;; =============================================
+;; Helper Functions
+;; =============================================
 
-;; Function to substitute environment variables like ${VAR_NAME}
-(defn- substitute-env-vars [s]
+(defn substitute-env-vars
+  "Substitutes ${VAR_NAME} patterns in a string using a provided getter function. Pure."
+  [s getenv-fn] ; Takes a function to resolve env vars
   (str/replace s #"\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}"
-               (fn [[_ var-name]] (or (System/getenv var-name) "")))) ; Return "" for undefined vars
+               (fn [[_ var-name]] (or (getenv-fn var-name) ""))))
 
-;; Function to parse the .vmoptions file, handling includes and classpath directives
-(defn- parse-vmoptions [file-path classpath]
-  (try
-    (loop [lines (->> (slurp file-path)
-                      (str/split-lines)
-                      (map str/trim)
-                      (remove #(or (str/blank? %) (str/starts-with? % "#"))))
-           options []
-           current-classpath classpath]
-      (if (empty? lines)
-        [options current-classpath]
-        (let [line (first lines)
-              trimmed-line (str/trim line)]
-          (cond
-            (str/starts-with? trimmed-line "-include-options")
-            (let [included-path-str (str/trim (subs trimmed-line (count "-include-options")))
-                  included-file (io/file included-path-str)]
-              (if (.isFile included-file) ; Check if it's a valid file
-                (let [[included-options new-classpath] (parse-vmoptions (.getAbsolutePath included-file) current-classpath)]
-                  (recur (rest lines) (concat options included-options) new-classpath))
-                (do (println (str "Warning: Included options path is not a file or not found: '" included-path-str "'"))
-                    (recur (rest lines) options current-classpath)))) ; Skip if not a file
+(defn- parse-vmoptions* ; Internal recursive helper
+  "Parses vmoptions lines, returning a map with :options, :classpath, and :warnings.
+   Takes a config map with functions for side effects/environment info."
+  [file-path current-classpath config]
+  ;; Destructure the functions and values needed from the config map
+  (let [{:keys [read-file-fn getenv-fn is-file-fn path-separator]} config]
+    ;; Use try/catch for the initial file read of the current file-path
+    (try
+      ;; Read the file content using the provided function
+      (let [content (read-file-fn file-path)]
+        ;; Start the loop processing lines
+        (loop [lines (->> content
+                          (str/split-lines)
+                          (map str/trim)
+                          ;; Remove empty lines and comments
+                          (remove #(or (str/blank? %) (str/starts-with? % "#"))))
+               options [] ; Accumulator for JVM options
+               classpath current-classpath ; Accumulator for the classpath string
+               warnings []] ; Accumulator for any warnings generated
+
+          ;; Base case: No more lines to process
+          (if (empty? lines)
+            {:ok? true :options options :classpath classpath :warnings warnings} ; Return success map
+
+            ;; Recursive step: Process the first line
+            (let [line (first lines)
+                  remaining-lines (rest lines)
+                  trimmed-line (str/trim line)
+                  ;; Create a substitution function for this scope using the provided getenv-fn
+                  subst-fn (fn [s] (substitute-env-vars s getenv-fn))]
+
+              ;; Dispatch based on the start of the line
+              (cond
+                ;; --- Handle -include-options ---
+                (str/starts-with? trimmed-line "-include-options")
+                (let [included-path-str (str/trim (subs trimmed-line (count "-include-options")))]
+                  (if (is-file-fn included-path-str) ; Use provided function to check file
+                    ;; --- File Exists ---
+                    (let [;; Recursively call self to parse the included file.
+                          ;; Pass the *current* loop's classpath state.
+                          sub-result (parse-vmoptions* included-path-str classpath config)]
+                      (if (:ok? sub-result)
+                        ;; Include successful: Recur with combined options, the *new* classpath
+                        ;; from the sub-result, and accumulated warnings.
+                        (recur remaining-lines
+                               (concat options (:options sub-result))
+                               (:classpath sub-result) ; Use updated classpath
+                               (concat warnings (:warnings sub-result) [(str "Included options from: " included-path-str)]))
+                        ;; Include failed (e.g., nested file not found): Recur with warning,
+                        ;; keeping the *current* options and classpath state.
+                        (recur remaining-lines
+                               options
+                               classpath ; Keep current classpath
+                               (conj warnings (str "Failed to parse included options from '" included-path-str "': " (:error sub-result))))))
+                    ;; --- File Does Not Exist ---
+                    ;; Recur with warning, keeping current options and classpath.
+                    (recur remaining-lines
+                           options
+                           classpath
+                           (conj warnings (str "Included options path is not a file or not found: '" included-path-str "'")))))
+
+                ;; --- Handle -classpath (replace) ---
+                (str/starts-with? trimmed-line "-classpath ")
+                (recur remaining-lines
+                       options ; Options unchanged
+                       (subst-fn (str/trim (subs trimmed-line (count "-classpath ")))) ; Replace classpath
+                       warnings)
+
+                ;; --- Handle -classpath/a (append) ---
+                (str/starts-with? trimmed-line "-classpath/a")
+                (let [path-to-append (subst-fn (str/trim (subs trimmed-line (count "-classpath/a"))))]
+                  (recur remaining-lines
+                         options
+                         (if (str/blank? classpath) ; Append using configured separator
+                           path-to-append
+                           (str classpath path-separator path-to-append))
+                         warnings))
+
+                ;; --- Handle -classpath/p (prepend) ---
+                (str/starts-with? trimmed-line "-classpath/p")
+                (let [path-to-prepend (subst-fn (str/trim (subs trimmed-line (count "-classpath/p"))))]
+                  (recur remaining-lines
+                         options
+                         (if (str/blank? classpath) ; Prepend using configured separator
+                           path-to-prepend
+                           (str path-to-prepend path-separator classpath))
+                         warnings))
+
+                ;; --- Handle regular JVM option ---
+                :else
+                (recur remaining-lines
+                       (conj options (subst-fn trimmed-line)) ; Add substituted option
+                       classpath ; Classpath unchanged
+                       warnings)))))) ; End let and loop body
+
+      ;; Catch file not found for the *current* file-path being processed
+      (catch FileNotFoundException _
+        {:ok? false :error :file-not-found :path file-path :options [] :classpath current-classpath :warnings []}))))
 
 
-            (str/starts-with? trimmed-line "-classpath ") ; Note the space - prevents matching -classpath/a etc.
-            (recur (rest lines) options (substitute-env-vars (str/trim (subs trimmed-line (count "-classpath ")))))
 
-            (str/starts-with? trimmed-line "-classpath/a")
-            (let [path-to-append (substitute-env-vars (str/trim (subs trimmed-line (count "-classpath/a"))))]
-               (recur (rest lines) options (if (str/blank? current-classpath)
-                                             path-to-append
-                                             (str current-classpath path-separator path-to-append))))
+(defn parse-vmoptions
+  "Public interface for parsing vmoptions. Takes initial state and config, returns result map. Pure."
+  [file-path initial-classpath config]
+  ;; Doesn't do much now, but could validate config or handle top-level errors
+  (parse-vmoptions* file-path initial-classpath config))
 
-            (str/starts-with? trimmed-line "-classpath/p")
-             (let [path-to-prepend (substitute-env-vars (str/trim (subs trimmed-line (count "-classpath/p"))))]
-               (recur (rest lines) options (if (str/blank? current-classpath)
-                                             path-to-prepend
-                                             (str path-to-prepend path-separator current-classpath))))
+(defn determine-java-executable
+  "Determines the java executable path based on JAVA_HOME. Pure.
+   Takes functions for env lookup and file existence checks."
+  [getenv-fn file-exists-fn file-separator]
+  (let [java-home (getenv-fn "JAVA_HOME")]
+    (if (and java-home (not (str/blank? java-home)))
+      (let [exec-path-str (str java-home file-separator "bin" file-separator "java")
+            exec-path (io/file exec-path-str) ; Create File object locally
+            ]
+        (if (file-exists-fn (.getAbsolutePath exec-path)) ; Check absolute path
+          (.getAbsolutePath exec-path)
+          ;; Log warning via side-effect fn if passed, or just return fallback
+          "java")) ; Simplified: return fallback directly
+      "java")))
 
-            :else
-            (recur (rest lines) (conj options (substitute-env-vars trimmed-line)) current-classpath)))))
-    (catch java.io.FileNotFoundException _
-      ;; Don't print warning here if the main file isn't found, handle in -main
-      [[] classpath])))
+(defn build-command-list
+  "Constructs the final command vector. Pure."
+  [java-exec vm-opts final-cp main-cls args]
+  (-> [java-exec]
+      (into vm-opts)
+      (into ["-cp" final-cp])
+      (conj main-cls)
+      (into args)))
 
-;; === Main Application Entry Point ===
+;; =============================================
+;; Main Function (Orchestrates Side Effects)
+;; =============================================
+
 (defn -main [& args]
-  (let [;; --- Configuration Setup ---
-        vmoptions-file (io/file "." "engine.vmoptions")
-        ;; Atom to hold the running child process reference for the shutdown hook
-        process-atom (atom nil)
-        java-home (System/getenv "JAVA_HOME") ; Get JAVA_HOME (can be nil)
+  ;; --- Define Real Side-Effecting Functions/Values ---
+  (let [;; Environment Access
+        real-getenv (fn ([var] (System/getenv var)))
+        ;; File System Access
+        real-read-file slurp
+        real-is-file #(.isFile (io/file %))
+        real-file-exists #(.exists (io/file %))
+        ;; OS-specific separators
+        os-file-separator File/separator ; e.g., "/" or "\"
+        os-path-separator File/pathSeparator ; e.g., ":" or ";"
 
-        ;; Determine java executable path
-        java-executable (if (and java-home (not (str/blank? java-home)))
-                          (let [exec-path (io/file java-home "bin" "java")]
-                            (if (.isFile exec-path) ; Check if java exists at path
-                              (.getAbsolutePath exec-path)
-                              (do (println (str "WARNING: java executable not found in specified JAVA_HOME: '" (.getAbsolutePath exec-path) "'. Falling back to 'java'."))
-                                  "java"))) ; Fallback if not found in JAVA_HOME
-                          "java") ; Default if JAVA_HOME is not set or blank
-        _ (println (str "Using Java executable: " java-executable))
+        ;; --- Configuration for Pure Functions ---
+        config {:getenv-fn      real-getenv
+                :read-file-fn   real-read-file
+                :is-file-fn     real-is-file
+                :path-separator os-path-separator
+                ;; No log-fn passed, parse-vmoptions* won't log warnings internally now
+                }
 
-        ;; Parse vmoptions file if it exists
-        [vm-options parsed-classpath] (if (.isFile vmoptions-file)
-                                         (parse-vmoptions (.getAbsolutePath vmoptions-file) "")
-                                         (do (println "INFO: engine.vmoptions not found in current directory. Proceeding without custom VM options.")
-                                             [[] ""])) ; Default if file doesn't exist or isn't a file
+        ;; --- Core Logic using Pure(r) Functions ---
+        vmoptions-file-path "engine.vmoptions" ; Define path
+        process-atom (atom nil) ; For shutdown hook state
 
-        ;; --- Classpath and Command Construction ---
-        mirth-launcher-jar "mirth-server-launcher.jar" ; Target application JAR
+        ;; Determine Java executable
+        java-executable (determine-java-executable real-getenv real-file-exists os-file-separator)
+        _ (println (str "Using Java executable: " java-executable)) ; Side effect: Logging
+
+        ;; Parse vmoptions file
+        parse-result (if (real-is-file vmoptions-file-path) ; Check existence before parsing
+                       (parse-vmoptions vmoptions-file-path "" config)
+                       {:ok? true :options [] :classpath "" :warnings [(str "vmoptions file not found or not a file: " vmoptions-file-path)]})
+
+        ;; Log warnings from parsing (Side effect)
+        _ (doseq [warning (:warnings parse-result)] (println "WARNING:" warning))
+        ;; Could add error handling here if parse-result wasn't :ok?
+
+        ;; Extract results (assuming :ok? or using defaults)
+        vm-options (:options parse-result [])
+        parsed-classpath (:classpath parse-result "")
+
+        ;; Construct Classpath and Command (Pure)
+        mirth-launcher-jar "mirth-server-launcher.jar"
         final-classpath (if (str/blank? parsed-classpath)
                           mirth-launcher-jar
-                          (str mirth-launcher-jar path-separator parsed-classpath))
-        main-class "com.mirth.connect.server.launcher.MirthLauncher" ; Target application main class
+                          (str mirth-launcher-jar os-path-separator parsed-classpath))
+        main-class "com.mirth.connect.server.launcher.MirthLauncher"
+        command (build-command-list java-executable vm-options final-classpath main-class args)
 
-        ;; Build the full command list
-        command (-> [java-executable] ; Start with java executable
-                    (into vm-options) ; Add parsed JVM options
-                    (into ["-cp" final-classpath]) ; Add classpath flag and value
-                    (conj main-class) ; Add main class to run
-                    (into args))] ; Add any pass-through arguments given to the launcher
+        ;; --- Side Effects Execution ---
+        _ (println "Launching Engine with command:" (str/join " " command)) ; Side effect: Logging
 
-    ;; --- Shutdown Hook Setup ---
-    ;; Add a hook to attempt graceful, then forceful, shutdown of the child process
-    ;; if the launcher itself is terminated (e.g., via Ctrl+C).
-    (.addShutdownHook (Runtime/getRuntime)
-      (Thread.
-       (fn []
-         ;; This code runs when the launcher's JVM is shutting down
-         (when-let [proc @process-atom] ; Check if process atom holds a valid process reference
-           (println "\nLauncher shutting down, attempting to terminate Mirth process...")
-           (try
-             (.destroy proc) ; Attempt graceful shutdown (sends SIGTERM on Unix/Linux)
-             ;; Optional: Wait briefly and force kill if needed
-             (when-not (.waitFor proc 5 TimeUnit/SECONDS) ; Wait up to 5 seconds
-               (println "Mirth process did not terminate gracefully after 5s, forcing shutdown...")
-               (.destroyForcibly proc)) ; Force kill (sends SIGKILL on Unix/Linux)
-             (println "Mirth process termination signal sent.")
-             (catch Exception e
-               ;; Catch potential errors during shutdown hook execution
-               (println (str "ERROR during shutdown hook: " (.getMessage e)))))))))
-    ;; --- End Shutdown Hook Setup ---
+        ;; Shutdown Hook (Side effect)
+        shutdown-hook (Thread. (fn []
+                                 (when-let [proc @process-atom]
+                                   (println "\nLauncher shutting down, attempting to terminate Engine process...")
+                                   (try
+                                     (.destroy proc)
+                                     (when-not (.waitFor proc 5 TimeUnit/SECONDS)
+                                       (println "Engine process did not terminate gracefully, forcing shutdown...")
+                                       (.destroyForcibly proc))
+                                     (println "Engine process termination signal sent.")
+                                     (catch Exception e (println "ERROR during shutdown hook:" (.getMessage e)))))))
+        _ (.addShutdownHook (Runtime/getRuntime) shutdown-hook)
 
-    (println "Launching Mirth with command:" (str/join " " command))
-    (try
-      ;; --- Process Execution ---
-      ;; Start the child process
-      (let [process (.start (ProcessBuilder. ^java.util.List command))]
-        ;; Store the running process reference in the atom for the shutdown hook
-        (reset! process-atom process)
+        exit-code (try ; Process Launching and Management (Side effect)
+                    (let [process (.start (ProcessBuilder. ^java.util.List command))]
+                      (reset! process-atom process) ; Store process for hook
+                      (with-open [input-stream (.getInputStream process) error-stream (.getErrorStream process)]
+                        (let [out-thread (future (io/copy input-stream System/out))
+                              err-thread (future (io/copy error-stream System/err))
+                              ec (.waitFor process)]
+                          @out-thread @err-thread ; Ensure streams are flushed
+                          ec))) ; Return exit code
+                    (catch IOException e
+                      (println (str "ERROR: Could not start Engine process: " (.getMessage e)))
+                      (println "Check java executable, JAR path, and command details:")
+                      (println (str/join " " command))
+                      1) ; Return error code 1
+                    (finally
+                      (reset! process-atom nil) ; Clear process atom
+                      (.removeShutdownHook (Runtime/getRuntime) shutdown-hook))) ; Remove hook
+        ]
 
-        ;; Handle child process output/error streams asynchronously to prevent blocking
-        (with-open [input-stream (.getInputStream process)
-                    error-stream (.getErrorStream process)]
-          ;; Start threads to copy child streams to launcher's streams
-          (let [out-thread (future (io/copy input-stream System/out))
-                err-thread (future (io/copy error-stream System/err))]
-
-            ;; Wait for the child process to complete its execution naturally
-            (let [exit-code (.waitFor process)]
-              ;; Ensure stream copying is finished before exiting launcher
-              @out-thread
-              @err-thread
-              (println (str "\nMirth process exited with code: " exit-code))
-              ;; Exit the launcher with the same exit code as the child process
-              (System/exit exit-code)))))
-
-    ;; --- Error Handling ---
-    (catch java.io.IOException e
-      ;; Handle errors during process startup (e.g., java command not found)
-      (println (str "ERROR: Could not start Mirth process: " (.getMessage e)))
-      (println "Check:")
-      (println (str " - If '" java-executable "' is correct and exists."))
-      (println (str " - If '" mirth-launcher-jar "' is present."))
-      (println (str " - If the generated command is valid: " (str/join " " command)))
-      (System/exit 1)) ; Exit launcher with an error code
-
-    (finally
-      ;; --- Cleanup ---
-      ;; Clear the process atom when -main finishes (either normally or via exception).
-      ;; This prevents the shutdown hook from attempting to act on a process
-      ;; that has already finished or failed to start.
-      (reset! process-atom nil)))))
+    ;; Exit with final code (Side effect)
+    (System/exit exit-code)))

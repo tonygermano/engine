@@ -161,7 +161,7 @@
         ;; OS-specific separators
         os-file-separator File/separator ; e.g., "/" or "\"
         os-path-separator File/pathSeparator ; e.g., ":" or ";"
-
+        
         ;; --- Configuration for Pure Functions ---
         config {:getenv-fn      real-getenv
                 :read-file-fn   real-read-file
@@ -173,11 +173,12 @@
         ;; --- Core Logic using Pure(r) Functions ---
         vmoptions-file-path "engine.vmoptions" ; Define path
         process-atom (atom nil) ; For shutdown hook state
+        shutting-down?-atom (atom false)
 
         ;; Determine Java executable
         java-executable (determine-java-executable real-getenv real-file-exists os-file-separator)
         _ (println (str "Using Java executable: " java-executable)) ; Side effect: Logging
-
+        
         ;; Parse vmoptions file
         parse-result (if (real-is-file vmoptions-file-path) ; Check existence before parsing
                        (parse-vmoptions vmoptions-file-path "" config)
@@ -186,7 +187,7 @@
         ;; Log warnings from parsing (Side effect)
         _ (doseq [warning (:warnings parse-result)] (println "WARNING:" warning))
         ;; Could add error handling here if parse-result wasn't :ok?
-
+        
         ;; Extract results (assuming :ok? or using defaults)
         vm-options (:options parse-result [])
         parsed-classpath (:classpath parse-result "")
@@ -201,29 +202,21 @@
 
         ;; --- Side Effects Execution ---
         _ (println "Launching Engine with command:" (str/join " " command)) ; Side effect: Logging
-
+        
         ;; Shutdown Hook (Side effect)
         shutdown-hook (Thread. (fn []
+                                 (reset! shutting-down?-atom true)
                                  (when-let [proc @process-atom]
                                    (println "\nLauncher shutting down, attempting to terminate Engine process...")
                                    (try
                                      (.destroy proc)
-                                     (when-not (.waitFor proc 5 TimeUnit/SECONDS)
-                                       (println "Engine process did not terminate gracefully, forcing shutdown...")
-                                       (.destroyForcibly proc))
-                                     (println "Engine process termination signal sent.")
                                      (catch Exception e (println "ERROR during shutdown hook:" (.getMessage e)))))))
         _ (.addShutdownHook (Runtime/getRuntime) shutdown-hook)
 
         exit-code (try ; Process Launching and Management (Side effect)
-                    (let [process (.start (ProcessBuilder. ^java.util.List command))]
+                    (let [process (.start (.inheritIO (ProcessBuilder. ^java.util.List command)))]
                       (reset! process-atom process) ; Store process for hook
-                      (with-open [input-stream (.getInputStream process) error-stream (.getErrorStream process)]
-                        (let [out-thread (future (io/copy input-stream System/out))
-                              err-thread (future (io/copy error-stream System/err))
-                              ec (.waitFor process)]
-                          @out-thread @err-thread ; Ensure streams are flushed
-                          ec))) ; Return exit code
+                      (.waitFor process)) ; Return exit code
                     (catch IOException e
                       (println (str "ERROR: Could not start Engine process: " (.getMessage e)))
                       (println "Check java executable, JAR path, and command details:")
@@ -231,7 +224,11 @@
                       1) ; Return error code 1
                     (finally
                       (reset! process-atom nil) ; Clear process atom
-                      (.removeShutdownHook (Runtime/getRuntime) shutdown-hook))) ; Remove hook
+                      (when (not @shutting-down?-atom)
+                        (try
+                          (.removeShutdownHook (Runtime/getRuntime) shutdown-hook)
+                          (catch IllegalStateException _)
+                          )))) ; Remove hook
         ]
 
     ;; Exit with final code (Side effect)

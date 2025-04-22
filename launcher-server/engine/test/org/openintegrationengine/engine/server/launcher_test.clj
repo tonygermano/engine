@@ -1,78 +1,205 @@
 (ns org.openintegrationengine.engine.server.launcher-test
   (:require [clojure.test :refer :all]
-            ;; Keep requires as they might be needed by compiler/macro phases
-            ;; even if tests are commented out.
-            [clojure.java.io :as io]
+            [clojure.java.io :as io] ; Still needed for File separators potentially
             [clojure.string :as str]
-            [mockery.core :refer [with-mocks]]
-            [org.openintegrationengine.engine.server.launcher :as launcher]))
+            ;; Require the namespace under test, aliased for clarity
+            [org.openintegrationengine.engine.server.launcher :as launcher])
+  (:import [java.io File FileNotFoundException])) ; Import for mocking file reads
 
-;; === Fixture for Test Environment (MINIMAL VERSION) ===
-(defn env-and-file-fixture
-  "Fixture to mock System/getenv using mockery."
-  [f]
-  ;; Replace with-redefs with with-mocks
-  (with-mocks
-    ;; Mock definition for java.lang.System/getenv
-    (java.lang.System/getenv ; Target the static method
-     (fn ; Provide the multi-arity mock implementation
-       ([var-name] ; 1-arity
-        (case var-name
-          "EXISTING_VAR"   "VAR_VALUE"
-          "OTHER_VAR"      "OTHER_VALUE"
-          "MY_LIB_PATH"    "/path/to/libs"
-          "MY_CONFIG_PATH" "/path/to/config"
-          nil)) ; Default for 1-arity
-       ([var-name default-val] ; 2-arity
-        (case var-name
-          "EXISTING_VAR"   "VAR_VALUE"
-          "OTHER_VAR"      "OTHER_VALUE"
-          "MY_LIB_PATH"    "/path/to/libs"
-          "MY_CONFIG_PATH" "/path/to/config"
-          default-val)))) ; Default for 2-arity
+;; NOTE: No global fixture (env-and-file-fixture) is needed anymore.
+;; NOTE: No create-temp-vmoptions helper is needed anymore.
 
-    ;; If you needed to mock other functions/methods, add them here
-    ;; with the same pattern: (target-fn-or-method (fn [...] ...))
+;; === Tests for substitute-env-vars ===
 
-    ;; Run the actual test function within the mocked context
-    (f)))
+(deftest substitute-env-vars-test
+  ;; Define a mock environment for these tests
+  (let [mock-env {"EXISTING_VAR" "VAR_VALUE"
+                  "OTHER_VAR"    "OTHER_VALUE"}
+        mock-getenv (fn [var-name] (get mock-env var-name))]
 
-;; Apply the fixture to all tests in this namespace
-(use-fixtures :each env-and-file-fixture)
+    (testing "String with no variables"
+      (is (= "hello world" (launcher/substitute-env-vars "hello world" mock-getenv))))
 
-;; === ALL HELPERS AND TESTS COMMENTED OUT ===
-#_(comment
-    ;; === Helper Function for Temp Files ===
-    (defn create-temp-vmoptions [filename content]
-      (let [temp-file (io/file filename)]
-        (.deleteOnExit temp-file) ; Ensure cleanup even if tests fail
-        (spit temp-file content)
-        (.getAbsolutePath temp-file)))
+    (testing "String with existing variable"
+      (is (= "hello VAR_VALUE" (launcher/substitute-env-vars "hello ${EXISTING_VAR}" mock-getenv))))
 
-    ;; === Tests for substitute-env-vars ===
-    (deftest substitute-env-vars-test
-      (testing "String with no variables"
-        (is (= "hello world" (#'launcher/substitute-env-vars "hello world")))))
-      ;; ... etc ...
+    (testing "String with multiple existing variables"
+      (is (= "VAR_VALUE meets OTHER_VALUE" (launcher/substitute-env-vars "${EXISTING_VAR} meets ${OTHER_VAR}" mock-getenv))))
 
-    ;; === Tests for parse-vmoptions ===
-    (deftest parse-vmoptions-test
-      (testing "Empty file"
-       (let [f (create-temp-vmoptions "empty.vmoptions" "")]
-         (is (= [[] ""] (#'launcher/parse-vmoptions f "")))))
-       ;; ... etc ...
+    (testing "String with non-existent variable"
+      ;; substitute-env-vars replaces non-found with ""
+      (is (= "hello " (launcher/substitute-env-vars "hello ${NON_EXISTENT_VAR}" mock-getenv))))
 
-    ;; === Tests for -main command construction (using mocking) ===
-    (deftest main-command-construction-test
-      (let [captured-command (atom nil) ; Atom to capture the command list
-           mock-vmoptions-path "/fake/engine.vmoptions"]
-         ;; ... etc ...
-    ))
-  ) ;; End of comment block
+    (testing "String with mixed variables"
+      (is (= "VAR_VALUE and " (launcher/substitute-env-vars "${EXISTING_VAR} and ${NON_EXISTENT_VAR}" mock-getenv))))
 
-;; Add a dummy test just so 'lein test' has something to run
-(deftest dummy-test
-  (println "DEBUG: Running dummy-test...")
-  (is (= 1 1)))
+    (testing "Empty string"
+      (is (= "" (launcher/substitute-env-vars "" mock-getenv))))))
 
-(println "DEBUG: launcher_test.clj loaded.")
+;; === Tests for parse-vmoptions ===
+
+(deftest parse-vmoptions-test
+  ;; Define mock file contents and environment for these tests
+  (let [mock-files {"main.vmoptions" (str "-Xmx512m\n"
+                                          "-Dprop=${ENV_PROP}\n"
+                                          "-include-options included.vmoptions\n"
+                                          "-classpath/a /main/append")
+
+                    "included.vmoptions" (str "# A comment\n"
+                                              "-XincOpt\n"
+                                              "-classpath/p /included/prepend")
+
+                    "cp_replace.vmoptions" "-classpath /new/path"
+                    "cp_append.vmoptions" "-classpath/a /append"
+                    "cp_prepend.vmoptions" "-classpath/p /prepend"
+                    "empty.vmoptions" ""
+                    "only_comments.vmoptions" "# line 1\n   # line 2"}
+
+        mock-env {"ENV_PROP" "env-value"}
+
+        ;; Mock implementations for config map
+        mock-read-file (fn [path]
+                         (if-let [content (get mock-files path)]
+                           content
+                           (throw (FileNotFoundException. (str path " not found in mock files")))))
+        mock-getenv (fn [var-name] (get mock-env var-name))
+        mock-is-file (fn [path] (contains? mock-files path))
+
+        ;; Basic config map using mocks (Unix path separator for tests)
+        test-config {:read-file-fn   mock-read-file
+                     :getenv-fn      mock-getenv
+                     :is-file-fn     mock-is-file
+                     :path-separator ":"}]
+
+    (testing "Parsing basic file with includes and substitutions"
+      (let [result (launcher/parse-vmoptions "main.vmoptions" "initial/cp" test-config)]
+        (is (:ok? result))
+        (is (= ["-Xmx512m" "-Dprop=env-value" "-XincOpt"] (:options result)))
+        ;; Expected: included prepends, main appends -> /included/prepend:initial/cp:/main/append
+        (is (= "/included/prepend:initial/cp:/main/append" (:classpath result)))
+        (is (= 1 (count (:warnings result)))) ; Expect one warning about the include
+        (is (str/includes? (first (:warnings result)) "Included options from: included.vmoptions"))))
+
+    (testing "Empty file"
+      (let [result (launcher/parse-vmoptions "empty.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (empty? (:options result)))
+        (is (= "" (:classpath result)))
+        (is (empty? (:warnings result)))))
+
+    (testing "File with only comments/blanks"
+      (let [result (launcher/parse-vmoptions "only_comments.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (empty? (:options result)))
+        (is (= "" (:classpath result)))
+        (is (empty? (:warnings result)))))
+
+    (testing "Classpath replace"
+      (let [result (launcher/parse-vmoptions "cp_replace.vmoptions" "old/path" test-config)]
+        (is (:ok? result))
+        (is (empty? (:options result)))
+        (is (= "/new/path" (:classpath result)))))
+
+    (testing "Classpath append"
+      (let [result (launcher/parse-vmoptions "cp_append.vmoptions" "initial" test-config)]
+        (is (:ok? result))
+        (is (= "initial:/append" (:classpath result)))))
+
+    (testing "Classpath append to empty"
+      (let [result (launcher/parse-vmoptions "cp_append.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (= "/append" (:classpath result)))))
+
+    (testing "Classpath prepend"
+      (let [result (launcher/parse-vmoptions "cp_prepend.vmoptions" "initial" test-config)]
+        (is (:ok? result))
+        (is (= "/prepend:initial" (:classpath result)))))
+
+    (testing "Classpath prepend to empty"
+      (let [result (launcher/parse-vmoptions "cp_prepend.vmoptions" "" test-config)]
+        (is (:ok? result))
+        (is (= "/prepend" (:classpath result)))))
+
+    (testing "Included file check (file not found)"
+      (let [config-no-include (assoc test-config :is-file-fn (constantly false))
+            result (launcher/parse-vmoptions "main.vmoptions" "" config-no-include)]
+        ;; Should parse main options, but skip include and add warning
+        (is (:ok? result))
+        (is (= ["-Xmx512m" "-Dprop=env-value"] (:options result)))
+        (is (= "/main/append" (:classpath result))) ; Initial "" + main append
+        (is (= 1 (count (:warnings result))))
+        (is (str/includes? (first (:warnings result)) "not a file or not found: 'included.vmoptions'"))))
+
+    (testing "Main file not found"
+      (let [result (launcher/parse-vmoptions "/non/existent/path.vmoptions" "initial/cp" test-config)]
+        (is (false? (:ok? result)))
+        (is (= :file-not-found (:error result)))
+        (is (= "/non/existent/path.vmoptions" (:path result)))
+        (is (= "initial/cp" (:classpath result))) ; Returns initial classpath
+        (is (empty? (:options result)))))))
+
+;; === Tests for determine-java-executable ===
+
+(deftest determine-java-executable-test
+  (testing "JAVA_HOME set and java exists"
+    (let [mock-env {"JAVA_HOME" "/opt/java"}
+          mock-exists #(= % "/opt/java/bin/java")] ; Only this path exists
+      (is (= "/opt/java/bin/java"
+             (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists File/separator)))))
+
+  (testing "JAVA_HOME set but java does NOT exist"
+    (let [mock-env {"JAVA_HOME" "/opt/java"}
+          mock-exists (constantly false)] ; Nothing exists
+      (is (= "java" ; Should fallback
+             (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists File/separator)))))
+
+  (testing "JAVA_HOME not set"
+    (let [mock-env {}
+          mock-exists (constantly true)] ; Assume "java" exists on path
+      (is (= "java" ; Should use default
+             (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists File/separator)))))
+
+  (comment (testing "Windows separators"
+             (let [mock-env {"JAVA_HOME" "C:\\Java"}
+                   mock-exists #(= % "C:\\Java\\bin\\java")]
+               (is (= "C:\\Java\\bin\\java"
+                      (launcher/determine-java-executable (fn [v] (get mock-env v)) mock-exists "\\"))))))) ; Pass "\" separator
+
+;; === Tests for build-command-list ===
+
+(deftest build-command-list-test
+  (testing "Basic command construction"
+    (is (= ["java" "-Xmx1g" "-cp" "app.jar:/lib/*" "com.app.Main" "arg1"]
+           (launcher/build-command-list "java"
+                                        ["-Xmx1g"]
+                                        "app.jar:/lib/*"
+                                        "com.app.Main"
+                                        ["arg1"]))))
+
+  (testing "No VM options"
+    (is (= ["java" "-cp" "app.jar" "com.app.Main"]
+           (launcher/build-command-list "java"
+                                        [] ; Empty vm options
+                                        "app.jar"
+                                        "com.app.Main"
+                                        [])))) ; Empty args
+
+  (testing "No pass-through arguments"
+    (is (= ["java" "-Dprop=val" "-cp" "app.jar" "com.app.Main"]
+           (launcher/build-command-list "java"
+                                        ["-Dprop=val"]
+                                        "app.jar"
+                                        "com.app.Main"
+                                        [])))) ; Empty args
+
+  (testing "Multiple VM options and arguments"
+    (is (= ["java" "-Xmx1g" "-Dprop=val" "-cp" "app.jar" "com.app.Main" "arg1" "--flag"]
+           (launcher/build-command-list "java"
+                                        ["-Xmx1g" "-Dprop=val"]
+                                        "app.jar"
+                                        "com.app.Main"
+                                        ["arg1" "--flag"])))))
+
+;; NOTE: No unit test for -main as its primary role is orchestrating
+;;       side effects using the now-testable pure helper functions.
+;;       -main should be tested via integration tests if needed.

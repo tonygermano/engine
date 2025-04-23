@@ -17,7 +17,9 @@
                  :opts ["--no-fallback"
                         "--verbose"
                         "--report-unsupported-elements-at-runtime"
-                        "--initialize-at-build-time"]}
+                        "--initialize-at-build-time"
+                        "--strict-image-heap"
+                        "-H:ReflectionConfigurationFiles=reflect-config.json"]}
 
   :profiles {:dev {:resource-paths ["resources"]}
              :native-image {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})

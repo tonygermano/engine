@@ -24,9 +24,19 @@ FIXME: listing of options this app accepts.
 
 ...
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+### Development
+`lein test` to run tests
+`lein uberjar` to build jar
+
+To create reflect-config, from server/setup
+```
+java -agentlib:native-image-agent=config-output-dir=../../launcher-server/engine/target/native-image-config \
+     -jar ../../launcher-server/engine/target/engine-0.1.0-SNAPSHOT-standalone.jar
+```
+Afterwards, copy `./target/native-image-config/reflect-config.json` to `./reflect-config.json`
+
+`lein native-image` to compile to bin
+
 
 ## License
 

@@ -14,8 +14,10 @@
   ;; The :name key here matches the :native-image map you had,
   ;; but it's interpreted by the plugin.
   :native-image {:name "engine"
-                ;; Optional: Add GraalVM arguments if needed
-                ;; :opts ["--no-fallback" "--verbose"]
-                }
+                 :opts ["--no-fallback"
+                        "--verbose"
+                        "--report-unsupported-elements-at-runtime"
+                        "--initialize-at-build-time"]}
 
-  :profiles {:dev {:resource-paths ["resources"]}})
+  :profiles {:dev {:resource-paths ["resources"]}
+             :native-image {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})

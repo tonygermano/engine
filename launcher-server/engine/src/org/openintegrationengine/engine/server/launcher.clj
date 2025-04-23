@@ -24,6 +24,7 @@
       (let [content (read-file-fn file-path)]
         (loop [lines (->> content
                           (str/split-lines)
+                          (map str/trim)
                           (remove #(or (str/blank? %) (str/starts-with? % "#"))))
                options []
                classpath current-classpath

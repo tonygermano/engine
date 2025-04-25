@@ -15,9 +15,9 @@
                (fn [[_ var-name]] (or (getenv-fn var-name) ""))))
 
 (defn- parse-vmoptions* ; Internal recursive helper
-  "Parses vmoptions lines, returning a map with :options, :classpath, :java-bin-path, and :warnings.
+  "Parses vmoptions lines, returning a map with :options, :classpath, :java-cmd-path, and :warnings.
    Takes a config map with functions for side effects/environment info."
-  [file-path current-classpath current-java-bin-path config] ; Added current-java-bin-path
+  [file-path current-classpath current-java-cmd-path config]
   ;; Destructure the functions and values needed from the config map
   (let [{:keys [read-file-fn getenv-fn is-file-fn path-separator]} config]
     (try
@@ -28,12 +28,11 @@
                           (remove #(or (str/blank? %) (str/starts-with? % "#"))))
                options []
                classpath current-classpath
-               java-bin-path current-java-bin-path
+               java-cmd-path current-java-cmd-path
                warnings []]
 
           (if (empty? lines)
-            ;; Return map now includes :java-bin-path
-            {:ok? true :options options :classpath classpath :java-bin-path java-bin-path :warnings warnings}
+            {:ok? true :options options :classpath classpath :java-cmd-path java-cmd-path :warnings warnings}
 
             (let [line (first lines)
                   remaining-lines (rest lines)
@@ -47,25 +46,25 @@
                 (let [included-path-str (str/trim (subs trimmed-line (count "-include-options")))]
                   (if (is-file-fn included-path-str)
                     (let [;; Pass the *current* state down
-                          sub-result (parse-vmoptions* included-path-str classpath java-bin-path config)]
+                          sub-result (parse-vmoptions* included-path-str classpath java-cmd-path config)]
                       (if (:ok? sub-result)
                         ;; Use the state *returned* from the sub-result
                         (recur remaining-lines
                                (concat options (:options sub-result))
                                (:classpath sub-result)
-                               (:java-bin-path sub-result)
+                               (:java-cmd-path sub-result)
                                (concat warnings (:warnings sub-result) [(str "Included options from: " included-path-str)]))
                         ;; Include failed: Recur with warning, keeping current state
-                        (recur remaining-lines options classpath java-bin-path
+                        (recur remaining-lines options classpath java-cmd-path
                                (conj warnings (str "Failed to parse included options from '" included-path-str "': " (:error sub-result))))))
                     ;; File Does Not Exist: Recur with warning, keeping current state
-                    (recur remaining-lines options classpath java-bin-path
+                    (recur remaining-lines options classpath java-cmd-path
                            (conj warnings (str "Included options path is not a file or not found: '" included-path-str "'")))))
 
-                ;; --- Handle -java-bin ---
-                (str/starts-with? trimmed-line "-java-bin ")
-                (let [path-from-directive (subst-fn (str/trim (subs trimmed-line (count "-java-bin "))))]
-                  ;; Recur, updating java-bin-path. Options and classpath unchanged.
+                ;; --- Handle -java-cmd ---
+                (str/starts-with? trimmed-line "-java-cmd ")
+                (let [path-from-directive (subst-fn (str/trim (subs trimmed-line (count "-java-cmd "))))]
+                  ;; Recur, updating java-cmd-path. Options and classpath unchanged.
                   (recur remaining-lines
                          options
                          classpath
@@ -74,25 +73,25 @@
 
                 ;; --- Handle -classpath (replace) ---
                 (str/starts-with? trimmed-line "-classpath ")
-                (recur remaining-lines options (subst-fn (str/trim (subs trimmed-line (count "-classpath ")))) java-bin-path warnings)
+                (recur remaining-lines options (subst-fn (str/trim (subs trimmed-line (count "-classpath ")))) java-cmd-path warnings)
 
                 ;; --- Handle -classpath/a (append) ---
                 (str/starts-with? trimmed-line "-classpath/a")
                 (let [path-to-append (subst-fn (str/trim (subs trimmed-line (count "-classpath/a"))))]
-                  (recur remaining-lines options (if (str/blank? classpath) path-to-append (str classpath path-separator path-to-append)) java-bin-path warnings))
+                  (recur remaining-lines options (if (str/blank? classpath) path-to-append (str classpath path-separator path-to-append)) java-cmd-path warnings))
 
                 ;; --- Handle -classpath/p (prepend) ---
                 (str/starts-with? trimmed-line "-classpath/p")
                 (let [path-to-prepend (subst-fn (str/trim (subs trimmed-line (count "-classpath/p"))))]
-                  (recur remaining-lines options (if (str/blank? classpath) path-to-prepend (str path-to-prepend path-separator classpath)) java-bin-path warnings))
+                  (recur remaining-lines options (if (str/blank? classpath) path-to-prepend (str path-to-prepend path-separator classpath)) java-cmd-path warnings))
 
                 ;; --- Handle regular JVM option ---
                 :else
-                (recur remaining-lines (conj options (subst-fn trimmed-line)) classpath java-bin-path warnings))))))
+                (recur remaining-lines (conj options (subst-fn trimmed-line)) classpath java-cmd-path warnings))))))
 
       (catch FileNotFoundException _
-        ;; Return nil for java-bin-path on error
-        {:ok? false :error :file-not-found :path file-path :options [] :classpath current-classpath :java-bin-path nil :warnings []}))))
+        ;; Return nil for java-cmd-path on error
+        {:ok? false :error :file-not-found :path file-path :options [] :classpath current-classpath :java-cmd-path nil :warnings []}))))
 
 (defn parse-vmoptions
   "Public interface for parsing vmoptions. Takes initial state and config, returns result map. Pure."
@@ -110,7 +109,7 @@
             ]
         (if (file-exists-fn (.getCanonicalPath exec-path)) ; Check canonical path
           (.getCanonicalPath exec-path) 
-          "java")) ; Simplified: return fallback directly
+          "java"))
       "java")))
 
 (defn build-command-list
@@ -147,7 +146,7 @@
         ;; --- Step 1: Parse vmoptions file ---
         parse-result (if (real-is-file vmoptions-file-path)
                        (parse-vmoptions vmoptions-file-path "" config) ; Initial classpath is empty
-                       {:ok? true :options [] :classpath "" :java-bin-path nil :warnings [(str "vmoptions file not found or not a file: " vmoptions-file-path)]})
+                       {:ok? true :options [] :classpath "" :java-cmd-path nil :warnings [(str "vmoptions file not found or not a file: " vmoptions-file-path)]})
 
         ;; Log warnings from parsing
         _ (doseq [warning (:warnings parse-result)] (println "WARNING:" warning))
@@ -156,19 +155,19 @@
         ;; (when-not (:ok? parse-result) (println "ERROR parsing vmoptions:" (:error parse-result)) (System/exit 1))
 
         ;; --- Step 2: Determine Final Java Executable Path ---
-        java-bin-directive-path (when (:ok? parse-result) ; Only consider if parse was ok
-                                  (let [raw-path (get parse-result :java-bin-path)]
+        java-cmd-directive-path (when (:ok? parse-result) ; Only consider if parse was ok
+                                  (let [raw-path (get parse-result :java-cmd-path)]
                                     (when (and raw-path (not (str/blank? raw-path)))
                                       raw-path))) ; Get non-blank path from directive if present
 
-        final-java-executable (if (and java-bin-directive-path (real-file-exists java-bin-directive-path))
-                                ;; Use path from -java-bin directive if it exists
-                                (do (println (str "Using Java executable from -java-bin directive: " java-bin-directive-path))
-                                    java-bin-directive-path)
+        final-java-executable (if (and java-cmd-directive-path (real-file-exists java-cmd-directive-path))
+                                ;; Use path from -java-cmd directive if it exists
+                                (do (println (str "Using Java executable from -java-cmd directive: " java-cmd-directive-path))
+                                    java-cmd-directive-path)
                                 ;; Otherwise, fall back to standard determination
                                 (let [determined-path (determine-java-executable real-getenv real-file-exists os-file-separator)]
-                                  (if java-bin-directive-path ; Log if directive was present but invalid
-                                    (println (str "WARNING: Path from -java-bin ('" java-bin-directive-path "') not found. Using determined Java executable: " determined-path))
+                                  (if java-cmd-directive-path ; Log if directive was present but invalid
+                                    (println (str "WARNING: Path from -java-cmd ('" java-cmd-directive-path "') not found. Using determined Java executable: " determined-path))
                                     (println (str "Using determined Java executable: " determined-path)))
                                   determined-path))
 

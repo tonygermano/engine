@@ -25,7 +25,7 @@ jobs:
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@13.2
         with:
-          lein: 2.11.12
+          lein: 2.11.2
 
       - name: Build OIE (signed)
         if: github.ref == 'refs/heads/main'

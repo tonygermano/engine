@@ -1,3 +1,9 @@
+;;;
+;;; SPDX-FileCopyrightText: 2025 Tony Germano tony@germano.name
+;;;
+;;; SPDX-License-Identifier: MPL-2.0
+;;;
+
 (defproject org.openintegrationengine/engine "0.1.0-SNAPSHOT"
   :description "A native engine for launching Java applications with advanced .vmoptions support"
   :url "https://github.com/OpenIntegrationEngine/engine"

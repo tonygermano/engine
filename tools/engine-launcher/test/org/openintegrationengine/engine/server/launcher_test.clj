@@ -1,3 +1,9 @@
+;;;
+;;; SPDX-FileCopyrightText: 2025 Tony Germano tony@germano.name
+;;;
+;;; SPDX-License-Identifier: MPL-2.0
+;;;
+
 ;;;;
 ;; File: launcher_test.clj
 ;; Purpose: Unit tests for the OIE Engine Launcher (`launcher.clj`).

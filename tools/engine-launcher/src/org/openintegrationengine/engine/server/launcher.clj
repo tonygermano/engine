@@ -1,3 +1,9 @@
+;;;
+;;; SPDX-FileCopyrightText: 2025 Tony Germano tony@germano.name
+;;;
+;;; SPDX-License-Identifier: MPL-2.0
+;;;
+
 ;;;;
 ;; File: launcher.clj
 ;; Purpose: Main entry point for the OIE Engine Launcher.

@@ -1,11 +1,6 @@
-/*
- * Copyright (c) Mirth Corporation. All rights reserved.
- * 
- * http://www.mirthcorp.com
- * 
- * The software in this package is published under the terms of the MPL license a copy of which has
- * been included with this distribution in the LICENSE.txt file.
- */
+// SPDX-License-Identifier: MPL-2.0
+// SPDX-FileCopyrightText: Mirth Corporation
+// SPDX-FileCopyrightText: 2026 Eclipse Open Integration Engine Contributors
 
 package com.mirth.connect.cli;
 
@@ -60,6 +55,7 @@ import com.mirth.connect.client.core.ListHandlerException;
 import com.mirth.connect.client.core.PaginatedEventList;
 import com.mirth.connect.client.core.PaginatedMessageList;
 import com.mirth.connect.client.core.PropertiesConfigurationUtil;
+import com.mirth.connect.client.core.UnauthorizedException;
 import com.mirth.connect.donkey.model.channel.DeployedState;
 import com.mirth.connect.donkey.model.message.ContentType;
 import com.mirth.connect.donkey.model.message.Message;
@@ -96,6 +92,16 @@ import com.mirth.connect.util.messagewriter.MessageWriterFactory;
 import com.mirth.connect.util.messagewriter.MessageWriterOptions;
 
 public class CommandLineInterface {
+    // Exit code for invalid arguments or configuration, kept for compatibility
+    private static final int EXIT_USAGE = 2;
+
+    // Exit codes from sysexits.h
+    private static final int EX_OK = 0;
+    private static final int EX_UNAVAILABLE = 69;
+    private static final int EX_SOFTWARE = 70;
+    private static final int EX_IOERR = 74;
+    private static final int EX_NOPERM = 77;
+
     private String DEFAULT_CHARSET = "UTF-8";
     private Client client;
     private boolean debug;
@@ -144,7 +150,7 @@ public class CommandLineInterface {
             // Bail out early if they just want help
             if (line.hasOption("h")) {
                 new HelpFormatter().printHelp("Shell", options);
-                System.exit(0);
+                System.exit(EX_OK);
             }
 
             Parameters params = new Parameters();
@@ -167,7 +173,7 @@ public class CommandLineInterface {
                 if (line.hasOption("c")) {
                     // An explicit configuration file was specified with -c; fail fast with a clear error
                     error("Failed to load the configuration file specified with -c: " + line.getOptionValue("c"), cex);
-                    System.exit(2);
+                    System.exit(EXIT_USAGE);
                 }
             }
 
@@ -177,53 +183,71 @@ public class CommandLineInterface {
             String script = line.getOptionValue("s", config.getString("script"));
 
             if ((server != null) && (user != null) && (password != null)) {
-                runShell(server, user, password, script, line.hasOption("d"));
+                System.exit(runShell(server, user, password, script, line.hasOption("d")));
             } else {
                 new HelpFormatter().printHelp("Shell", options);
                 error("all of address, user, password, and version options must be supplied as arguments or in the default configuration file", null);
-                System.exit(2);
+                System.exit(EXIT_USAGE);
             }
         } catch (ParseException e) {
             error("Could not parse input arguments.", e);
-            System.exit(2);
+            System.exit(EXIT_USAGE);
         }
     }
 
-    private void runShell(String server, String user, String password, String script, boolean debug) {
-        try {
-            client = new Client(server);
-            this.debug = debug;
+    private int runShell(String server, String user, String password, String script, boolean debug) {
+        this.debug = debug;
 
-            LoginStatus loginStatus = client.login(user, password);
+        try (Client client = new Client(server)) {
+            this.client = client;
 
-            if (loginStatus.getStatus() != LoginStatus.Status.SUCCESS) {
-                error("Could not login to server.", null);
-                return;
-            }
-
-            String serverVersion = client.getVersion();
+            LoginStatus loginStatus;
             try {
-                ObjectXMLSerializer.getInstance().init(serverVersion);
-            } catch (Exception e) {
+                loginStatus = client.login(user, password);
+            } catch (UnauthorizedException e) {
+                // The server responds with 401 for every failed login
+                error("Could not login to server. Please check your username and password and try again.", e);
+                return EX_NOPERM;
             }
 
-            out.println(String.format("Connected to %s Server @ %s (%s)", BrandingConstants.PRODUCT_NAME, server, serverVersion));
-            currentUser = StringUtils.defaultString(loginStatus.getUpdatedUsername(), user);
+            try {
+                String serverVersion = client.getVersion();
+                try {
+                    ObjectXMLSerializer.getInstance().init(serverVersion);
+                } catch (Exception e) {
+                }
 
-            if (script != null) {
-                runScript(script);
-            } else {
-                runConsole();
+                out.println(String.format("Connected to %s Server @ %s (%s)", BrandingConstants.PRODUCT_NAME, server, serverVersion));
+                currentUser = StringUtils.defaultString(loginStatus.getUpdatedUsername(), user);
+
+                if (script != null) {
+                    runScript(script);
+                } else {
+                    runConsole();
+                }
+            } finally {
+                try {
+                    client.logout();
+                } catch (ClientException e) {
+                    error("Could not logout from server.", e);
+                }
             }
-            client.logout();
-            client.close();
+
             out.println("Disconnected from server.");
-        } catch (ClientException ce) {
-            ce.printStackTrace();
-        } catch (IOException ioe) {
-            error("Could not load script file.", ioe);
+            return EX_OK;
+        } catch (ClientException e) {
+            if (ExceptionUtils.indexOfType(e, IOException.class) != -1) {
+                error("Could not communicate with server.", e);
+                return EX_UNAVAILABLE;
+            }
+            error("Server request failed: " + e.getMessage(), e);
+            return EX_SOFTWARE;
+        } catch (IOException e) {
+            error("Could not load script file.", e);
+            return EX_IOERR;
         } catch (URISyntaxException e) {
             error("Invalid server address.", e);
+            return EX_UNAVAILABLE;
         }
     }
 

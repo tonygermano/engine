@@ -5,6 +5,9 @@
 		<path id="build.classpath">
 			<fileset dir="${generator.lib}" includes="*.jar" />
 		</path>
+
+		<!-- Set to default if not set globally -->
+		<property name="git.commit.timestamp" value="2025-03-25T22:28:08.664Z" />
 	</target>
 
 	<target name="clean" depends="init">
@@ -20,7 +23,7 @@
 
 	<target name="dist-generator" depends="compile-generator">
 		<mkdir dir="${generator.dist}" />
-		<jar destfile="${generator.dist}/${generator.jar}" basedir="${generator.classes}" />
+		<jar destfile="${generator.dist}/${generator.jar}" basedir="${generator.classes}" modificationTime="${git.commit.timestamp}" />
 	</target>
 
 	<target name="generate-vocab-source" depends="dist-generator">
@@ -47,7 +50,7 @@
 
 	<target name="dist-vocab" depends="compile-vocab">
 		<mkdir dir="${vocab.dist}" />
-		<jar destfile="${vocab.dist}/${vocab.jar}">
+		<jar destfile="${vocab.dist}/${vocab.jar}" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${vocab.classes}" />
 			<fileset dir="${generator.classes}" includes="**/hl7v2/**/*.class" />
 		</jar>

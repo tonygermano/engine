@@ -6,6 +6,9 @@
 		<path id="classpath">
 			<fileset dir="${lib}" includes="**/*.jar" />
 		</path>
+
+		<!-- Set to default if not set globally -->
+		<property name="git.commit.timestamp" value="2025-03-25T22:28:08.664Z" />
 	</target>
 	
 	<target name="clean" depends="init">
@@ -32,7 +35,7 @@
 	</target>
 	
 	<target name="build-server" depends="compile">
-		<jar destfile="${setup}/${server.jar}" basedir="${classes}">
+		<jar destfile="${setup}/${server.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/donkey/server/**" />
 			<include name="com/mirth/connect/donkey/model/**" />
 			<include name="com/mirth/connect/donkey/util/**" />
@@ -44,7 +47,7 @@
 	</target>
 	
 	<target name="build-model" depends="compile">
-		<jar destfile="${setup}/${model.jar}" basedir="${classes}">
+		<jar destfile="${setup}/${model.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/donkey/model/**" />
 			<include name="com/mirth/connect/donkey/util/**" />
 		</jar>

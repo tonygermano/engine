@@ -11,6 +11,9 @@
 			<fileset dir="${lib}" includes="*.jar" />
 		</path>
 
+		<!-- Set to default if not set globally -->
+		<property name="git.commit.timestamp" value="2025-03-25T22:28:08.664Z" />
+
 		<mkdir dir="${logs}" />
 	</target>
 
@@ -39,7 +42,7 @@
 	<target name="build" depends="compile">
 		<mkdir dir="${dist}" />
 
-		<jar destfile="${dist}/${manager.jar}" basedir="${classes}">
+		<jar destfile="${dist}/${manager.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<manifest>
 				<attribute name="Manifest-Version" value="1.0" />
 				<attribute name="Main-Class" value="com.mirth.connect.manager.Manager" />

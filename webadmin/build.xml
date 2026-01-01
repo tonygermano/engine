@@ -15,6 +15,8 @@
 	<property name="build.classes" value="${build}/classes" />
 	<property name="webadmin" value="../webadmin" />
 
+	<property name="git.commit.timestamp" value="2025-03-25T22:28:08.664Z" />
+
 	<path id="compile.jspc">
 		<fileset dir="${javax.home}" includes="javax.servlet-api-*.jar" />
 		<fileset dir="${jetty.home}" includes="jetty-schemas-*.jar" />
@@ -66,7 +68,7 @@
 	</target>
 
 	<target name="dist" depends="compile">
-		<war destfile="${dist}/webadmin.war" webxml="${build.web}/WEB-INF/web.xml">
+		<war destfile="${dist}/webadmin.war" webxml="${build.web}/WEB-INF/web.xml" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${build.web}" />
 			<classes dir="${build.classes}" />
 		</war>

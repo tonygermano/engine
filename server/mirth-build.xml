@@ -4,6 +4,11 @@
 		<property name="donkey.setup" value="${donkey}/setup" />
 		<property name="server.setup" value="${server}/setup" />
 		<property name="server.build" value="${server}/build" />
+
+		<!-- Get the timestamp of the current git commit in ISO-8601 format-->
+		<exec executable="git" outputproperty="git.commit.timestamp" failonerror="false">
+			<arg line="log -1 --pretty=%cI"/>
+		</exec>
 	</target>
 	
 	<!-- Donkey -->

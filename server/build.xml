@@ -17,6 +17,9 @@
 			<fileset dir="${lib}" includes="**/*.jar" />
 		</path>
 
+		<!-- Set to default if not set globally -->
+		<property name="git.commit.timestamp" value="2025-03-25T22:28:08.664Z" />
+
 		<!-- connectors -->
 		<property name="connectors.jms" value="${extensions}/jms" />
 		<property name="connectors.jdbc" value="${extensions}/jdbc" />
@@ -110,13 +113,13 @@
 
 	
 	<target name="create-crypto" depends="compile">
-		<jar destfile="${setup.server.lib}/${crypto.jar}" basedir="${classes}">
+		<jar destfile="${setup.server.lib}/${crypto.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/commons/encryption/**" />
 		</jar>
 	</target>
 
 	<target name="create-client-core" depends="compile, create-crypto">
-		<jar destfile="${setup.server.lib}/${client-core.jar}" basedir="${classes}">
+		<jar destfile="${setup.server.lib}/${client-core.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/client/core/**" />
 			<include name="com/mirth/connect/model/**" />
 			<include name="com/mirth/connect/userutil/**" />
@@ -144,11 +147,11 @@
 		<copy todir="${connectors.dicom}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/dimse" />
 		</copy>
-		<jar destfile="${connectors.dicom}/dicom-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.dicom}/dicom-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/dimse/DICOMReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/dimse/DICOMDispatcherProperties.class" />
 		</jar>
-		<jar destfile="${connectors.dicom}/dicom-server.jar">
+		<jar destfile="${connectors.dicom}/dicom-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/dimse/**" />
 				<include name="org/dcm4che2/**" />
@@ -167,13 +170,13 @@
 		<copy todir="${connectors.doc}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/doc" />
 		</copy>
-		<jar destfile="${connectors.doc}/doc-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.doc}/doc-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/doc/DocumentDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/doc/DocumentConnectorServletInterface.class" />
 			<include name="com/mirth/connect/connectors/doc/PageSize.class" />
 			<include name="com/mirth/connect/connectors/doc/Unit.class" />
 		</jar>
-		<jar destfile="${connectors.doc}/doc-server.jar">
+		<jar destfile="${connectors.doc}/doc-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/doc/**" />
 				<exclude name="com/mirth/connect/connectors/doc/DocumentDispatcherProperties.class" />
@@ -193,7 +196,7 @@
 		<copy todir="${connectors.file}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/file" />
 		</copy>
-		<jar destfile="${connectors.file}/file-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.file}/file-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/file/SchemeProperties.class" />
 			<include name="com/mirth/connect/connectors/file/FTPSchemeProperties.class" />
 			<include name="com/mirth/connect/connectors/file/SmbDialectVersion.class" />
@@ -206,7 +209,7 @@
 			<include name="com/mirth/connect/connectors/file/FileAction.class" />
 			<include name="com/mirth/connect/connectors/file/FileConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.file}/file-server.jar">
+		<jar destfile="${connectors.file}/file-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/file/**" />
 				<exclude name="com/mirth/connect/connectors/file/SchemeProperties.class" />
@@ -231,14 +234,14 @@
 		<copy todir="${connectors.http}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/http" />
 		</copy>
-		<jar destfile="${connectors.http}/http-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.http}/http-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/http/HttpReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/http/HttpDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/http/HttpStaticResource.class" />
 			<include name="com/mirth/connect/connectors/http/HttpStaticResource$ResourceType.class" />
 			<include name="com/mirth/connect/connectors/http/HttpConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.http}/http-server.jar">
+		<jar destfile="${connectors.http}/http-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/http/**" />
 				<exclude name="com/mirth/connect/connectors/http/HttpReceiverProperties.class" />
@@ -259,7 +262,7 @@
 		<copy todir="${connectors.jdbc}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/jdbc" />
 		</copy>
-		<jar destfile="${connectors.jdbc}/jdbc-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.jdbc}/jdbc-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/jdbc/DatabaseReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/jdbc/DatabaseDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/jdbc/DatabaseConnectionInfo.class" />
@@ -267,7 +270,7 @@
 			<include name="com/mirth/connect/connectors/jdbc/Column.class" />
 			<include name="com/mirth/connect/connectors/jdbc/DatabaseConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.jdbc}/jdbc-server.jar">
+		<jar destfile="${connectors.jdbc}/jdbc-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/jdbc/**" />
 				<exclude name="com/mirth/connect/connectors/jdbc/DatabaseReceiverProperties.class" />
@@ -289,13 +292,13 @@
 		<copy todir="${connectors.jms}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/jms" />
 		</copy>
-		<jar destfile="${connectors.jms}/jms-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.jms}/jms-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/jms/JmsConnectorProperties.class" />
 			<include name="com/mirth/connect/connectors/jms/JmsReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/jms/JmsDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/jms/JmsConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.jms}/jms-server.jar">
+		<jar destfile="${connectors.jms}/jms-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/jms/**" />
 				<exclude name="com/mirth/connect/connectors/jms/JmsConnectorProperties.class" />
@@ -315,11 +318,11 @@
 		<copy todir="${connectors.js}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/js" />
 		</copy>
-		<jar destfile="${connectors.js}/js-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.js}/js-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/js/JavaScriptReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/js/JavaScriptDispatcherProperties.class" />
 		</jar>
-		<jar destfile="${connectors.js}/js-server.jar">
+		<jar destfile="${connectors.js}/js-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/js/**" />
 				<exclude name="com/mirth/connect/connectors/js/JavaScriptReceiverProperties.class" />
@@ -337,12 +340,12 @@
 		<copy todir="${connectors.smtp}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/smtp" />
 		</copy>
-		<jar destfile="${connectors.smtp}/smtp-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.smtp}/smtp-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/smtp/SmtpDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/smtp/SmtpConnectorServletInterface.class" />
 			<include name="com/mirth/connect/connectors/smtp/Attachment.class" />
 		</jar>
-		<jar destfile="${connectors.smtp}/smtp-server.jar">
+		<jar destfile="${connectors.smtp}/smtp-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/smtp/**" />
 				<exclude name="com/mirth/connect/connectors/smtp/SmtpDispatcherProperties.class" />
@@ -361,12 +364,12 @@
 		<copy todir="${connectors.tcp}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/tcp" />
 		</copy>
-		<jar destfile="${connectors.tcp}/tcp-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.tcp}/tcp-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/tcp/TcpReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/tcp/TcpDispatcherProperties.class" />
 			<include name="com/mirth/connect/connectors/tcp/TcpConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.tcp}/tcp-server.jar">
+		<jar destfile="${connectors.tcp}/tcp-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/tcp/**" />
 				<exclude name="com/mirth/connect/connectors/tcp/TcpReceiverProperties.class" />
@@ -385,11 +388,11 @@
 		<copy todir="${connectors.vm}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/vm" />
 		</copy>
-		<jar destfile="${connectors.vm}/vm-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.vm}/vm-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/vm/VmReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/vm/VmDispatcherProperties.class" />
 		</jar>
-		<jar destfile="${connectors.vm}/vm-server.jar">
+		<jar destfile="${connectors.vm}/vm-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/vm/**" />
 				<exclude name="com/mirth/connect/connectors/vm/VmReceiverProperties.class" />
@@ -407,7 +410,7 @@
 		<copy todir="${connectors.ws}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/ws" />
 		</copy>
-		<jar destfile="${connectors.ws}/ws-shared.jar" basedir="${classes}">
+		<jar destfile="${connectors.ws}/ws-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/connectors/ws/Binding.class" />
 			<include name="com/mirth/connect/connectors/ws/WebServiceReceiverProperties.class" />
 			<include name="com/mirth/connect/connectors/ws/WebServiceDispatcherProperties.class" />
@@ -416,7 +419,7 @@
 			<include name="com/mirth/connect/connectors/ws/DefinitionServiceMap$PortInformation.class" />
 			<include name="com/mirth/connect/connectors/ws/WebServiceConnectorServletInterface.class" />
 		</jar>
-		<jar destfile="${connectors.ws}/ws-server.jar">
+		<jar destfile="${connectors.ws}/ws-server.jar" modificationTime="${git.commit.timestamp}">
 			<fileset dir="${classes}">
 				<include name="com/mirth/connect/connectors/ws/**" />
 				<exclude name="com/mirth/connect/connectors/ws/Binding.class" />
@@ -446,13 +449,13 @@
 		<copy todir="${plugins.datatype-delimited}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/delimited" />
 		</copy>
-		<jar destfile="${plugins.datatype-delimited}/datatype-delimited-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-delimited}/datatype-delimited-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/delimited/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/delimited/DelimitedDataTypeServerPlugin.class" />
 			<exclude name="com/mirth/connect/plugins/datatypes/delimited/DelimitedBatchAdaptor.class" />
 			<exclude name="com/mirth/connect/plugins/datatypes/delimited/DelimitedBatchReader.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-delimited}/datatype-delimited-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-delimited}/datatype-delimited-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/delimited/DelimitedDataTypeServerPlugin.class" />
 			<include name="com/mirth/connect/plugins/datatypes/delimited/DelimitedBatchAdaptor.class" />
 			<include name="com/mirth/connect/plugins/datatypes/delimited/DelimitedBatchReader.class" />
@@ -468,11 +471,11 @@
 		<copy todir="${plugins.datatype-dicom}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/dicom" />
 		</copy>
-		<jar destfile="${plugins.datatype-dicom}/datatype-dicom-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-dicom}/datatype-dicom-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/dicom/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/dicom/DICOMDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-dicom}/datatype-dicom-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-dicom}/datatype-dicom-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/dicom/DICOMDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -491,11 +494,11 @@
 		<copy todir="${classes}/com/mirth/connect/plugins/datatypes/edi/xml">
 			<fileset dir="${src}/com/mirth/connect/plugins/datatypes/edi/xml" />
 		</copy>
-		<jar destfile="${plugins.datatype-edi}/datatype-edi-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-edi}/datatype-edi-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/edi/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/edi/EDIDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-edi}/datatype-edi-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-edi}/datatype-edi-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/edi/EDIDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -509,12 +512,12 @@
 		<copy todir="${plugins.datatype-hl7v2}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/hl7v2" />
 		</copy>
-		<jar destfile="${plugins.datatype-hl7v2}/datatype-hl7v2-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-hl7v2}/datatype-hl7v2-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/hl7v2/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/hl7v2/HL7v2DataTypeServerPlugin.class" />
 			<exclude name="com/mirth/connect/plugins/datatypes/hl7v2/HL7v2BatchAdaptor.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-hl7v2}/datatype-hl7v2-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-hl7v2}/datatype-hl7v2-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/hl7v2/HL7v2DataTypeServerPlugin.class" />
 			<include name="com/mirth/connect/plugins/datatypes/hl7v2/HL7v2BatchAdaptor.class" />
 		</jar>
@@ -529,11 +532,11 @@
 		<copy todir="${plugins.datatype-hl7v3}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/hl7v3" />
 		</copy>
-		<jar destfile="${plugins.datatype-hl7v3}/datatype-hl7v3-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-hl7v3}/datatype-hl7v3-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/hl7v3/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/hl7v3/HL7V3DataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-hl7v3}/datatype-hl7v3-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-hl7v3}/datatype-hl7v3-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/hl7v3/HL7V3DataTypeServerPlugin.class" />
 		</jar>
 		
@@ -547,11 +550,11 @@
 		<copy todir="${plugins.datatype-ncpdp}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/ncpdp" />
 		</copy>
-		<jar destfile="${plugins.datatype-ncpdp}/datatype-ncpdp-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-ncpdp}/datatype-ncpdp-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/ncpdp/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/ncpdp/NCPDPDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-ncpdp}/datatype-ncpdp-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-ncpdp}/datatype-ncpdp-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/ncpdp/NCPDPDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -565,11 +568,11 @@
 		<copy todir="${plugins.datatype-xml}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/xml" />
 		</copy>
-		<jar destfile="${plugins.datatype-xml}/datatype-xml-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-xml}/datatype-xml-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/xml/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/xml/XMLDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-xml}/datatype-xml-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-xml}/datatype-xml-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/xml/XMLDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -583,11 +586,11 @@
 		<copy todir="${plugins.datatype-raw}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/raw" />
 		</copy>
-		<jar destfile="${plugins.datatype-raw}/datatype-raw-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-raw}/datatype-raw-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/raw/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/raw/RawDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-raw}/datatype-raw-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-raw}/datatype-raw-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/raw/RawDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -601,11 +604,11 @@
 		<copy todir="${plugins.datatype-json}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datatypes/json" />
 		</copy>
-		<jar destfile="${plugins.datatype-json}/datatype-json-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-json}/datatype-json-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/json/**" />
 			<exclude name="com/mirth/connect/plugins/datatypes/json/JSONDataTypeServerPlugin.class" />
 		</jar>
-		<jar destfile="${plugins.datatype-json}/datatype-json-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datatype-json}/datatype-json-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datatypes/json/JSONDataTypeServerPlugin.class" />
 		</jar>
 		
@@ -619,11 +622,11 @@
 		<copy todir="${plugins.directoryresource}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/directoryresource" />
 		</copy>
-		<jar destfile="${plugins.directoryresource}/directoryresource-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.directoryresource}/directoryresource-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/directoryresource/DirectoryResourceProperties.class" />
 			<include name="com/mirth/connect/plugins/directoryresource/DirectoryResourceServletInterface.class" />
 		</jar>
-		<jar destfile="${plugins.directoryresource}/directoryresource-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.directoryresource}/directoryresource-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/directoryresource/**" />
 			<exclude name="com/mirth/connect/plugins/directoryresource/DirectoryResourceProperties.class" />
 			<exclude name="com/mirth/connect/plugins/directoryresource/DirectoryResourceServletInterface.class" />
@@ -639,11 +642,11 @@
 		<copy todir="${plugins.dashboardstatus}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/dashboardstatus" />
 		</copy>
-		<jar destfile="${plugins.dashboardstatus}/dashboardstatus-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.dashboardstatus}/dashboardstatus-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/dashboardstatus/ConnectionLogItem.class" />
 			<include name="com/mirth/connect/plugins/dashboardstatus/DashboardConnectorStatusServletInterface.class" />
 		</jar>
-		<jar destfile="${plugins.dashboardstatus}/dashboardstatus-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.dashboardstatus}/dashboardstatus-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/dashboardstatus/**" />
 			<exclude name="com/mirth/connect/plugins/dashboardstatus/ConnectionLogItem.class" />
 			<exclude name="com/mirth/connect/plugins/dashboardstatus/DashboardConnectorStatusServletInterface.class" />
@@ -659,7 +662,7 @@
 		<copy todir="${plugins.destinationsetfilter}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/destinationsetfilter" />
 		</copy>
-		<jar destfile="${plugins.destinationsetfilter}/destinationsetfilter-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.destinationsetfilter}/destinationsetfilter-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/destinationsetfilter/DestinationSetFilterStep.class" />
 			<include name="com/mirth/connect/plugins/destinationsetfilter/DestinationSetFilterStep$Behavior.class" />
 			<include name="com/mirth/connect/plugins/destinationsetfilter/DestinationSetFilterStep$Condition.class" />
@@ -686,10 +689,10 @@
 		<copy todir="${plugins.globalmapviewer}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/globalmapviewer" />
 		</copy>
-		<jar destfile="${plugins.globalmapviewer}/globalmapviewer-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.globalmapviewer}/globalmapviewer-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/globalmapviewer/GlobalMapServletInterface.class" />
 		</jar>
-		<jar destfile="${plugins.globalmapviewer}/globalmapviewer-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.globalmapviewer}/globalmapviewer-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/globalmapviewer/**" />
 			<exclude name="com/mirth/connect/plugins/globalmapviewer/GlobalMapServletInterface.class" />
 		</jar>
@@ -704,7 +707,7 @@
 		<copy todir="${plugins.httpauth}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/httpauth" />
 		</copy>
-		<jar destfile="${plugins.httpauth}/httpauth-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.httpauth}/httpauth-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/httpauth/HttpAuthConnectorPluginProperties.class" />
 			<include name="com/mirth/connect/plugins/httpauth/HttpAuthConnectorPluginProperties$AuthType.class" />
 			<include name="com/mirth/connect/plugins/httpauth/NoneHttpAuthProperties.class" />
@@ -717,7 +720,7 @@
 			<include name="com/mirth/connect/plugins/httpauth/oauth2/OAuth2HttpAuthProperties.class" />
 			<include name="com/mirth/connect/plugins/httpauth/oauth2/OAuth2HttpAuthProperties$TokenLocation.class" />
 		</jar>
-		<jar destfile="${plugins.httpauth}/httpauth-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.httpauth}/httpauth-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/httpauth/**" />
 			<exclude name="com/mirth/connect/plugins/httpauth/HttpAuthConnectorPluginProperties.class" />
 			<exclude name="com/mirth/connect/plugins/httpauth/HttpAuthConnectorPluginProperties$AuthType.class" />
@@ -731,7 +734,7 @@
 			<exclude name="com/mirth/connect/plugins/httpauth/oauth2/OAuth2HttpAuthProperties.class" />
 			<exclude name="com/mirth/connect/plugins/httpauth/oauth2/OAuth2HttpAuthProperties$TokenLocation.class" />
 		</jar>
-		<jar destfile="${plugins.httpauth}/src/httpauth-userutil-sources.jar" basedir="${src}">
+		<jar destfile="${plugins.httpauth}/src/httpauth-userutil-sources.jar" basedir="${src}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/httpauth/userutil/**" />
 		</jar>
 
@@ -756,7 +759,7 @@
 		<copy todir="${plugins.javascriptrule}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/javascriptrule" />
 		</copy>
-		<jar destfile="${plugins.javascriptrule}/javascriptrule-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.javascriptrule}/javascriptrule-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/javascriptrule/JavaScriptRule.class" />
 		</jar>
 
@@ -770,7 +773,7 @@
 		<copy todir="${plugins.javascriptstep}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/javascriptstep" />
 		</copy>
-		<jar destfile="${plugins.javascriptstep}/javascriptstep-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.javascriptstep}/javascriptstep-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/javascriptstep/JavaScriptStep.class" />
 		</jar>
 
@@ -784,7 +787,7 @@
 		<copy todir="${plugins.mapper}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/mapper" />
 		</copy>
-		<jar destfile="${plugins.mapper}/mapper-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.mapper}/mapper-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/mapper/MapperStep.class" />
 			<include name="com/mirth/connect/plugins/mapper/MapperStep$Scope.class" />
 		</jar>
@@ -799,7 +802,7 @@
 		<copy todir="${plugins.messagebuilder}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/messagebuilder" />
 		</copy>
-		<jar destfile="${plugins.messagebuilder}/messagebuilder-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.messagebuilder}/messagebuilder-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/messagebuilder/MessageBuilderStep.class" />
 		</jar>
 
@@ -813,10 +816,10 @@
 		<copy todir="${plugins.datapruner}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/datapruner" />
 		</copy>
-		<jar destfile="${plugins.datapruner}/datapruner-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.datapruner}/datapruner-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datapruner/DataPrunerServletInterface.class" />
 		</jar>
-		<jar destfile="${plugins.datapruner}/datapruner-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.datapruner}/datapruner-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/datapruner/**" />
 			<exclude name="com/mirth/connect/plugins/datapruner/DataPrunerServletInterface.class" />
 		</jar>
@@ -831,10 +834,10 @@
 		<copy todir="${plugins.mllpmode}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/mllpmode" />
 		</copy>
-		<jar destfile="${plugins.mllpmode}/mllpmode-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.mllpmode}/mllpmode-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
 		</jar>
-		<jar destfile="${plugins.mllpmode}/mllpmode-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.mllpmode}/mllpmode-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/mllpmode/**" />
 			<exclude name="com/mirth/connect/plugins/mllpmode/MLLPModeProperties.class" />
 		</jar>
@@ -871,7 +874,7 @@
 		<copy todir="${plugins.rulebuilder}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/rulebuilder" />
 		</copy>
-		<jar destfile="${plugins.rulebuilder}/rulebuilder-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.rulebuilder}/rulebuilder-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/rulebuilder/RuleBuilderRule.class" />
 			<include name="com/mirth/connect/plugins/rulebuilder/RuleBuilderRule$Condition.class" />
 		</jar>
@@ -886,11 +889,11 @@
 		<copy todir="${plugins.serverlog}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/serverlog" />
 		</copy>
-		<jar destfile="${plugins.serverlog}/serverlog-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.serverlog}/serverlog-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/serverlog/ServerLogItem.class" />
 			<include name="com/mirth/connect/plugins/serverlog/ServerLogServletInterface.class" />
 		</jar>
-		<jar destfile="${plugins.serverlog}/serverlog-server.jar" basedir="${classes}">
+		<jar destfile="${plugins.serverlog}/serverlog-server.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/serverlog/**" />
 			<exclude name="com/mirth/connect/plugins/serverlog/ServerLogItem.class" />
 			<exclude name="com/mirth/connect/plugins/serverlog/ServerLogServletInterface.class" />
@@ -906,7 +909,7 @@
 		<copy todir="${plugins.scriptfilerule}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/scriptfilerule" />
 		</copy>
-		<jar destfile="${plugins.scriptfilerule}/scriptfilerule-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.scriptfilerule}/scriptfilerule-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/scriptfilerule/ExternalScriptRule.class" />
 		</jar>
 
@@ -920,7 +923,7 @@
 		<copy todir="${plugins.scriptfilestep}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/scriptfilestep" />
 		</copy>
-		<jar destfile="${plugins.scriptfilestep}/scriptfilestep-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.scriptfilestep}/scriptfilestep-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/scriptfilestep/ExternalScriptStep.class" />
 		</jar>
 
@@ -934,7 +937,7 @@
 		<copy todir="${plugins.xsltstep}/lib" failonerror="false" quiet="true">
 			<fileset dir="${lib.extensions}/xsltstep" />
 		</copy>
-		<jar destfile="${plugins.xsltstep}/xsltstep-shared.jar" basedir="${classes}">
+		<jar destfile="${plugins.xsltstep}/xsltstep-shared.jar" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/plugins/xsltstep/XsltStep.class" />
 		</jar>
 
@@ -1011,7 +1014,7 @@
 		<chmod file="${setup}/oieserver" perm="755"/>
 
 		<!-- create the server jar -->
-		<jar destfile="${setup.server.lib}/${server.jar}" basedir="${classes}">
+		<jar destfile="${setup.server.lib}/${server.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/server/**" />
 			<include name="com/mirth/connect/model/**" />
 			<include name="com/mirth/connect/util/**" />
@@ -1027,10 +1030,10 @@
 		</jar>
 
 		<!-- create the dbconf jar -->
-		<jar destfile="${setup.server.lib}/${dbconf.jar}" basedir="${dbconf}" />
+		<jar destfile="${setup.server.lib}/${dbconf.jar}" basedir="${dbconf}" modificationTime="${git.commit.timestamp}" />
 
 		<!-- create the mirth-launcher jar -->
-		<jar destfile="${setup}/${mirth-launcher.jar}" basedir="${classes}">
+		<jar destfile="${setup}/${mirth-launcher.jar}" basedir="${classes}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/server/launcher/**" />
 			<include name="com/mirth/connect/server/extprops/**" />
 
@@ -1041,7 +1044,7 @@
 		</jar>
 		
 		<!-- create the userutil-sources jar -->
-		<jar destfile="${setup.client.lib}/${userutil-sources.jar}" basedir="${src}">
+		<jar destfile="${setup.client.lib}/${userutil-sources.jar}" basedir="${src}" modificationTime="${git.commit.timestamp}">
 			<include name="com/mirth/connect/userutil/**.java" />
 			<include name="com/mirth/connect/server/userutil/**.java" />
 			<exclude name="**/package-info.java" />
@@ -1150,45 +1153,45 @@
 		<delete dir="${dist.extensions}" />
 		<mkdir dir="${dist.extensions}" />
 
-		<zip destfile="${dist.extensions}/jms-${version}.zip" basedir="${extensions}" includes="jms/**/*" />
-		<zip destfile="${dist.extensions}/jdbc-${version}.zip" basedir="${extensions}" includes="jdbc/**/*" />
-		<zip destfile="${dist.extensions}/dicom-${version}.zip" basedir="${extensions}" includes="dicom/**/*" />
-		<zip destfile="${dist.extensions}/http-${version}.zip" basedir="${extensions}" includes="http/**/*" />
-		<zip destfile="${dist.extensions}/doc-${version}.zip" basedir="${extensions}" includes="doc/**/*" />
-		<zip destfile="${dist.extensions}/smtp-${version}.zip" basedir="${extensions}" includes="smtp/**/*" />
-		<zip destfile="${dist.extensions}/tcp-${version}.zip" basedir="${extensions}" includes="tcp/**/*" />
-		<zip destfile="${dist.extensions}/file-${version}.zip" basedir="${extensions}" includes="file/**/*" />
-		<zip destfile="${dist.extensions}/js-${version}.zip" basedir="${extensions}" includes="js/**/*" />
-		<zip destfile="${dist.extensions}/ws-${version}.zip" basedir="${extensions}" includes="ws/**/*" />
-		<zip destfile="${dist.extensions}/vm-${version}.zip" basedir="${extensions}" includes="vm/**/*" />
+		<zip destfile="${dist.extensions}/jms-${version}.zip" basedir="${extensions}" includes="jms/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/jdbc-${version}.zip" basedir="${extensions}" includes="jdbc/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/dicom-${version}.zip" basedir="${extensions}" includes="dicom/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/http-${version}.zip" basedir="${extensions}" includes="http/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/doc-${version}.zip" basedir="${extensions}" includes="doc/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/smtp-${version}.zip" basedir="${extensions}" includes="smtp/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/tcp-${version}.zip" basedir="${extensions}" includes="tcp/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/file-${version}.zip" basedir="${extensions}" includes="file/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/js-${version}.zip" basedir="${extensions}" includes="js/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/ws-${version}.zip" basedir="${extensions}" includes="ws/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/vm-${version}.zip" basedir="${extensions}" includes="vm/**/*" modificationTime="${git.commit.timestamp}" />
 		
-		<zip destfile="${dist.extensions}/datatype-delimited-${version}.zip" basedir="${extensions}" includes="datatype-delimited/**/*" />
-		<zip destfile="${dist.extensions}/datatype-dicom-${version}.zip" basedir="${extensions}" includes="datatype-dicom/**/*" />
-		<zip destfile="${dist.extensions}/datatype-edi-${version}.zip" basedir="${extensions}" includes="datatype-edi/**/*" />
-		<zip destfile="${dist.extensions}/datatype-hl7v2-${version}.zip" basedir="${extensions}" includes="datatype-hl7v2/**/*" />
-		<zip destfile="${dist.extensions}/datatype-hl7v3-${version}.zip" basedir="${extensions}" includes="datatype-hl7v3/**/*" />
-		<zip destfile="${dist.extensions}/datatype-ncpdp-${version}.zip" basedir="${extensions}" includes="datatype-ncpdp/**/*" />
-		<zip destfile="${dist.extensions}/datatype-xml-${version}.zip" basedir="${extensions}" includes="datatype-xml/**/*" />
-		<zip destfile="${dist.extensions}/datatype-raw-${version}.zip" basedir="${extensions}" includes="datatype-raw/**/*" />
-		<zip destfile="${dist.extensions}/datatype-json-${version}.zip" basedir="${extensions}" includes="datatype-json/**/*" />
+		<zip destfile="${dist.extensions}/datatype-delimited-${version}.zip" basedir="${extensions}" includes="datatype-delimited/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-dicom-${version}.zip" basedir="${extensions}" includes="datatype-dicom/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-edi-${version}.zip" basedir="${extensions}" includes="datatype-edi/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-hl7v2-${version}.zip" basedir="${extensions}" includes="datatype-hl7v2/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-hl7v3-${version}.zip" basedir="${extensions}" includes="datatype-hl7v3/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-ncpdp-${version}.zip" basedir="${extensions}" includes="datatype-ncpdp/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-xml-${version}.zip" basedir="${extensions}" includes="datatype-xml/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-raw-${version}.zip" basedir="${extensions}" includes="datatype-raw/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datatype-json-${version}.zip" basedir="${extensions}" includes="datatype-json/**/*" modificationTime="${git.commit.timestamp}" />
 
-		<zip destfile="${dist.extensions}/directoryresource-${version}.zip" basedir="${extensions}" includes="directoryresource/**/*" />
-		<zip destfile="${dist.extensions}/dashboardstatus-${version}.zip" basedir="${extensions}" includes="dashboardstatus/**/*" />
-		<zip destfile="${dist.extensions}/destinationsetfilter-${version}.zip" basedir="${extensions}" includes="destinationsetfilter/**/*" />
-		<zip destfile="${dist.extensions}/serverlog-${version}.zip" basedir="${extensions}" includes="serverlog/**/*" />
-		<zip destfile="${dist.extensions}/datapruner-${version}.zip" basedir="${extensions}" includes="datapruner/**/*" />
-		<zip destfile="${dist.extensions}/javascriptstep-${version}.zip" basedir="${extensions}" includes="javascriptstep/**/*" />
-		<zip destfile="${dist.extensions}/mapper-${version}.zip" basedir="${extensions}" includes="mapper/**/*" />
-		<zip destfile="${dist.extensions}/messagebuilder-${version}.zip" basedir="${extensions}" includes="messagebuilder/**/*" />
-		<zip destfile="${dist.extensions}/scriptfilestep-${version}.zip" basedir="${extensions}" includes="scriptfilestep/**/*" />
-		<zip destfile="${dist.extensions}/rulebuilder-${version}.zip" basedir="${extensions}" includes="rulebuilder/**/*" />
-		<zip destfile="${dist.extensions}/javascriptrule-${version}.zip" basedir="${extensions}" includes="javascriptrule/**/*" />
-		<zip destfile="${dist.extensions}/dicomviewer-${version}.zip" basedir="${extensions}" includes="dicomviewer/**/*" />
-		<zip destfile="${dist.extensions}/pdfviewer-${version}.zip" basedir="${extensions}" includes="pdfviewer/**/*" />
-		<zip destfile="${dist.extensions}/textviewer-${version}.zip" basedir="${extensions}" includes="textviewer/**/*" />
-		<zip destfile="${dist.extensions}/httpauth-${version}.zip" basedir="${extensions}" includes="httpauth/**/*" />
-		<zip destfile="${dist.extensions}/imageviewer-${version}.zip" basedir="${extensions}" includes="imageviewer/**/*" />
-		<zip destfile="${dist.extensions}/globalmapviewer-${version}.zip" basedir="${extensions}" includes="globalmapviewer/**/*" />
+		<zip destfile="${dist.extensions}/directoryresource-${version}.zip" basedir="${extensions}" includes="directoryresource/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/dashboardstatus-${version}.zip" basedir="${extensions}" includes="dashboardstatus/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/destinationsetfilter-${version}.zip" basedir="${extensions}" includes="destinationsetfilter/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/serverlog-${version}.zip" basedir="${extensions}" includes="serverlog/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/datapruner-${version}.zip" basedir="${extensions}" includes="datapruner/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/javascriptstep-${version}.zip" basedir="${extensions}" includes="javascriptstep/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/mapper-${version}.zip" basedir="${extensions}" includes="mapper/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/messagebuilder-${version}.zip" basedir="${extensions}" includes="messagebuilder/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/scriptfilestep-${version}.zip" basedir="${extensions}" includes="scriptfilestep/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/rulebuilder-${version}.zip" basedir="${extensions}" includes="rulebuilder/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/javascriptrule-${version}.zip" basedir="${extensions}" includes="javascriptrule/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/dicomviewer-${version}.zip" basedir="${extensions}" includes="dicomviewer/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/pdfviewer-${version}.zip" basedir="${extensions}" includes="pdfviewer/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/textviewer-${version}.zip" basedir="${extensions}" includes="textviewer/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/httpauth-${version}.zip" basedir="${extensions}" includes="httpauth/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/imageviewer-${version}.zip" basedir="${extensions}" includes="imageviewer/**/*" modificationTime="${git.commit.timestamp}" />
+		<zip destfile="${dist.extensions}/globalmapviewer-${version}.zip" basedir="${extensions}" includes="globalmapviewer/**/*" modificationTime="${git.commit.timestamp}" />
 	</target>
 
 	<target name="create-dist" depends="create-extension-zips">
@@ -1277,7 +1280,7 @@
 			</fileset>
 		</copy>
 		
-		<jar destfile="${test.dist}/${tests.jar}" basedir="${test_classes}">
+		<jar destfile="${test.dist}/${tests.jar}" basedir="${test_classes}" modificationTime="${git.commit.timestamp}">
 			<include name="**/*" />
 		</jar>
 	</target>

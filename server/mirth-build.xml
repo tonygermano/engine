@@ -1,14 +1,67 @@
 <project name="mirth-connect" basedir="." default="build">
+	<macrodef name="exec-with-default">
+		<attribute name="executable" />
+		<attribute name="property" />
+		<attribute name="default" />
+		<element name="args" optional="true" />
+		<sequential>
+			<!-- Use <local> so these names can be reused in multiple calls -->
+			<local name="temp.output" />
+			<local name="temp.status" />
+
+			<!-- 1. Run the command -->
+			<exec executable="@{executable}"
+				outputproperty="temp.output"
+				resultproperty="temp.status"
+				failonerror="false">
+				<args />
+			</exec>
+
+			<!-- 2. Assign the real property ONLY if successful (exit code 0) -->
+			<condition property="@{property}" value="${temp.output}">
+				<equals arg1="${temp.status}" arg2="0" />
+			</condition>
+
+			<!-- 3. Fallback to default if @{property} is still unset -->
+			<property name="@{property}" value="@{default}" />
+		</sequential>
+	</macrodef>
+
 	<target name="init">
 		<property file="mirth-build.properties" />
 		<property name="donkey.setup" value="${donkey}/setup" />
 		<property name="server.setup" value="${server}/setup" />
 		<property name="server.build" value="${server}/build" />
 
+		<!--
+			The following tasks use exec-with-default macro defined above.
+			Default values are used in case the source code is being compiled where git is not available.
+		-->
+
 		<!-- Get the timestamp of the current git commit in ISO-8601 format-->
-		<exec executable="git" outputproperty="git.commit.timestamp" failonerror="false">
-			<arg line="log -1 --pretty=%cI"/>
-		</exec>
+		<exec-with-default executable="git" property="git.commit.timestamp" default="2025-03-25T22:28:08.664Z">
+			<args><arg line="log -1 --pretty=%cI"/></args>
+		</exec-with-default>
+		<echo>Using git.commit.timestamp of [${git.commit.timestamp}]</echo>
+
+		<!-- Get the long hash of the current git commit -->
+		<exec-with-default executable="git" property="git.commit.hash" default="">
+			<args><arg line="rev-parse HEAD"/></args>
+		</exec-with-default>
+		<echo>Using git.commit.hash of [${git.commit.hash}]</echo>
+
+		<!-- Get the human readable name of the current git commit for build version -->
+		<exec-with-default executable="git" property="git.commit.name" default="unavailable">
+			<args>
+				<arg value="describe" />
+				<arg value="--match" />
+				<arg value="v[0-9]*" />
+				<arg value="--tags" />
+				<arg value="--long" />
+				<arg value="--dirty" />
+			</args>
+		</exec-with-default>
+		<echo>Using git.commit.name of [${git.commit.name}]</echo>
 	</target>
 	
 	<!-- Donkey -->

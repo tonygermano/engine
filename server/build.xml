@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="mirth-server" basedir="." default="help">
+<project name="mirth-server" basedir="." default="help" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<property name="keystore_property_file" value="keystore.properties" />
 	<property name="manifest_thread_count" value="4" />
@@ -1200,12 +1200,29 @@
 	
 	<target name="create-javadocs" depends="init">
 		<mkdir dir="${docs.javadocs}" />
+
+		<local name="commit.rev.available" />
+
+		<condition property="commit.rev.available">
+			<and>
+				<isset property="git.commit.name" />
+				<not><equals arg1="${git.commit.name}" arg2="unavailable" /></not>
+			</and>
+		</condition>
 		
 		<javadoc sourcepath="${src}:${jdk_src_path}" destdir="${docs.javadocs.userapi}" packagenames="com.mirth.connect.server.userutil,com.mirth.connect.userutil,com.mirth.connect.plugins.httpauth.userutil" link="https://docs.oracle.com/en/java/javase/17/docs/api/">
 			<classpath refid="classpath" />
-			<arg line="-html5"/>
-			<arg line="--add-modules=java.sql.rowset"/>
-			<arg line="--add-exports=java.sql.rowset/com.sun.rowset=ALL-UNNAMED"/>
+			<bottom if:true="${commit.rev.available}">
+				<![CDATA[Built from Git revision: <a href="https://github.com/OpenIntegrationEngine/engine/commit/${git.commit.hash}">${git.commit.name}</a><br>]]>
+				<![CDATA[Licensed under the <a href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License 2.0</a>.]]>
+			</bottom>
+			<bottom unless:true="${commit.rev.available}">
+				<![CDATA[Built from Git revision: unknown<br>]]>
+				<![CDATA[Licensed under the <a href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License 2.0</a>.]]>
+			</bottom>
+			<arg value="-notimestamp"/>
+			<arg value="--add-modules=java.sql.rowset"/>
+			<arg value="--add-exports=java.sql.rowset/com.sun.rowset=ALL-UNNAMED"/>
 		</javadoc>
 	</target>
 

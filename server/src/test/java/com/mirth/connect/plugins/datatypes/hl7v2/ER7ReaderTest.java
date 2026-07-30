@@ -315,6 +315,22 @@ public class ER7ReaderTest {
     }
 
     /**
+     * MIRTH-1544: the check for {@code ^~&} only looks at character positions, so it also applies
+     * when the first segment is not a header, and makes {@code &} the subcomponent separator.
+     */
+    @Test
+    public void testMissingEscapeCharacterWithoutHeader() throws Exception {
+        String expected = """
+                <HL7Message>
+                <ZZZ><ZZZ.1><ZZZ.1.1></ZZZ.1.1><ZZZ.1.2></ZZZ.1.2></ZZZ.1>
+                <ZZZ.1><ZZZ.1.1><ZZZ.1.1.1></ZZZ.1.1.1><ZZZ.1.1.2></ZZZ.1.1.2></ZZZ.1.1></ZZZ.1>
+                <ZZZ.2><ZZZ.2.1><ZZZ.2.1.1>a</ZZZ.2.1.1><ZZZ.2.1.2>b</ZZZ.2.1.2></ZZZ.2.1></ZZZ.2></ZZZ>
+                </HL7Message>
+                """;
+        assertEquals(compact(expected), read("ZZZ|^~&|a&b"));
+    }
+
+    /**
      * The separators come from a header matched without regard to case, but MSH.1 and MSH.2 are
      * only special for upper case names, so the encoding characters are split like field content.
      */

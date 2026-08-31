@@ -22,12 +22,12 @@ public class FilePermissionUtilTest {
 
     @Test
     public void testCreatesMissingFileOwnerOnly() throws Exception {
-        File file = new File(temporaryFolder.getRoot(), "nested/keystore.p12");
+        Path path = temporaryFolder.getRoot().toPath().resolve("nested/keystore.p12");
 
-        FilePermissionUtil.createOwnerOnlyFile(file);
+        FilePermissionUtil.createOwnerOnlyFile(path);
 
-        assertTrue(file.exists());
-        assertPermissions(file);
+        assertTrue(Files.exists(path));
+        assertPermissions(path);
     }
 
     @Test
@@ -35,9 +35,10 @@ public class FilePermissionUtilTest {
         File file = temporaryFolder.newFile("keystore.p12");
         assumeTrue(file.setReadable(true, false));
 
-        FilePermissionUtil.createOwnerOnlyFile(file);
+        Path path = file.toPath();
+        FilePermissionUtil.createOwnerOnlyFile(path);
 
-        assertPermissions(file);
+        assertPermissions(path);
     }
 
     @Test
@@ -48,13 +49,12 @@ public class FilePermissionUtilTest {
             fos.write(new byte[] { 1, 2, 3 });
         }
 
-        FilePermissionUtil.createOwnerOnlyFile(file);
+        FilePermissionUtil.createOwnerOnlyFile(file.toPath());
 
         assertEquals(3, file.length());
     }
 
-    private void assertPermissions(File file) throws Exception {
-        Path path = file.toPath();
+    private void assertPermissions(Path path) throws Exception {
         assumeTrue(Files.getFileAttributeView(path, PosixFileAttributeView.class) != null);
         assertEquals("rw-------", PosixFilePermissions.toString(Files.getPosixFilePermissions(path)));
     }

@@ -1,11 +1,6 @@
-/*
- * Copyright (c) Mirth Corporation. All rights reserved.
- * 
- * http://www.mirthcorp.com
- * 
- * The software in this package is published under the terms of the MPL license a copy of which has
- * been included with this distribution in the LICENSE.txt file.
- */
+// SPDX-License-Identifier: MPL-2.0
+// SPDX-FileCopyrightText: Mirth Corporation
+// SPDX-FileCopyrightText: 2026 Mitch Gaffigan <mitch@gaffigan.net>
 
 package com.mirth.connect.server.controllers;
 
@@ -13,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -1241,6 +1235,7 @@ public class DefaultConfigurationController extends ConfigurationController {
                 }
             } else {
                 keyStore.load(null, keyStorePassword);
+                FilePermissionUtil.createOwnerOnlyFile(keyStoreFile);
                 logger.debug("keystore file not found, created new one");
             }
 
@@ -1248,7 +1243,6 @@ public class DefaultConfigurationController extends ConfigurationController {
             generateDefaultCertificate(provider, keyStore, keyPassword);
 
             // write the keystore back to the file
-            FilePermissionUtil.createOwnerOnlyFile(keyStoreFile);
             try (OutputStream fos = Files.newOutputStream(keyStoreFile)) {
                 keyStore.store(fos, keyStorePassword);
             }

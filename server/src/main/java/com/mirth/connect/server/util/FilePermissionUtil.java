@@ -1,6 +1,10 @@
+// SPDX-License-Identifier: MPL-2.0
+// SPDX-FileCopyrightText: 2026 Mitch Gaffigan <mitch@gaffigan.net>
+
 package com.mirth.connect.server.util;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,22 +34,21 @@ public class FilePermissionUtil {
     private FilePermissionUtil() {}
 
     /**
-     * Creates the file if it does not already exist, and restricts it so that only
-     * the user the server runs as (and System/Administrators on Windows) may read or write it.
-     * This is what protects files that hold key material in place of a passphrase,
-     * so the file must never be created readable and then locked down afterwards;
-     * on POSIX and Windows ACL, the permissions are applied as part of the create itself.
-     * If the file already exists, its permissions are updated to match these restrictions.
+     * Creates a new file and restricts it so that only the user the server runs as 
+     * (and System/Administrators on Windows) may read or write it.
+     * The permissions are applied atomically as part of the create itself.
      * 
-     * @param path The path of the file to create or secure.
+     * @param path The path of the file to create.
+     * @throws FileAlreadyExistsException If a file of that name already exists.
      * @throws IOException If an I/O error occurs during creation or path resolution.
      */
-    public static void createOwnerOnlyFile(Path path) throws IOException {
+    public static void createOwnerOnlyFile(Path path) throws FileAlreadyExistsException, IOException {
         Path parentDir = path.toAbsolutePath().getParent();
         if (parentDir != null) {
             // Create missing parent directories. Does nothing if directory already exists.
             Files.createDirectories(parentDir);
         }
+        
         FileStore parentStore = Files.getFileStore(parentDir);
         FileAttribute<?> att = null;
 
@@ -55,20 +58,11 @@ public class FilePermissionUtil {
             att = getAclFileAttribute(path);
         }
 
-        if (!Files.exists(path)) {
-            if (att != null) {
-                Files.createFile(path, att);
-            } else {
-                Files.createFile(path);
-            }
-        } else if (att != null) {
-            try {
-                Files.setAttribute(path, att.name(), att.value());
-            } catch (IOException e) {
-                logger.warn("Could not automatically restrict permissions on existing file: {}. "
-                        + "The application may not have ownership rights or the filesystem may be read-only. "
-                        + "Please ensure the file is secured manually.", path, e);
-            }
+        // Atomically create the file with the strict permissions
+        if (att != null) {
+            Files.createFile(path, att);
+        } else {
+            Files.createFile(path);
         }
     }
 

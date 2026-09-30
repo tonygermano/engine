@@ -143,7 +143,6 @@ java-semver = { module = "com.github.zafarkhaja:java-semver", version = "0.10.2"
 javassist = { module = "org.javassist:javassist", version = "3.26.0-GA" }
 javax-activation-api = { module = "javax.activation:javax.activation-api", version = "1.2.0" }
 javax-annotation-api = { module = "javax.annotation:javax.annotation-api", version = "1.3.2" }
-javax-annotation-api-v1-3 = { module = "javax.annotation:javax.annotation-api", version = "1.3" }
 javax-json = { module = "org.glassfish:javax.json", version = "1.0.4" }
 javax-json-api = { module = "javax.json:javax.json-api", version = "1.0" }
 javax-persistence-api = { module = "javax.persistence:persistence-api", version = "1.0" }
@@ -192,9 +191,8 @@ joda-time = { module = "joda-time:joda-time", version = "2.9.9" }
 jsch = { module = "com.github.mwiede:jsch", version = "2.27.7" }
 jsr181-api = { module = "javax.jws:jsr181-api", version = "1.0-MR1" }
 jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
-junit = { module = "junit:junit", version = "4.8.1" }
+junit = { module = "junit:junit", version = "4.13.1" }
 junit-platform-console-standalone = { module = "org.junit.platform:junit-platform-console-standalone", version = "1.11.4" }
-junit-v4-13-1 = { module = "junit:junit", version = "4.13.1" }
 libphonenumber = { module = "com.googlecode.libphonenumber:libphonenumber", version = "8.12.50" }
 listenablefuture = { module = "com.google.guava:listenablefuture", version = "9999.0-empty-to-avoid-conflict-with-guava" }
 log4j-1-2-api = { module = "org.apache.logging.log4j:log4j-1.2-api", version.ref = "log4j" }
@@ -357,7 +355,7 @@ command-main = [
     "jakarta-activation",
     "javassist",
     "javax-activation-api",
-    "javax-annotation-api-v1-3",
+    "javax-annotation-api",
     "javax-ws-rs-api",
     "jaxb-api",
     "jaxb-runtime",
@@ -382,6 +380,7 @@ command-main = [
     "xstream",
 ]
 command-test = [
+    "hamcrest",
     "junit",
 ]
 donkey-main = [
@@ -423,6 +422,7 @@ donkey-main = [
 donkey-test = [
     "byte-buddy",
     "byte-buddy-agent",
+    "hamcrest",
     "hk2-aopalliance-repackaged",
     "hk2-javax-inject",
     "junit",
@@ -638,7 +638,7 @@ server-test = [
     "byte-buddy",
     "byte-buddy-agent",
     "hamcrest",
-    "junit-v4-13-1",
+    "junit",
     "mockito-core",
     "mockito-inline",
     "objenesis",

@@ -24,7 +24,7 @@ jna = "4.5.2"
 log4j = "2.26.1"
 miglayout = "4.2"
 mockito = "5.1.1"
-netty = "4.1.119.Final"
+netty = "4.1.137.Final"
 netty-reactive-streams = "2.0.8"
 openhtmltopdf = "1.0.9"
 pdfbox = "2.0.24"
@@ -209,8 +209,7 @@ mssql-jdbc = { module = "com.microsoft.sqlserver:mssql-jdbc", version = "10.2.4.
 mybatis = { module = "org.mybatis:mybatis", version = "3.1.1" }
 mysql-connector-j = { module = "com.mysql:mysql-connector-j", version = "8.4.0" }
 netty-buffer = { module = "io.netty:netty-buffer", version.ref = "netty" }
-# off the netty ref: bumped alone for a security fix; realign the family
-netty-codec = { module = "io.netty:netty-codec", version = "4.1.136.Final" }
+netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
 netty-codec-http = { module = "io.netty:netty-codec-http", version.ref = "netty" }
 netty-codec-http2 = { module = "io.netty:netty-codec-http2", version.ref = "netty" }
 netty-common = { module = "io.netty:netty-common", version.ref = "netty" }
@@ -219,6 +218,7 @@ netty-reactive-streams = { module = "com.typesafe.netty:netty-reactive-streams",
 netty-reactive-streams-http = { module = "com.typesafe.netty:netty-reactive-streams-http", version.ref = "netty-reactive-streams" }
 netty-resolver = { module = "io.netty:netty-resolver", version.ref = "netty" }
 netty-transport = { module = "io.netty:netty-transport", version.ref = "netty" }
+netty-transport-native-epoll = { module = "io.netty:netty-transport-native-epoll", version.ref = "netty" }
 netty-transport-native-unix-common = { module = "io.netty:netty-transport-native-unix-common", version.ref = "netty" }
 objenesis = { module = "org.objenesis:objenesis", version = "2.5.1" }
 ojdbc8 = { module = "com.oracle.database.jdbc:ojdbc8", version = "12.2.0.1" }

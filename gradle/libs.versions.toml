@@ -8,6 +8,7 @@ asm = "9.6"
 awssdk = "2.15.28"
 bouncycastle = "1.78.1"
 byte-buddy = "1.14.13"
+derby = "10.10.2.0"
 flying-saucer = "9.0.1"
 hapi = "2.3"
 hk2 = "2.4.0-b31"
@@ -88,9 +89,8 @@ commons-net = { module = "commons-net:commons-net", version = "3.9.0" }
 commons-pool2 = { module = "org.apache.commons:commons-pool2", version = "2.3" }
 commons-text = { module = "org.apache.commons:commons-text", version = "1.15.0" }
 commons-vfs2 = { module = "org.apache.commons:commons-vfs2", version = "2.10.0" }
-derby = { module = "org.apache.derby:derby", version = "10.11.1.1" }
-# not on a shared ref with derby: derby was bumped alone for a security fix
-derbytools = { module = "org.apache.derby:derbytools", version = "10.10.2.0" }
+derby = { module = "org.apache.derby:derby", version.ref = "derby" }
+derbytools = { module = "org.apache.derby:derbytools", version.ref = "derby" }
 ecj = { module = "org.eclipse.jdt:ecj", version = "3.19.0" }
 error-prone-annotations = { module = "com.google.errorprone:error_prone_annotations", version = "2.3.4" }
 failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.1" }

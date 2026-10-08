@@ -12,7 +12,7 @@ The following are distributed under the terms of the Apache License version 2.0
 	Apache Derby 10.10.2.0
 	Apache Geronimo (only components needed for the JMS API)
 	Apache HttpComponents 4.x [incl. CLI]
-	Apache Log4j 2.25.3 [incl. CLI]
+	Apache Log4j 2.26.1 [incl. CLI]
 	Apache PDFBox 2.0.24
 	Apache Standard Taglib 1.2.5
 	Apache Tomcat Jasper JSP Engine 8.5.70
@@ -35,7 +35,7 @@ The following are distributed under the terms of the Apache License version 2.0
 	Joda-Time 2.9.9
 	JSR305 Annotations for Findbugs 3.0.2 (http://findbugs.sourceforge.net/)
 	MyBatis 3.1.1
-	Netty 4.1.119
+	Netty 4.1.137
 	Not-Going-To-Be-Commons-SSL 0.3.18
 	Quartz Scheduler 2.3.2
 	SQLite JDBC Driver 3.43.2.1 (https://github.com/xerial/sqlite-jdbc)
@@ -140,7 +140,7 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 	downloaded from: https://github.com/javaee/jaxb-v2/tree
 	/2.4.0-b180725.0644/jaxb-ri)
 	
-	JAXB TXW Runtime 2.4.0-b180725.0427 (source code can be downloaded from:
+	JAXB TXW Runtime 2.4.0-b180725.0644 (source code can be downloaded from:
 	https://github.com/javaee/jaxb-v2/tree/master/jaxb-ri/txw)
 	
 	Jersey RESTful Web Services framework 2.22.1 [incl. CLI] (source code can be
@@ -160,7 +160,7 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 	SOAP with Attachment API for Java 1.4.0 (source code can be downloaded from:
 	https://github.com/javaee/javax.xml.soap/tree/1.4.0)
 	
-	SOAP with Attachment API for Java Impl 1.0 (source code can be downloaded
+	SOAP with Attachment API for Java Impl 1.4.0 (source code can be downloaded
 	from: https://javaee.github.io/metro-saaj/)
 	
 	WS-Policy Implementation for Project Metro 2.7.2 (source code can be
@@ -185,8 +185,8 @@ Distribution License version 1.0 (see CDDL-1.0.txt):
 	Swinglabs Wizard (source code can be downloaded from:
 	https://java.net/projects/wizard)
 	
-	Java Common Annotations API 1.3 [incl. CLI] (source code can be downloaded
-	from: https://github.com/javaee/javax.annotation/tree/1.3)
+	Java Common Annotations API 1.3.2 [incl. CLI] (source code can be downloaded
+	from: https://github.com/javaee/javax.annotation/tree/1.3.2)
 	
 	OSGi Resource Locator 1.0.1 (source code can be downloaded from:
 	https://github.com/eclipse-ee4j/glassfish-hk2-extra/tree/master/
@@ -205,8 +205,8 @@ version 2.0 (see EPL-2.0.txt):
 	Eclipse Compiler For Java 3.19.0 (source code can be downloaded from:
 	http://www.eclipse.org/jdt)
 
-	Jakarta Mail API 1.6.7 (source code can be downloaded from:
-	https://github.com/eclipse-ee4j/mail/tree/1.6.7)
+	Jakarta Mail API 1.6.8 (source code can be downloaded from:
+	https://github.com/eclipse-ee4j/mail/tree/1.6.8)
 	Also available under GPLv2 with Classpath Exception (see GPLv2+CE.txt).
 
 
@@ -762,7 +762,7 @@ included within the MyBatis 3.1.1 library.
 --------------------------------------------------------------------------------
 
 
-The license below pertains to the PostgreSQL JDBC Driver version 42.7.8.
+The license below pertains to the PostgreSQL JDBC Driver version 42.7.12.
 
 =================== Beginning of License ===================
 
@@ -905,44 +905,6 @@ OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-=================== End of License =========================
-
-
---------------------------------------------------------------------------------
-
-
-The license below pertains to JUnit 4.8.1.
-
-=================== Beginning of License ===================
-
-BSD License
-
-Copyright (c) 2000-2006, www.hamcrest.org
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list of
-conditions and the following disclaimer. Redistributions in binary form must reproduce
-the above copyright notice, this list of conditions and the following disclaimer in
-the documentation and/or other materials provided with the distribution.
-
-Neither the name of Hamcrest nor the names of its contributors may be used to endorse
-or promote products derived from this software without specific prior written
-permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
-SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
-WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-DAMAGE.
 
 =================== End of License =========================
 

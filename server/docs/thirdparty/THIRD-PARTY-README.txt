@@ -252,15 +252,6 @@ version 1.0 (see CPL-1.0.txt):
 --------------------------------------------------------------------------------
 
 
-The following are distributed under the terms of the Artistic License
-version 1.0 (see ARTISTIC-LICENSE-1.0.txt):
-
-	Display tag library (displaytag.org)
-	
-	
---------------------------------------------------------------------------------
-
-
 The following are distributed under the terms of the OSGi Specification
 License, Version 1.0 (see OSGi-1.0.txt):
 
@@ -1222,48 +1213,6 @@ The OSHI library is licensed under the Eclipse Public License version 1.0. A
 copy of this license is available in the file named EPL-1.0.txt.
 
 The source code for OSHI is available at: https://github.com/oshi/oshi
-
-
---------------------------------------------------------------------------------
-
-
-The JaCoCo Java Code Coverage Library version 0.8.2 is licensed under the
-Eclipse Public License version 1.0. A copy of this license is available in the
-file named EPL-1.0.txt.
-
-The source code for the JaCoCo Java Code Coverage Library is available at
-https://github.com/jacoco/jacoco/.
-
-
---------------------------------------------------------------------------------
-
-
-The license below pertains to the args4j library.
-
-=================== Beginning of License Information ===================
-
-Copyright (c) 2003-2016 by Kohsuke Kawaguchi
-https://github.com/kohsuke/args4j
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-=================== End of License Information ===================
 
 
 --------------------------------------------------------------------------------

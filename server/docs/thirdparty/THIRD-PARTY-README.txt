@@ -68,7 +68,8 @@ terms.
 
 	dcm4che 2.0.29 (source code can be downloaded at: http://www.dcm4che.org/)
 	DcmRcv and DcmSnd were modified to allow overriding of the network
-	connections.
+	connections. The modified source is included in the Open Integration
+	Engine source code under server/src/main/java/org/dcm4che2/tool/.
 
 	HAPI 2.3 (source code can be downloaded at: 
 	https://github.com/hapifhir/hapi-hl7v2)
@@ -91,7 +92,9 @@ terms.
 	Mozilla Rhino 1.7.13 [incl. CLI] (source code can be downloaded at:
 	https://github.com/mozilla/rhino/tree/Rhino1_7_13_Release)
 	This library was modified to fix some issues in XML processing, and to make
-	the debugger easier to implement.
+	the debugger easier to implement. The modified source is included in the
+	Open Integration Engine source code under
+	server/src/main/java/org/mozilla/javascript/.
 
 
 --------------------------------------------------------------------------------
@@ -281,9 +284,10 @@ Its source code is available at:
 
 The jTDS JDBC driver version 1.3.1 is covered by the LGPL version 2.1 (see
 LGPL-2.1.txt). The library source code is available at
-http://jtds.sourceforge.net/. The following file has been changed:
+http://jtds.sourceforge.net/. The following file has been changed, and the
+modified source is included in the Open Integration Engine source code at:
 
-	net/sourceforge/jtds/ssl/TdsTlsOutputStream.java
+	server/src/main/java/net/sourceforge/jtds/ssl/TdsTlsOutputStream.java
 	
 	Changes: Fixes made to allow SSL/TLS connections. More information here:
 	https://sourceforge.net/p/jtds/bugs/725/

@@ -75,11 +75,10 @@ terms.
 
 	iText, a free Java-PDF library version 2.1.7 (source code can be downloaded 
 	at:
-	http://search.maven.org/remotecontent?filepath=com/lowagie/itext/2.1.7/itext
-	-2.1.7-sources.jar)
+	https://repo1.maven.org/maven2/com/lowagie/itext/2.1.7/itext-2.1.7-sources.jar)
 
 	Javassist 3.26.0 [incl. CLI] (source code can be downloaded at:
-	http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/)
+	https://github.com/jboss-javassist/javassist/tree/rel_3_26_0_ga)
 
 	
 --------------------------------------------------------------------------------
@@ -90,7 +89,7 @@ The following are distributed under the terms of the MPL version 2.0
 terms.
 
 	Mozilla Rhino 1.7.13 [incl. CLI] (source code can be downloaded at:
-	https://github.com/mozilla/rhino)
+	https://github.com/mozilla/rhino/tree/Rhino1_7_13_Release)
 	This library was modified to fix some issues in XML processing, and to make
 	the debugger easier to implement.
 
@@ -101,8 +100,8 @@ terms.
 The following are distributed under the terms of the Common Development and
 Distribution License version 1.1 (see CDDL-1.1.txt):
 
-	AOP Alliance Repackaged 2.4.0 (source code can be downloaded from:
-	https://sourceforge.net/projects/aopalliance/)
+	AOP Alliance Repackaged 2.4.0-b31 (source code can be downloaded from:
+	https://repo1.maven.org/maven2/org/glassfish/hk2/external/aopalliance-repackaged/2.4.0-b31/aopalliance-repackaged-2.4.0-b31-sources.jar)
 
 	Extended StAX API 1.8 (source code can be downloaded from:
 	https://github.com/javaee/metro-stax-ex/tree/1.8) 
@@ -116,8 +115,9 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 	GlassFish MBean Annotation Library 3.1.0.b001 (source code can be downloaded
 	from: https://github.com/javaee/gmbal/tree/VERSION-3.1.0-b001)
 
-	HK2 2.4.0 [incl. CLI] (source code can be downloaded from:
-	https://hk2.java.net/2.4.0-b34/)
+	HK2 2.4.0-b31 [incl. CLI] (source code for each module is available as
+	its 2.4.0-b31 -sources.jar under:
+	https://repo1.maven.org/maven2/org/glassfish/hk2/)
 	
 	IStack Commons Runtime 3.0.6 (source code can be downloaded from: 
 	https://github.com/javaee/jaxb-istack-commons)
@@ -130,7 +130,7 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 	https://github.com/javaee/metro-jax-ws/tree/2.3.0.2/jaxws-ri)
 	
 	Java Persistence API 1.0 (source code can be downloaded from:
-	https://glassfish.java.net/downloads/persistence/JavaPersistence.html)
+	https://repo1.maven.org/maven2/javax/persistence/persistence-api/1.0/persistence-api-1.0-sources.jar)
 	
 	Java XML Bind API 2.4.0-b180725.0427 [incl. CLI] (source code can be
 	downloaded from: https://github.com/javaee/jaxb-spec/tree
@@ -141,27 +141,32 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 	/2.4.0-b180725.0644/jaxb-ri)
 	
 	JAXB TXW Runtime 2.4.0-b180725.0644 (source code can be downloaded from:
-	https://github.com/javaee/jaxb-v2/tree/master/jaxb-ri/txw)
+	https://github.com/javaee/jaxb-v2/tree
+	/2.4.0-b180725.0644/jaxb-ri/txw)
 	
-	Jersey RESTful Web Services framework 2.22.1 [incl. CLI] (source code can be
-	downloaded from: https://jersey.java.net/)
+	Jersey RESTful Web Services framework 2.22.1 [incl. CLI] (source code for
+	each module is available as its 2.22.1 -sources.jar under:
+	https://repo1.maven.org/maven2/org/glassfish/jersey/)
 	The WebResourceFactory class was modified to open visibility on methods so
-	that it could be overridden.
+	that it could be overridden. The modified source is included in the Open
+	Integration Engine source code at
+	server/src/main/java/org/glassfish/jersey/client/proxy/WebResourceFactory.java.
 	
-	JSR 374 JSON Processing API 1.0 (source code can be downloaded from: 
-	http://json-processing-spec.java.net)
+	JSON Processing API 1.0 (source code can be downloaded from:
+	https://repo1.maven.org/maven2/javax/json/javax.json-api/1.0/javax.json-api-1.0-sources.jar)
 	
-	JSR 374 JSON Processing Default Provider 1.0.4 (source code can be downloaded
-	from: https://jsonp.java.net/)
+	JSON Processing Default Provider 1.0.4 (source code can be
+	downloaded from:
+	https://repo1.maven.org/maven2/org/glassfish/javax.json/1.0.4/javax.json-1.0.4-sources.jar)
 
 	Mimepull 1.9.7 [incl. CLI] (source code can be downloaded from:
-	https://mimepull.java.net/)
+	https://repo1.maven.org/maven2/org/jvnet/mimepull/mimepull/1.9.7/mimepull-1.9.7-sources.jar)
 	
 	SOAP with Attachment API for Java 1.4.0 (source code can be downloaded from:
 	https://github.com/javaee/javax.xml.soap/tree/1.4.0)
 	
 	SOAP with Attachment API for Java Impl 1.4.0 (source code can be downloaded
-	from: https://javaee.github.io/metro-saaj/)
+	from: https://github.com/javaee/metro-saaj/tree/1.4.0)
 	
 	WS-Policy Implementation for Project Metro 2.7.2 (source code can be
 	downloaded from: https://github.com/javaee/metro-policy/tree/policy-2.7.2)
@@ -176,8 +181,8 @@ Distribution License version 1.1 (see CDDL-1.1.txt):
 The following are distributed under the terms of the Common Development and
 Distribution License version 1.0 (see CDDL-1.0.txt):
 
-	Java Servlet API 3.1.0 (source code can be downloaded from: https://java.net
-	/projects/glassfish/sources/svn/show/tags/javax.servlet-api-3.1.0)
+	Java Servlet API 3.1.0 (source code can be downloaded from:
+	https://repo1.maven.org/maven2/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0-sources.jar)
 	
 	Jetty Apache JSP Implementation 9.4.57 (source code can be downloaded from:
 	http://download.eclipse.org/jetty/)
@@ -189,11 +194,10 @@ Distribution License version 1.0 (see CDDL-1.0.txt):
 	from: https://github.com/javaee/javax.annotation/tree/1.3.2)
 	
 	OSGi Resource Locator 1.0.1 (source code can be downloaded from:
-	https://github.com/eclipse-ee4j/glassfish-hk2-extra/tree/master/
-	osgi-resource-locator)
+	https://repo1.maven.org/maven2/org/glassfish/hk2/osgi-resource-locator/1.0.1/osgi-resource-locator-1.0.1-sources.jar)
 
 	Web Services Metadata API / JSR-181 (source code can be downloaded from:
-	https://mvnrepository.com/artifact/javax.jws/jsr181-api/1.0-MR1)
+	https://repo1.maven.org/maven2/javax/jws/jsr181-api/1.0-MR1/jsr181-api-1.0-MR1-sources.jar)
 
 
 --------------------------------------------------------------------------------
@@ -203,7 +207,7 @@ The following are distributed under the terms of the Eclipse Public License
 version 2.0 (see EPL-2.0.txt):
 
 	Eclipse Compiler For Java 3.19.0 (source code can be downloaded from:
-	http://www.eclipse.org/jdt)
+	https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/3.19.0/ecj-3.19.0-sources.jar)
 
 	Jakarta Mail API 1.6.8 (source code can be downloaded from:
 	https://github.com/eclipse-ee4j/mail/tree/1.6.8)
@@ -256,7 +260,7 @@ The following are distributed under the terms of the OSGi Specification
 License, Version 1.0 (see OSGi-1.0.txt):
 
 	OSGi Core Release 4.2.0 (source code can be downloaded from:
-	https://www.osgi.org/release-4-version-4-2/)
+	https://repo1.maven.org/maven2/org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0-sources.jar)
 	
 	
 --------------------------------------------------------------------------------
@@ -265,14 +269,11 @@ License, Version 1.0 (see OSGi-1.0.txt):
 Eclipse Java Development Tools 3.19.0
 
 Licensing information for this software can be found in the about.html file
-contained within the org.eclipse.jdt.ecj-3.19.0.jar file. This file
-can be found within the installation folder at:
+contained within the org.eclipse.jdt.ecj-3.19.0.jar file.
 
-	[Install Folder]/server-lib/jetty/jsp/
+Its source code is available at:
 
-Or in the source code distribution, it can be found at:
-
-	[Server Source Folder]/lib/jetty/jsp/
+	https://repo1.maven.org/maven2/org/eclipse/jdt/ecj/3.19.0/ecj-3.19.0-sources.jar
 
 
 --------------------------------------------------------------------------------
@@ -295,7 +296,7 @@ http://jtds.sourceforge.net/. The following file has been changed:
 The MySQL Connector/J JDBC Driver version 8.4.0 is covered by the GPL
 version 2 with Oracle's Free and Open Source Software ("FOSS") License
 Exception (see MYSQL-CONNECTOR-LICENSE.txt). The library source code is
-available at http://mirrors.ibiblio.org/maven2/mysql/mysql-connector-j/8.4.0/src/.
+available at https://github.com/mysql/mysql-connector-j/tree/8.4.0
 
 
 --------------------------------------------------------------------------------
@@ -303,31 +304,31 @@ available at http://mirrors.ibiblio.org/maven2/mysql/mysql-connector-j/8.4.0/src
 
 The jcifs-ng SMB client library in Java version 2.1.10 is covered by the
 LGPL version 2.1 (see LGPL-2.1.txt). The library source code is available at
-https://github.com/AgNO3/jcifs-ng/.
+https://github.com/AgNO3/jcifs-ng/
 	
 	
 --------------------------------------------------------------------------------
 
 
-The Pdf-renderer library ([Install Folder]/extensions/pdfviewer/lib/PDFRenderer.jar)
-is covered by the LGPL version 2.1 (see LGPL-2.1.txt). The library source code
-is available at https://java.net/projects/pdf-renderer/.
+The Pdf-renderer library version 1.0.5 is covered by the LGPL version 2.1
+(see LGPL-2.1.txt). The library source code is available at
+https://repo1.maven.org/maven2/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5-sources.jar
 
 
 --------------------------------------------------------------------------------
 
 
-javaparser version 1.0.8 is covered by the LGPL version 2.1 (see
-LGPL-2.1.txt). The library source code is available at
-https://code.google.com/p/javaparser/.
+javaparser version 1.0.8 is covered by the LGPL version 3 or later (see
+LGPL-3.0.txt). The library source code is available at
+https://repo1.maven.org/maven2/com/google/code/javaparser/javaparser/1.0.8/javaparser-1.0.8-sources.jar
 
 
 --------------------------------------------------------------------------------
 
 
-SwingLabs SwingX version 1.6.2 is covered by the LGPL version 2.1 (see
+SwingLabs SwingX version 1.6.2-2 is covered by the LGPL version 2.1 (see
 LGPL-2.1.txt). The library source code is available at
-https://swingx.java.net/.
+https://repo1.maven.org/maven2/org/swinglabs/swingx-core/1.6.2-2/swingx-core-1.6.2-2-sources.jar
 
 
 --------------------------------------------------------------------------------
@@ -335,7 +336,7 @@ https://swingx.java.net/.
 
 openhtmltopdf version 1.0.9 is covered by the LGPL version 2.1 (see
 LGPL-2.1.txt). The library source code is available at
-https://github.com/danfickle/openhtmltopdf/.
+https://github.com/danfickle/openhtmltopdf/
 
 
 --------------------------------------------------------------------------------
@@ -438,7 +439,7 @@ The license information below pertains to Flying Saucer version 9.0.1. This
 library is covered by the LGPL version 2.1 (see LGPL-2.1.txt) and its source
 code is available at
 https://github.com/flyingsaucerproject/flyingsaucer or
-https://code.google.com/p/flying-saucer/.
+https://code.google.com/p/flying-saucer/
 
 =================== Beginning of License Information ===================
 

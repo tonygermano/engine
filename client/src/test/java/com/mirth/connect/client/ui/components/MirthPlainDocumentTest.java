@@ -18,7 +18,6 @@ import javax.swing.text.PlainDocument;
 import javax.swing.undo.UndoManager;
 
 import org.junit.Test;
-import org.syntax.jedit.MirthPlainDocument;
 
 public class MirthPlainDocumentTest {
 

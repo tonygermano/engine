@@ -78,7 +78,7 @@ public class XsltStepTest {
             transform("<!DOCTYPE r [ <!ENTITY ok \"canary\"> ]><r>&ok;</r>", TEXT_XSLT);
             fail("expected the DOCTYPE to be refused");
         } catch (Exception e) {
-            assertTrue(String.valueOf(e), String.valueOf(e).contains("DOCTYPE is disallowed"));
+            assertTrue(String.valueOf(e), String.valueOf(e).contains("disallow-doctype-decl"));
         }
     }
 

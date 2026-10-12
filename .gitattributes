@@ -9,5 +9,9 @@ configure-from-env text eol=lf
 # Windows scripts must stay CRLF
 *.bat           text eol=crlf
 
+# Stored with LF, checked out with native endings. install4j rewrites
+# the whole file with the platform's endings on save.
+*.install4j     text
+
 # Binary files are left untouched
 *.jar           binary

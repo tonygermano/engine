@@ -244,6 +244,7 @@ public class ServerMigrator extends Migrator {
 			case v4_5_1: return null;
 			case v4_5_2: return new Migrate4_5_2();
 			case v4_6_0: return null;
+			case v4_7_0: return null;
         } // @formatter:on
 
         return null;

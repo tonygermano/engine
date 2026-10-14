@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="13.1.1" transformSequenceNumber="13">
-  <application name="Open Integration Engine" applicationId="4145-9206-7630-8076" mediaDir="${compiler:installer:mediaRoot}/server/build" shortName="oie" publisher="Open Integration Engine Project" publisherWeb="https://openintegrationengine.com" version="4.7.0" backupOnSave="true" autoSave="true" macVolumeId="88477e584eb462ba" javaMinVersion="17" javaMaxVersion="25">
+  <application name="Open Integration Engine" applicationId="4145-9206-7630-8076" mediaDir="${compiler:installer:mediaRoot}/server/build" shortName="oie" publisher="Open Integration Engine Project" publisherWeb="https://openintegrationengine.org" version="4.7.0" backupOnSave="true" autoSave="true" macVolumeId="88477e584eb462ba" javaMinVersion="17" javaMaxVersion="999">
     <variables>
-      <variable name="installer:mediaRoot" value="../../../engine" />
+      <variable name="installer:mediaRoot" value="../.." />
     </variables>
-    <jreBundles jdkProviderId="Zulu" release="17/17.0.15">
+    <jreBundles jdkProviderId="Adoptium" release="21/jdk-21.0.12.1+1">
       <modules>
         <defaultModules set="all" />
       </modules>
@@ -18,13 +18,14 @@
       <dirEntry mountPoint="24" file="${compiler:installer:mediaRoot}/server/setup" subDirectory="setup">
         <exclude>
           <entry location="conf" />
+          <entry location="oieserver" />
+          <entry location="oieserver.ps1" />
         </exclude>
       </dirEntry>
       <dirEntry mountPoint="24" file="${compiler:installer:mediaRoot}/server/setup" overwriteMode="never" uninstallMode="never" overrideOverwriteMode="true" overrideUninstallMode="true">
         <exclude>
           <entry location="server-lib" />
-          <entry location="webapps" />
-          <entry location="mirth-manager-launcher.jar" />
+          <entry location="configure-from-env" />
           <entry location="public_html" />
           <entry location="oieserver.vmoptions" />
           <entry location="cli-lib" />
@@ -33,7 +34,8 @@
           <entry location="public_api_html" />
           <entry location="docs" />
           <entry location="extensions" />
-          <entry location="manager-lib" />
+          <entry location="oieserver.ps1" />
+          <entry location="oieserver" />
           <entry location="mirth-cli-launcher.jar" />
           <entry location="logs" />
           <entry location="oieservice.vmoptions" />
@@ -81,18 +83,6 @@
 -Djava.awt.headless=true
 -Dapple.awt.UIElement=true</content>
       </vmOptionsFile>
-      <iconImageFiles>
-        <file path="${compiler:installer:mediaRoot}/../governance/branding/icons/oie_logo_only_white_background_128x128.png" />
-      </iconImageFiles>
-    </launcher>
-    <launcher name="oiemanager" id="56" menuName="${compiler:sys.fullName}">
-      <executable name="${compiler:sys.shortName}manager" iconSet="true" executableMode="gui" executionLevel="requireAdministrator" />
-      <java mainClass="com.mirth.connect.manager.Manager">
-        <classPath>
-          <archive location="mirth-manager-launcher.jar" failOnError="false" />
-        </classPath>
-      </java>
-      <vmOptionsFile mode="none" />
       <iconImageFiles>
         <file path="${compiler:installer:mediaRoot}/../governance/branding/icons/oie_logo_only_white_background_128x128.png" />
       </iconImageFiles>
@@ -286,34 +276,6 @@ return console.askOkCancel(message, true);
               </formComponent>
               <formComponent id="108" beanClass="com.install4j.runtime.beans.formcomponents.HtmlDisplayFormComponent" useExternalParametrization="true" externalParametrizationName="HTML or text display" externalParametrizationMode="include">
                 <serializedBean>
-                  <property name="displayedText" type="string">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 1em; background-color: white; color: black;"&gt;
-  &lt;h1 style="color: black;"&gt;Open Integration Engine - Preview Release&lt;/h1&gt;
-  &lt;p&gt;This is a preview release of the Open Integration Engine.&lt;/p&gt;
-  &lt;p&gt;
-    This release is recommended for users already familiar with Mirth Connect. 
-    It installs a fully functional version of the engine with minimal prompts.
-    As you have seen - this does require admin permissions to run and install services, we will be updating that!
-  &lt;/p&gt;
-  &lt;h2&gt;Notes&lt;/h2&gt;
-  &lt;ul&gt;
-  &lt;li&gt;Native services are installed for all supported platforms and are configured to start automatically.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;macOS users:&lt;/strong&gt; A reboot will automatically start the service.&lt;/li&gt;
-    &lt;li&gt;
-      Default settings from mirth.properties are applied automatically; the installer does not prompt for customization.
-    &lt;/li&gt;
-    &lt;li&gt;This includes ports (default: 8080 and 8443), log and app data paths, and password requirements.&lt;/li&gt;
-    &lt;li&gt;
-      Previous installations are not preserved, though runtime-created directories 
-      (e.g., appdata) 
-      are retained across installs.
-    &lt;/li&gt;
-
-  &lt;/ul&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</property>
                   <property name="displayedTextFile" id="LocalizedExternalFile0">
                     <property name="languageIdToExternalFile">
                       <entry>
@@ -404,6 +366,7 @@ return true;
           </screen>
           <screen id="15" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true" rollbackBarrierExitCode="0">
             <actions>
+              <action id="169" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="elevated" rollbackBarrierExitCode="0" />
               <action id="17" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" actionElevationType="elevated" rollbackBarrierExitCode="0" failureStrategy="quit" errorMessage="${i18n:FileCorrupted}">
                 <serializedBean>
                   <property name="fileFilterScript">
@@ -701,7 +664,7 @@ return console.askYesNo(message, true);
                   <formComponent name="Title" id="16" beanClass="com.install4j.runtime.beans.styles.ScreenTitleComponent">
                     <serializedBean>
                       <property name="labelWidgetStyleId" type="null" />
-                      <property name="labelWidgetStyle">
+                      <property name="labelWidgetStyle" id="LabelWidgetStyle0">
                         <property name="fontDescriptor">
                           <property name="fontType" type="enum" class="com.install4j.runtime.beans.formcomponents.FontType" value="DERIVED" />
                           <property name="fontStyle" type="enum" class="com.install4j.runtime.beans.formcomponents.FontStyle" value="BOLD" />
@@ -771,79 +734,42 @@ return console.askYesNo(message, true);
         </beans>
       </group>
     </styles>
-    <widgetStyles defaultWidgetStyleId="112">
-      <widgetStyle name="Standard" id="112" beanClass="com.install4j.runtime.beans.widgets.WidgetStyleCollection" />
+    <widgetStyles defaultWidgetStyleId="113">
+      <widgetStyle name="Standard" id="113" beanClass="com.install4j.runtime.beans.widgets.WidgetStyleCollection" />
     </widgetStyles>
   </installerGui>
   <mediaSets>
     <windows name="Windows x64" id="27" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="OpenIntegrationEngine" architecture="64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" jreBundleSource="none" />
     </windows>
     <unixInstaller name="Unix Installer" id="42" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" jreBundleSource="none" />
     </unixInstaller>
     <macosFolder name="macOS Folder - ARM" id="43" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-aarch" installDir="OpenIntegrationEngine">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" jreBundleSource="none" />
     </macosFolder>
     <unixArchive name="Unix Archive" id="44" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
-      <exclude>
-        <entry location="mirth-manager-launcher.jar" />
-      </exclude>
       <jreBundle jreBundleSource="none" />
     </unixArchive>
     <macosFolder name="macOS Folder - Intel" id="116" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-x86" installDir="OpenIntegrationEngine" architecture="amd64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" jreBundleSource="none" />
     </macosFolder>
     <windows name="Windows ARM" id="119" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" installDir="OpenIntegrationEngine" architecture="arm64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle jreBundleSource="none" />
     </windows>
     <windows name="Windows x64-with-JRE" id="121" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-with-JRE" installDir="OpenIntegrationEngine" architecture="64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" />
     </windows>
     <unixInstaller name="Unix Installer-with-JRE" id="125" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-with-JRE">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" />
     </unixInstaller>
     <macosFolder name="macOS Folder - ARM-with-JRE" id="130" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-aarch-with-JRE" installDir="OpenIntegrationEngine">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" />
     </macosFolder>
     <macosFolder name="macOS Folder - Intel-with-JRE" id="133" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-x86-with-JRE" installDir="OpenIntegrationEngine" architecture="amd64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
       <jreBundle usePack200="false" />
     </macosFolder>
-    <windows name="Windows ARM-with-JRE" id="136" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-with-JRE" installDir="OpenIntegrationEngine" architecture="arm64">
-      <excludedLaunchers>
-        <launcher id="56" />
-      </excludedLaunchers>
-    </windows>
+    <windows name="Windows ARM-with-JRE" id="136" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}-with-JRE" installDir="OpenIntegrationEngine" architecture="arm64" />
     <windowsArchive name="Windows x64 Archive" id="153" mediaFileName="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" architecture="64">
       <jreBundle jreBundleSource="none" />
     </windowsArchive>
@@ -851,7 +777,7 @@ return console.askYesNo(message, true);
       <jreBundle jreBundleSource="none" />
     </windowsArchive>
   </mediaSets>
-  <buildIds buildAll="false">
+  <buildIds>
     <mediaSet refId="136" />
   </buildIds>
 </install4j>

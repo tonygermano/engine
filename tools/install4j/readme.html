@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 1em; background-color: white; color: black;">
-  <h1 style="color: black;">Open Integration Engine</h1>
-  <p>Open Integration Engine</p>
+  <h1 style="color: black;">Open Integration Engine ${compiler:sys.version}</h1>
   <p>
-    This installer sets up a fully functional version of the engine with minimal user input.
+    This installer sets up a fully functional version of the engine with minimal user input,
+    or upgrades an existing installation.
     The installer requires administrator permissions to run and install services.
   </p>
   <h2>Notes</h2>
   <ul>
-  <li>Native services are installed for all supported platforms and are configured to start automatically.</li>
-  <li><strong>macOS users:</strong> A reboot will automatically start the service.</li>
+    <li>Native services are installed for all supported platforms and are configured to start automatically.</li>
+    <li><strong>macOS users:</strong> A reboot will automatically start the service.</li>
     <li>
-      Default settings from mirth.properties are applied automatically; the installer does not prompt for customization.
+      A new installation uses the default configuration files in the conf directory;
+      the installer does not prompt for customization.
+      This includes ports (default: 8080 and 8443), log and app data paths, and password requirements.
     </li>
-    <li>This includes ports (default: 8080 and 8443), log and app data paths, and password requirements.</li>
     <li>
-      Previous installations are not preserved, though runtime-created directories 
-      (e.g., appdata) 
-      are retained across installs.
+      An upgrade replaces the program files from the previous installation.
+      Files in the conf directory are kept and are not updated with new defaults.
+      Directories created at runtime, such as appdata, are also kept.
     </li>
-
   </ul>
 </body>
 </html>

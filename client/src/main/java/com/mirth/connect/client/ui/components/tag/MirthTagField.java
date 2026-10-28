@@ -804,6 +804,11 @@ public class MirthTagField extends JPanel {
 
     public void createTagOnFocusLost() {
         commitEditorText();
+
+        // Committed from outside the field, as by Save, the editor goes back to the end and its prompt.
+        if (!editor.isFocusOwner()) {
+            moveEditor(tokens.size());
+        }
     }
 
     public void setFocus(boolean focus) {

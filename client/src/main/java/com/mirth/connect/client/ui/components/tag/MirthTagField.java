@@ -472,7 +472,8 @@ public class MirthTagField extends JPanel {
 
     /** The prompt shows only in an empty, unfocused editor, which is kept at the end. */
     private boolean isShowingPrompt() {
-        return !editing && editorIndex == tokens.size() && !editor.isFocusOwner();
+        // The editor field is still null while the text field's own constructor runs.
+        return !editing && editorIndex == tokens.size() && (editor == null || !editor.isFocusOwner());
     }
 
     /** Only the editor showing its prompt fills the row, so that the prompt has room. */

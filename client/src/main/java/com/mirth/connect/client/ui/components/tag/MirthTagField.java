@@ -50,7 +50,6 @@ import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -141,17 +140,13 @@ public class MirthTagField extends JPanel {
 
     /** The edit mode outline: a thin rounded rectangle with the same corners as the chips. */
     private static class OutlineBorder extends AbstractBorder {
-        private final Color color;
-
-        OutlineBorder(Color color) {
-            this.color = color;
-        }
-
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            // Looked up on each paint, so the outline follows the look and feel.
+            Color color = UIManager.getColor("Button.focus");
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(color);
+            g2.setColor(color != null ? color : c.getForeground());
             g2.drawRoundRect(x, y, width - 1, height - 1, TagChip.ARC, TagChip.ARC);
             g2.dispose();
         }
@@ -321,7 +316,7 @@ public class MirthTagField extends JPanel {
         };
         idleBorder = BorderFactory.createEmptyBorder(1, 3, 1, 3);
         // The same insets as the idle border, so the outline doesn't shift the chips after it.
-        editingBorder = BorderFactory.createCompoundBorder(new OutlineBorder(MetalLookAndFeel.getFocusColor()), BorderFactory.createEmptyBorder(0, 2, 0, 2));
+        editingBorder = BorderFactory.createCompoundBorder(new OutlineBorder(), BorderFactory.createEmptyBorder(0, 2, 0, 2));
         editor.setBorder(idleBorder);
         editor.setFont(TagChip.FONT);
         editor.setToolTipText(getToolTipText());

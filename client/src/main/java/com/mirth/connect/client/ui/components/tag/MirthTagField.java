@@ -664,7 +664,10 @@ public class MirthTagField extends JPanel {
         if (index != editorIndex) {
             closePopupWindow();
             editorIndex = index;
-            rebuild();
+            // Moved within its own container, the editor keeps focus, so the chips can stay put.
+            chipRow.setComponentZOrder(editor, editorIndex);
+            updateEditorConstraints();
+            chipRow.repaint();
         }
 
         scrollEditorToVisible();

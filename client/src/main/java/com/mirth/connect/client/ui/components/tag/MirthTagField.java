@@ -826,6 +826,9 @@ public class MirthTagField extends JPanel {
             channelTokens.add(new Token(TAG_TYPE, tag.getName(), null, null));
         }
 
+        // Text left uncommitted in the previous channel doesn't belong to this one.
+        editor.setText("");
+        setEditing(false);
         editorIndex = channelTokens.size();
         setTokens(channelTokens, true);
     }

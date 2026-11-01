@@ -8,11 +8,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,11 +37,15 @@ import com.mirth.connect.client.core.Version;
 import com.mirth.connect.donkey.util.MapUtil;
 import com.mirth.connect.donkey.util.xstream.SerializerException;
 
-/// Characterization tests documenting how [ObjectXMLSerializer] currently handles the values a
-/// user script can put into the channel map, global map, response map, etc. These assertions record
-/// existing behavior, including behavior that is lossy or arguably wrong, so that changes to
-/// [JavaScriptObjectConverter] (or anything else in the serialization path) are made deliberately.
-/// When a change here is intended, update the assertion and its comment.
+/// Characterization tests documenting how [ObjectXMLSerializer] handles the values a user script
+/// can put into the channel map, global map, response map, etc. These assertions record current
+/// behavior, including behavior that is lossy, so that changes to [JavaScriptObjectConverter] (or
+/// anything else in the serialization path) are made deliberately. When a change here is intended,
+/// update the assertion and its comment.
+///
+/// JavaScriptObjectConverter handles every Rhino object except wrapped Java objects. It writes plain
+/// objects and arrays as JSON, valid dates as ISO-8601, and everything else as its JavaScript string
+/// value, so these values always deserialize as java.lang.String.
 ///
 /// Values are produced the way they are on a running server:
 ///
@@ -43,8 +55,7 @@ import com.mirth.connect.donkey.util.xstream.SerializerException;
 ///   shared scope is sealed, Rhino objects that fall through to XStream reflection can no longer be
 ///   serialized at all.
 /// - The per-script scope holds an E4X `msg`, as filter and transformer scopes do for XML-based
-///   data types. Results that fall back to XStream reflection depend on what that scope holds,
-///   because reflection reaches it through the object's parent scope.
+///   data types.
 /// - The value is passed through a Java `Map.put`, so Rhino's Java method argument coercion decides
 ///   what actually lands in the map (e.g. JS numbers become [Double]).
 ///
@@ -60,9 +71,9 @@ import com.mirth.connect.donkey.util.xstream.SerializerException;
 ///
 /// Serialization normally happens after the script has finished, with no Rhino [Context] on the
 /// thread. It can also happen while a Context is still entered, e.g. when a script calls
-/// `router.routeMessage()` and the downstream channel stores its maps on the same thread. A few
-/// types behave differently in those two cases; tests ending in `OutsideContext` and
-/// `InsideContext` document both.
+/// `router.routeMessage()` and the downstream channel stores its maps on the same thread. The
+/// converter enters a Context when none is current, so the results are the same; tests ending in
+/// `OutsideContext` and `InsideContext` check both for the types that used to differ.
 public class ObjectXMLSerializerScriptableTest {
 
     private ScriptableObject sealedSharedScope;
@@ -77,9 +88,8 @@ public class ObjectXMLSerializerScriptableTest {
     }
 
     /*
-     * A new shared scope per test, because Rhino lazily initializes built-in prototype methods and
-     * some results depend on whether that has already happened (see
-     * testObjectContainingDateOutsideContextAfterToJSONInitialized).
+     * A new shared scope per test, because Rhino lazily initializes built-in prototype methods, so
+     * tests sharing a scope could depend on what ran before.
      */
     @Before
     public void createSealedSharedScope() throws Exception {
@@ -156,6 +166,7 @@ public class ObjectXMLSerializerScriptableTest {
     /*
      * Objects (NativeObject). JavaScriptObjectConverter writes JSON.stringify output, and
      * MirthMapperWrapper names the element "string", so these deserialize as java.lang.String.
+     * Objects that JSON.stringify can't handle are written as their string value.
      */
 
     @Test
@@ -218,23 +229,9 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testObjectContainingDateOutsideContext() throws Exception {
-        // Date.prototype.toJSON needs a current Context, so JSON.stringify throws and the converter
-        // falls back to reflection, which fails on the scope chain. MapUtil then stores toString().
+        // Previously failed, because Date.prototype.toJSON needed a Context, and was stored as "[object Object]"
         Object value = jsValue("({d: new Date(0)})");
-        assertSerializeFails(value);
-        assertEquals("[object Object]", storedMapValue(value));
-    }
-
-    @Test
-    public void testObjectContainingDateOutsideContextAfterToJSONInitialized() throws Exception {
-        /*
-         * Rhino creates Date.prototype.toJSON lazily in the shared scope, and creating it is what
-         * needs the Context. Once any script using the same shared scope has touched it (e.g.
-         * JSON.stringify(new Date()), or a serialization while a Context was entered), serialization
-         * outside a Context succeeds. On a server the result depends on what has run before.
-         */
-        jsValue("Date.prototype.toJSON");
-        Object value = jsValue("({d: new Date(0)})");
+        assertSerializesAsString("{\"d\":\"1970-01-01T00:00:00.000Z\"}", value);
         assertEquals("{\"d\":\"1970-01-01T00:00:00.000Z\"}", storedMapValue(value));
     }
 
@@ -246,9 +243,8 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testObjectWithGetterOutsideContext() throws Exception {
-        Object value = jsValue("({get g() { return 1; }})");
-        assertSerializeFails(value);
-        assertEquals("[object Object]", storedMapValue(value));
+        // Previously failed and was stored as "[object Object]"
+        assertEquals("{\"g\":1}", storedMapValue(jsValue("({get g() { return 1; }})")));
     }
 
     @Test
@@ -259,9 +255,8 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testObjectContainingPrimitiveWrappersOutsideContext() throws Exception {
-        Object value = jsValue("({n: new Number(1), s: new String('s')})");
-        assertSerializeFails(value);
-        assertEquals("[object Object]", storedMapValue(value));
+        // Previously failed and was stored as "[object Object]"
+        assertEquals("{\"n\":1,\"s\":\"s\"}", storedMapValue(jsValue("({n: new Number(1), s: new String('s')})")));
     }
 
     @Test
@@ -272,55 +267,40 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testCyclicObjectOutsideContext() throws Exception {
+        // JSON.stringify throws on the cycle. Previously the serializer failed; MapUtil stored the same string.
         Object value = jsValue("(function() { var o = {}; o.self = o; return o; })()");
-        assertSerializeFails(value);
+        assertSerializesAsString("[object Object]", value);
         assertEquals("[object Object]", storedMapValue(value));
     }
 
     @Test
     public void testCyclicObjectInsideContext() throws Exception {
-        /*
-         * JSON.stringify throws on the cycle and the converter falls back to reflection, which
-         * reaches the per-script scope through the object's parent scope. With an E4X msg in that
-         * scope, reflection fails, and MapUtil stores toString().
-         */
         Object value = jsValue("(function() { var o = {}; o.self = o; return o; })()");
-        inContext(() -> {
-            assertSerializeFails(value);
-            return null;
-        });
         assertEquals("[object Object]", inContext(() -> storedMapValue(value)));
     }
 
     @Test
-    public void testCyclicObjectInsideContextWritesScopeVariables() throws Exception {
+    public void testCyclicObjectDoesNotWriteScopeVariables() throws Exception {
         /*
-         * Without E4X in the per-script scope, the reflection fallback succeeds. The prototype and
-         * parent scope fields are NativeObjects, so JavaScriptObjectConverter writes each as
-         * JSON.stringify output, and the parent scope is the per-script scope with the script's
-         * top-level variables. The result is a <string> element with child elements, which
-         * deserializes to the whitespace between them.
+         * Previously, inside a Context and without E4X in the per-script scope, the converter fell
+         * back to reflection and wrote the per-script scope, including its top-level variables.
          */
         Object value = jsValueInScope("var topVar = 'v'; msg = 'raw';", "(function() { var o = {}; o.self = o; return o; })()");
         String xml = inContext(() -> serialize(value));
-        assertTrue(xml, xml.startsWith("<string>"));
-        assertTrue(xml, xml.contains("{&quot;topVar&quot;:&quot;v&quot;,&quot;msg&quot;:&quot;raw&quot;"));
-        Object stored = inContext(() -> storedMapValue(value));
-        assertTrue(stored instanceof String);
-        assertEquals("", ((String) stored).trim());
+        assertEquals("<string>[object Object]</string>", xml);
     }
 
     @Test
     public void testObjectContainingXmlOutsideContext() throws Exception {
         // e.g. channelMap.put('patient', {name: msg['PID']['PID.5']})
+        // JSON.stringify throws on the XML value. Previously the serializer failed; MapUtil stored the same string.
         Object value = jsValue("({x: new XML('<a1><b>1</b></a1>')})");
-        assertSerializeFails(value);
+        assertSerializesAsString("[object Object]", value);
         assertEquals("[object Object]", storedMapValue(value));
     }
 
     @Test
     public void testObjectContainingXmlInsideContext() throws Exception {
-        // JSON.stringify throws on the XML value, and the reflection fallback fails on the scope's msg
         Object value = jsValue("({x: new XML('<a1><b>1</b></a1>')})");
         assertEquals("[object Object]", inContext(() -> storedMapValue(value)));
     }
@@ -383,10 +363,8 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testToJSONReturningJavaObjectOutsideContext() throws Exception {
-        // Calling a Java method from toJSON needs a Context
-        Object value = jsValue("({toJSON: function() { return java.util.Arrays.asList(1); }})");
-        assertSerializeFails(value);
-        assertEquals("[object Object]", storedMapValue(value));
+        // Previously failed, because calling a Java method from toJSON needs a Context, and was stored as "[object Object]"
+        assertEquals("{\"0\":1}", storedMapValue(jsValue("({toJSON: function() { return java.util.Arrays.asList(1); }})")));
     }
 
     @Test
@@ -424,27 +402,20 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testArrayContainingDateOutsideContext() throws Exception {
-        // Same failure as an object containing a Date, but NativeArray.toString() is the Java identity string
-        Object value = jsValue("[new Date(0)]");
-        assertSerializeFails(value);
-        assertTrue(((String) storedMapValue(value)).startsWith("org.mozilla.javascript.NativeArray@"));
-    }
-
-    @Test
-    public void testArrayContainingDateOutsideContextAfterToJSONInitialized() throws Exception {
-        jsValue("Date.prototype.toJSON");
+        // Previously failed and was stored as the Java identity string "org.mozilla.javascript.NativeArray@..."
         assertEquals("[\"1970-01-01T00:00:00.000Z\"]", storedMapValue(jsValue("[new Date(0)]")));
     }
 
     @Test
     public void testArrayContainingXml() throws Exception {
-        Object value = jsValue("[new XML('<a1>t</a1>')]");
-        assertSerializeFails(value);
-        assertTrue(((String) storedMapValue(value)).startsWith("org.mozilla.javascript.NativeArray@"));
-        inContext(() -> {
-            assertSerializeFails(value);
-            return null;
-        });
+        /*
+         * JSON.stringify throws on the XML value, so the array's string value is written, which
+         * joins the elements' string values. Previously failed and was stored as the Java identity
+         * string "org.mozilla.javascript.NativeArray@...".
+         */
+        Object value = jsValue("[new XML('<a1>t</a1>'), 2]");
+        assertSerializesAsString("t,2", value);
+        assertEquals("t,2", inContext(() -> storedMapValue(value)));
     }
 
     @Test
@@ -454,7 +425,7 @@ public class ObjectXMLSerializerScriptableTest {
     }
 
     /*
-     * Dates (NativeDate). Written as an unquoted ISO-8601 UTC string regardless of Context.
+     * Dates (NativeDate). Written as an unquoted ISO-8601 UTC string.
      */
 
     @Test
@@ -467,31 +438,37 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testInvalidDate() throws Exception {
-        // In JavaScript, toISOString() throws a RangeError for an invalid date, but the converter calls
-        // NativeDate.js_toISOString directly, which formats NaN as year zero
+        // toISOString() throws a RangeError for an invalid date, so its string value is written.
+        // Previously NativeDate.js_toISOString was called directly, which formatted NaN as "0000-01-01T00:00:00.000Z".
         Object value = jsValue("new Date(NaN)");
-        assertSerializesAsString("0000-01-01T00:00:00.000Z", value);
-        assertEquals("0000-01-01T00:00:00.000Z", storedMapValue(value));
+        assertSerializesAsString("Invalid Date", value);
+        assertEquals("Invalid Date", storedMapValue(value));
     }
 
     /*
-     * Functions. Not handled by JavaScriptObjectConverter, so they fall through to XStream
-     * reflection, which fails on the sealed shared scope. MapUtil stores the Java identity string.
+     * Functions. Written as their source text. Rhino 1.7.13 decompiles it, so the whitespace differs
+     * from the script, and newer versions keep the original text, so only the start is checked.
+     * Previously they fell through to XStream reflection, which failed on the sealed shared scope,
+     * and MapUtil stored the Java identity string (e.g. "org.mozilla.javascript.InterpretedFunction@...").
      */
 
     @Test
     public void testFunction() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.InterpretedFunction@", jsValue("function foo(a) { return a; }"));
+        Object value = jsValue("function foo(a) { return a; }");
+        assertFunctionSource("function foo(a)", ObjectXMLSerializer.getInstance().deserialize(serialize(value), Object.class));
+        assertFunctionSource("function foo(a)", storedMapValue(value));
     }
 
     @Test
     public void testArrowFunction() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.ArrowFunction@", jsValue("(a) => a"));
+        assertFunctionSource("(a) => a", storedMapValue(jsValue("(a) => a")));
     }
 
     @Test
     public void testBoundFunction() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.BoundFunction@", jsValue("(function() {}).bind(null)"));
+        Object stored = storedMapValue(jsValue("(function() {}).bind(null)"));
+        assertFunctionSource("function", stored);
+        assertTrue(String.valueOf(stored), ((String) stored).contains("[native code"));
     }
 
     @Test
@@ -504,26 +481,28 @@ public class ObjectXMLSerializerScriptableTest {
     }
 
     /*
-     * Regular expressions (NativeRegExp). Fail to serialize; stored as the source with flags.
+     * Regular expressions (NativeRegExp). Written as the source with flags. Previously serialization
+     * failed and MapUtil stored the same string.
      */
 
     @Test
     public void testRegExpLiteral() throws Exception {
         Object value = jsValue("/ab+c/gi");
-        assertSerializeFails(value);
+        assertSerializesAsString("/ab+c/gi", value);
         assertEquals("/ab+c/gi", storedMapValue(value));
     }
 
     @Test
     public void testRegExpConstructor() throws Exception {
         Object value = jsValue("new RegExp('x', 'm')");
-        assertSerializeFails(value);
+        assertSerializesAsString("/x/m", value);
         assertEquals("/x/m", storedMapValue(value));
     }
 
     /*
-     * E4X (XML, XMLList, Namespace, QName). Fail to serialize; stored as the E4X toString(), which
-     * for XML with simple content is just the text and not the markup.
+     * E4X (XML, XMLList, Namespace, QName). Written as the E4X toString(), which for XML with simple
+     * content is just the text and not the markup. Previously serialization failed and MapUtil
+     * stored the same string.
      *
      * Note: Rhino throws StringIndexOutOfBoundsException when parsing XML whose text is shorter than
      * "<?xml" (e.g. the literal <a/>), so these tests use longer element names.
@@ -533,7 +512,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testXmlLiteral() throws Exception {
         Object value = jsValue("<root attr=\"c\"><child>e</child></root>");
         assertEquals("org.mozilla.javascript.xmlimpl.XML", value.getClass().getName());
-        assertSerializeFails(value);
+        assertSerializesAsString("<root attr=\"c\"><child>e</child></root>", value);
         assertEquals("<root attr=\"c\"><child>e</child></root>", storedMapValue(value));
     }
 
@@ -541,7 +520,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testXmlMessage() throws Exception {
         // e.g. channelMap.put('msg', msg)
         Object value = jsValue("new XML('<HL7Message><MSH><MSH.1>|</MSH.1></MSH></HL7Message>')");
-        assertSerializeFails(value);
+        assertSerializesAsString("<HL7Message><MSH><MSH.1>|</MSH.1></MSH></HL7Message>", value);
         assertEquals("<HL7Message><MSH><MSH.1>|</MSH.1></MSH></HL7Message>", storedMapValue(value));
     }
 
@@ -549,7 +528,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testXmlWithSimpleContentLosesMarkup() throws Exception {
         // e.g. channelMap.put('field', msg['PID']['PID.5']['PID.5.1'])
         Object value = jsValue("new XML('<root>text</root>')");
-        assertSerializeFails(value);
+        assertSerializesAsString("text", value);
         assertEquals("text", storedMapValue(value));
     }
 
@@ -557,7 +536,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testXmlList() throws Exception {
         Object value = jsValue("<><one/><two/></>");
         assertEquals("org.mozilla.javascript.xmlimpl.XMLList", value.getClass().getName());
-        assertSerializeFails(value);
+        assertSerializesAsString("<one/><two/>", value);
         assertEquals("<one/><two/>", storedMapValue(value));
     }
 
@@ -565,26 +544,28 @@ public class ObjectXMLSerializerScriptableTest {
     public void testEmptyXmlList() throws Exception {
         // e.g. a query for a segment that doesn't exist
         Object value = jsValue("new XMLList()");
-        assertSerializeFails(value);
+        assertSerializesAsString("", value);
         assertEquals("", storedMapValue(value));
     }
 
     @Test
     public void testNamespace() throws Exception {
         Object value = jsValue("new Namespace('p', 'urn:x')");
-        assertSerializeFails(value);
+        assertSerializesAsString("urn:x", value);
         assertEquals("urn:x", storedMapValue(value));
     }
 
     @Test
     public void testQName() throws Exception {
         Object value = jsValue("new QName('urn:x', 'y')");
-        assertSerializeFails(value);
+        assertSerializesAsString("urn:x::y", value);
         assertEquals("urn:x::y", storedMapValue(value));
     }
 
     /*
-     * Primitive wrapper objects. Only NativeBoolean is handled by JavaScriptObjectConverter.
+     * Primitive wrapper objects. Written as their string value, as they are stored; previously only
+     * NativeBoolean was handled by JavaScriptObjectConverter, and the others failed to serialize and
+     * MapUtil stored the same string.
      */
 
     @Test
@@ -598,7 +579,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testStringObject() throws Exception {
         Object value = jsValue("new String('s')");
         assertEquals("org.mozilla.javascript.NativeString", value.getClass().getName());
-        assertSerializeFails(value);
+        assertSerializesAsString("s", value);
         assertEquals("s", storedMapValue(value));
     }
 
@@ -606,7 +587,7 @@ public class ObjectXMLSerializerScriptableTest {
     public void testNumberObject() throws Exception {
         Object value = jsValue("new Number(2)");
         assertEquals("org.mozilla.javascript.NativeNumber", value.getClass().getName());
-        assertSerializeFails(value);
+        assertSerializesAsString("2", value);
         // Stored as a String, unlike a number primitive which is stored as a Double
         assertEquals("2", storedMapValue(value));
     }
@@ -614,41 +595,43 @@ public class ObjectXMLSerializerScriptableTest {
     @Test
     public void testSymbol() throws Exception {
         Object value = jsValue("Symbol('s')");
-        assertSerializeFails(value);
+        assertSerializesAsString("Symbol(s)", value);
         assertEquals("Symbol(s)", storedMapValue(value));
     }
 
     /*
-     * Other built-ins. Fail to serialize. Errors keep a useful toString(), but the rest are stored
-     * as Java identity strings and their contents are lost.
+     * Other built-ins. Written as their JavaScript string value. Errors keep their message; the
+     * contents of the others are lost. Previously serialization failed, and MapUtil stored the same
+     * string for errors and the Java identity string (e.g. "org.mozilla.javascript.NativeMap@...")
+     * for the rest.
      */
 
     @Test
     public void testError() throws Exception {
         Object value = jsValue("new Error('boom')");
-        assertSerializeFails(value);
+        assertSerializesAsString("Error: boom", value);
         assertEquals("Error: boom", storedMapValue(value));
         assertEquals("TypeError: bad", storedMapValue(jsValue("new TypeError('bad')")));
     }
 
     @Test
     public void testMap() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.NativeMap@", jsValue("new Map([['k', 1]])"));
+        assertEquals("[object Map]", storedMapValue(jsValue("new Map([['k', 1]])")));
     }
 
     @Test
     public void testSet() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.NativeSet@", jsValue("new Set([1, 2])"));
+        assertEquals("[object Set]", storedMapValue(jsValue("new Set([1, 2])")));
     }
 
     @Test
     public void testTypedArray() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.typedarrays.NativeUint8Array@", jsValue("new Uint8Array([1, 2, 3])"));
+        assertEquals("1,2,3", storedMapValue(jsValue("new Uint8Array([1, 2, 3])")));
     }
 
     @Test
     public void testArguments() throws Exception {
-        assertNotSerializableStoredAs("org.mozilla.javascript.Arguments@", jsValue("(function() { return arguments; })(1, 2)"));
+        assertEquals("[object Arguments]", storedMapValue(jsValue("(function() { return arguments; })(1, 2)")));
     }
 
     /*
@@ -681,19 +664,19 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testJavaListContainingFunction() throws Exception {
-        // The whole Java list fails, so its Java toString() is stored
-        Object value = jsValue("new java.util.ArrayList([function() {}])");
-        assertSerializeFails(value);
-        assertTrue(((String) storedMapValue(value)).startsWith("[org.mozilla.javascript.InterpretedFunction@"));
+        // Previously the whole Java list failed, and its Java toString() was stored as a String
+        Object stored = storedMapValue(jsValue("new java.util.ArrayList([function() {}])"));
+        assertEquals(ArrayList.class, stored.getClass());
+        assertEquals(1, ((ArrayList<?>) stored).size());
+        assertFunctionSource("function ()", ((ArrayList<?>) stored).get(0));
     }
 
     @Test
     public void testJavaListContainingXml() throws Exception {
         // e.g. list.add(msg['OBX'][i]['OBX.5']) for each OBX, then channelMap.put('values', list)
-        // The whole Java list fails, so its Java toString() is stored as a String, not a List
+        // Previously the whole Java list failed, and its Java toString() "[x, y]" was stored as a String, not a List
         Object value = jsValue("(function() { var l = new java.util.ArrayList(); l.add(new XML('<a1>x</a1>')); l.add(new XML('<a1>y</a1>')); return l; })()");
-        assertSerializeFails(value);
-        assertEquals("[x, y]", storedMapValue(value));
+        assertEquals(List.of("x", "y"), storedMapValue(value));
     }
 
     @Test
@@ -704,10 +687,10 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testJavaMapContainingFunction() throws Exception {
-        // The whole Java map fails, so its Java toString() is stored
-        Object value = jsValue("java.util.Collections.singletonMap('k', function() {})");
-        assertSerializeFails(value);
-        assertTrue(((String) storedMapValue(value)).startsWith("{k=org.mozilla.javascript.InterpretedFunction@"));
+        // Previously the whole Java map failed, and its Java toString() was stored as a String
+        Object stored = storedMapValue(jsValue("java.util.Collections.singletonMap('k', function() {})"));
+        assertTrue(String.valueOf(stored), stored instanceof Map);
+        assertFunctionSource("function ()", ((Map<?, ?>) stored).get("k"));
     }
 
     /*
@@ -716,9 +699,10 @@ public class ObjectXMLSerializerScriptableTest {
 
     @Test
     public void testUnserializableValueDoesNotAffectOtherMapValues() throws Exception {
+        // A JavaScript value no longer fails, so use a Java object XStream can't write
         Map<String, Object> map = new HashMap<>();
         map.put("object", jsValue("({a: 1})"));
-        map.put("function", jsValue("function foo() {}"));
+        map.put("unserializable", new Unserializable());
         map.put("number", jsValue("1"));
         map.put("xml", jsValue("<root>text</root>"));
 
@@ -726,9 +710,86 @@ public class ObjectXMLSerializerScriptableTest {
 
         assertEquals(4, stored.size());
         assertEquals("{\"a\":1}", stored.get("object"));
-        assertTrue(((String) stored.get("function")).startsWith("org.mozilla.javascript.InterpretedFunction@"));
+        assertEquals("unserializable", stored.get("unserializable"));
         assertEquals(Double.valueOf(1), stored.get("number"));
         assertEquals("text", stored.get("xml"));
+    }
+
+    /*
+     * Edge cases of the conversion itself
+     */
+
+    @Test
+    public void testScriptGlobalsDoNotAffectConversion() throws Exception {
+        // The conversion runs in its own scope, so a script's top-level declarations can't replace JSON, String, etc.
+        String scopeScript = """
+                var JSON = {stringify: function() { return 'replaced'; }};
+                function String() { return 'replaced'; }
+                var isNaN = function() { return true; };
+                var Object = 5;
+                """;
+        assertEquals("{\"a\":1}", storedMapValue(jsValueInScope(scopeScript, "({a: 1})")));
+        assertEquals("/x/", storedMapValue(jsValueInScope(scopeScript, "/x/")));
+        assertEquals("1970-01-01T00:00:00.000Z", storedMapValue(jsValueInScope(scopeScript, "new Date(0)")));
+    }
+
+    @Test
+    public void testObjectWithoutScope() throws Exception {
+        // e.g. created in Java by a plugin or library
+        NativeObject object = new NativeObject();
+        object.put("a", object, 1);
+        assertEquals("{\"a\":1}", storedMapValue(object));
+    }
+
+    @Test
+    public void testObjectThatCannotBeConverted() throws Exception {
+        // JSON.stringify and String() both throw, so serialization fails and MapUtil stores the Java toString()
+        Object value = jsValue("({toJSON: function() { throw 'json'; }, toString: function() { throw 'string'; }})");
+        assertSerializeFails(value);
+        assertEquals("[object Object]", storedMapValue(value));
+    }
+
+    @Test
+    public void testObjectWithDatePrototype() throws Exception {
+        // Not a real Date, so getTime() and Date.prototype.toString() both throw TypeError
+        Object value = jsValue("Object.create(Date.prototype)");
+        assertSerializeFails(value);
+        assertEquals("[object Object]", storedMapValue(value));
+    }
+
+    @Test
+    public void testConcurrentConversion() throws Exception {
+        List<Object> values = List.of(jsValue("({a: 1, d: new Date(0)})"), jsValue("[1, 'x']"), jsValue("new Date(0)"), jsValue("/x/g"), jsValue("<root>text</root>"));
+        List<Object> expected = List.of("{\"a\":1,\"d\":\"1970-01-01T00:00:00.000Z\"}", "[1,\"x\"]", "1970-01-01T00:00:00.000Z", "/x/g", "text");
+
+        // Start from a new conversion scope, so the first conversions on several threads race with its creation
+        JavaScriptObjectConverter.resetConversion();
+        CyclicBarrier start = new CyclicBarrier(8);
+
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        try {
+            List<Future<List<Object>>> futures = new ArrayList<>();
+            for (int i = 0; i < 8; i++) {
+                futures.add(executor.submit(() -> {
+                    start.await(60, TimeUnit.SECONDS);
+                    List<Object> results = new ArrayList<>();
+                    for (int j = 0; j < 50; j++) {
+                        for (Object value : values) {
+                            results.add(storedMapValue(value));
+                        }
+                    }
+                    return results;
+                }));
+            }
+            for (Future<List<Object>> future : futures) {
+                List<Object> results = future.get(60, TimeUnit.SECONDS);
+                for (int i = 0; i < results.size(); i++) {
+                    assertEquals(expected.get(i % expected.size()), results.get(i));
+                }
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     /*
@@ -809,9 +870,19 @@ public class ObjectXMLSerializerScriptableTest {
         }
     }
 
-    private static void assertNotSerializableStoredAs(String expectedPrefix, Object value) {
-        assertSerializeFails(value);
-        Object stored = storedMapValue(value);
-        assertTrue(String.valueOf(stored), stored instanceof String && ((String) stored).startsWith(expectedPrefix));
+    private static void assertFunctionSource(String expectedStart, Object stored) {
+        assertTrue(String.valueOf(stored), stored instanceof String source && source.trim().startsWith(expectedStart));
+    }
+
+    /// A Java object that XStream fails to write.
+    private static class Unserializable implements Serializable {
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            throw new IOException("not serializable");
+        }
+
+        @Override
+        public String toString() {
+            return "unserializable";
+        }
     }
 }

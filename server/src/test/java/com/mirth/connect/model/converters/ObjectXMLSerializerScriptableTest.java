@@ -4,18 +4,23 @@
 package com.mirth.connect.model.converters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -72,8 +77,8 @@ import com.mirth.connect.donkey.util.xstream.SerializerException;
 /// Serialization normally happens after the script has finished, with no Rhino [Context] on the
 /// thread. It can also happen while a Context is still entered, e.g. when a script calls
 /// `router.routeMessage()` and the downstream channel stores its maps on the same thread. The
-/// converter enters a Context when none is current, so the results are the same; tests ending in
-/// `OutsideContext` and `InsideContext` check both for the types that used to differ.
+/// converter always runs on its own thread with its own Context, so the results are the same; tests
+/// ending in `OutsideContext` and `InsideContext` check both for the types that used to differ.
 public class ObjectXMLSerializerScriptableTest {
 
     private ScriptableObject sealedSharedScope;
@@ -792,6 +797,146 @@ public class ObjectXMLSerializerScriptableTest {
         }
     }
 
+    @Test
+    public void testConversionIgnoresHaltedContext() throws Exception {
+        // e.g. a script halted while router.routeMessage() stores a downstream channel's maps on the same thread
+        Object value = jsValue("({a: 1})");
+        ContextFactory haltedFactory = new ContextFactory() {
+            @Override
+            protected void observeInstructionCount(Context context, int instructionCount) {
+                throw new Error("halted");
+            }
+        };
+        Context context = haltedFactory.enterContext();
+        try {
+            context.setOptimizationLevel(-1);
+            context.setInstructionObserverThreshold(1);
+            assertEquals("{\"a\":1}", storedMapValue(value));
+        } finally {
+            Context.exit();
+        }
+    }
+
+    @Test(timeout = 30000)
+    public void testRunawayToJSONExceedsTimeLimit() throws Exception {
+        // The time limit can't be caught in JavaScript, so String() isn't tried and MapUtil stores the Java toString()
+        assertExceedsTimeLimit(jsValue("({toJSON: function() { while (true) {} }, toString: function() { return 'string'; }})"));
+    }
+
+    @Test(timeout = 30000)
+    public void testRunawayGetterExceedsTimeLimit() throws Exception {
+        // The finally block is cut off before its first statement
+        StringBuilder log = new StringBuilder();
+        assertExceedsTimeLimit(jsValueInScope("", "({get a() { try { while (true) {} } finally { log.append('finally'); while (true) {} } }})", -1, Map.of("log", log)));
+        assertEquals("", log.toString());
+    }
+
+    @Test(timeout = 30000)
+    public void testRunawayCompiledToJSONExceedsTimeLimit() throws Exception {
+        // User code compiled by a MirthContext also counts instructions
+        assertExceedsTimeLimit(jsValueInScope("", "({toJSON: function() { while (true) {} }})", 0, Map.of()));
+    }
+
+    @Test
+    public void testJavaErrorDuringConversionPropagates() throws Exception {
+        // Errors other than the time limit propagate as they did when conversions ran on the caller's thread
+        Object value = jsValueInScope("", "({toJSON: function() { thrower.run(); }})", -1, Map.of("thrower", new ErrorThrower()));
+        assertThrows(TestError.class, () -> storedMapValue(value));
+    }
+
+    @Test(timeout = 30000)
+    public void testInterruptedCallerWaitsForConversion() throws Exception {
+        CountDownLatch started = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        // The interrupt is passed on to the conversion, but this toJSON ignores it and keeps waiting
+        String toJSON = "function() { started.countDown(); while (true) { try { release.await(); return 'done'; } catch (e) {} } }";
+        Object value = jsValueInScope("", "({toJSON: " + toJSON + "})", -1, Map.of("started", started, "release", release));
+
+        // Interrupt the caller while it waits for the conversion, then let the conversion finish
+        Thread caller = Thread.currentThread();
+        Thread interrupter = new Thread(() -> {
+            try {
+                if (started.await(10, TimeUnit.SECONDS)) {
+                    caller.interrupt();
+                }
+            } catch (InterruptedException e) {
+                // the test fails below if the caller wasn't interrupted
+            } finally {
+                release.countDown();
+            }
+        });
+        interrupter.setDaemon(true);
+        interrupter.start();
+        try {
+            assertEquals("\"done\"", storedMapValue(value));
+            assertTrue("interrupt status should be kept", Thread.currentThread().isInterrupted());
+        } finally {
+            interrupter.join();
+            Thread.interrupted();
+        }
+    }
+
+    @Test(timeout = 30000)
+    public void testInterruptReachesBlockedConversion() throws Exception {
+        // e.g. a channel halted while toJSON is blocked in a Java call
+        CountDownLatch started = new CountDownLatch(1);
+        Object value = jsValueInScope("", "({toJSON: function() { started.countDown(); java.lang.Thread.sleep(600000); return 'done'; }})", -1, Map.of("started", started));
+
+        Thread caller = Thread.currentThread();
+        Thread interrupter = new Thread(() -> {
+            try {
+                if (started.await(10, TimeUnit.SECONDS)) {
+                    caller.interrupt();
+                }
+            } catch (InterruptedException e) {
+                // the test fails below if the caller wasn't interrupted
+            }
+        });
+        interrupter.setDaemon(true);
+        interrupter.start();
+        try {
+            // The InterruptedException is caught by the conversion function, which then uses String()
+            assertEquals("[object Object]", storedMapValue(value));
+            assertTrue("interrupt status should be kept", Thread.currentThread().isInterrupted());
+        } finally {
+            interrupter.join();
+            Thread.interrupted();
+        }
+    }
+
+    @Test(timeout = 30000)
+    public void testNestedConversion() throws Exception {
+        // User code called by a conversion can store a map itself, which needs another conversion thread
+        Map<String, Object> variables = Map.of("serializer", ObjectXMLSerializer.getInstance());
+        Object value = jsValueInScope("", "({toJSON: function() { return String(serializer.serialize({b: 1})); }})", -1, variables);
+        assertEquals("\"<string>{&quot;b&quot;:1}</string>\"", storedMapValue(value));
+    }
+
+    @Test
+    public void testConversionUsesCallerContextClassLoader() throws Exception {
+        Object value = jsValue("({toJSON: function() { return String(java.lang.Thread.currentThread().getContextClassLoader()); }})");
+        Thread thread = Thread.currentThread();
+        ClassLoader original = thread.getContextClassLoader();
+        try (URLClassLoader marker = new URLClassLoader(new URL[0], original) {
+            @Override
+            public String toString() {
+                return "marker";
+            }
+        }) {
+            thread.setContextClassLoader(marker);
+            assertEquals("\"marker\"", storedMapValue(value));
+
+            // The conversion thread's own class loader is restored, so an idle thread doesn't keep the caller's reachable
+            for (Thread conversionThread : Thread.getAllStackTraces().keySet()) {
+                if (conversionThread.getName().startsWith("JavaScriptObjectConverter-")) {
+                    assertNotSame(conversionThread.getName(), marker, conversionThread.getContextClassLoader());
+                }
+            }
+        } finally {
+            thread.setContextClassLoader(original);
+        }
+    }
+
     /*
      * Helpers
      */
@@ -813,14 +958,27 @@ public class ObjectXMLSerializerScriptableTest {
     /// Like [#jsValue(String)], but first runs scopeScript in the script scope instead of setting up
     /// msg.
     private Object jsValueInScope(String scopeScript, String expression) {
+        return jsValueInScope(scopeScript, expression, -1, Map.of());
+    }
+
+    /// Like [#jsValueInScope(String, String)], but compiles the script at the given optimization
+    /// level and first puts the variables into the script scope as Java objects.
+    private Object jsValueInScope(String scopeScript, String expression, int optimizationLevel, Map<String, Object> variables) {
         Map<String, Object> channelMap = new HashMap<>();
         Context context = enterContext();
         try {
+            context.setOptimizationLevel(optimizationLevel);
+            // MirthContext always sets an instruction observer threshold, so compiled code counts instructions
+            context.setInstructionObserverThreshold(1);
+
             // Mirrors JavaScriptScopeUtil.getScope
             Scriptable scope = context.newObject(sealedSharedScope);
             scope.setPrototype(sealedSharedScope);
             scope.setParentScope(null);
             ScriptableObject.putProperty(scope, "channelMap", Context.javaToJS(channelMap, scope));
+            for (Map.Entry<String, Object> variable : variables.entrySet()) {
+                ScriptableObject.putProperty(scope, variable.getKey(), Context.javaToJS(variable.getValue(), scope));
+            }
 
             context.evaluateString(scope, scopeScript + "\nchannelMap.put('value', " + expression + ");", "test", 1, null);
         } finally {
@@ -870,9 +1028,30 @@ public class ObjectXMLSerializerScriptableTest {
         }
     }
 
+    private void assertExceedsTimeLimit(Object value) {
+        long original = JavaScriptObjectConverter.timeLimitMillis;
+        JavaScriptObjectConverter.timeLimitMillis = 200;
+        try {
+            assertSerializeFails(value);
+            assertEquals("[object Object]", storedMapValue(value));
+        } finally {
+            JavaScriptObjectConverter.timeLimitMillis = original;
+        }
+        // Later conversions are unaffected
+        assertEquals("{\"a\":1}", storedMapValue(jsValue("({a: 1})")));
+    }
+
     private static void assertFunctionSource(String expectedStart, Object stored) {
         assertTrue(String.valueOf(stored), stored instanceof String source && source.trim().startsWith(expectedStart));
     }
+
+    public static class ErrorThrower {
+        public void run() {
+            throw new TestError();
+        }
+    }
+
+    private static class TestError extends Error {}
 
     /// A Java object that XStream fails to write.
     private static class Unserializable implements Serializable {

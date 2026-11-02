@@ -8,14 +8,14 @@ package org.openintegrationengine.smoketest;
  * launcher runs one configuration per JVM and then exits, so a single login is reused
  * for the whole run and closed by a shutdown hook rather than per test class.
  */
-final class SharedServer {
+public final class SharedServer {
 
     private static OieServer instance;
 
     private SharedServer() {
     }
 
-    static synchronized OieServer get() {
+    public static synchronized OieServer get() {
         if (instance == null) {
             OieServer server = OieServer.connect();
             Runtime.getRuntime().addShutdownHook(new Thread(server::close, "oie-smoketest-logout"));

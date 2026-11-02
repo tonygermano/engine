@@ -188,7 +188,7 @@ public final class Harness {
     }
 
     /** Reads a staged fixture from the classpath. */
-    static String resource(String path) {
+    public static String resource(String path) {
         try (InputStream in = Harness.class.getClassLoader().getResourceAsStream(path)) {
             if (in == null) {
                 throw new IllegalStateException("Missing fixture resource on the classpath: " + path);

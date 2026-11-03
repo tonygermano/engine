@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.Assumptions;
 
@@ -35,6 +36,59 @@ public final class Harness {
 
     private static OieServer server() {
         return SharedServer.get();
+    }
+
+    /** A check for {@link #awaitAsserted(Check)}. */
+    @FunctionalInterface
+    public interface Check {
+        void run() throws Exception;
+    }
+
+    /**
+     * A failure that waiting cannot fix, such as an assertion on messages the server has
+     * finished with. {@link #awaitAsserted} throws it at once instead of retrying.
+     */
+    public static final class FinalAssertionError extends AssertionError {
+        private static final long serialVersionUID = 1L;
+
+        public FinalAssertionError(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
+     * Runs {@code check} every 500 ms until it passes or {@link HarnessConfig#TIMEOUT} passes.
+     * An {@link AssertionError} means the server isn't there yet, so the check runs again; on
+     * timeout the last one is thrown with the timeout added to its message. A
+     * {@link FinalAssertionError} or any other exception is thrown at once.
+     */
+    public static void awaitAsserted(Check check) throws Exception {
+        awaitAsserted(() -> {
+            check.run();
+            return null;
+        });
+    }
+
+    /**
+     * Like {@link #awaitAsserted(Check)}, for a check that returns the value it verified.
+     *
+     * @return the value from the run of {@code check} that passed
+     */
+    public static <T> T awaitAsserted(Callable<T> check) throws Exception {
+        long deadline = System.nanoTime() + HarnessConfig.TIMEOUT.toNanos();
+        while (true) {
+            try {
+                return check.call();
+            } catch (FinalAssertionError e) {
+                throw e;
+            } catch (AssertionError e) {
+                if (System.nanoTime() >= deadline) {
+                    throw new AssertionError("Timed out after " + HarnessConfig.TIMEOUT.toSeconds() + "s: "
+                            + e.getMessage(), e);
+                }
+            }
+            Thread.sleep(500);
+        }
     }
 
     /**
@@ -94,32 +148,23 @@ public final class Harness {
                     + " message(s), found " + messageIds.size() + " " + messageIds);
         }
 
-        long deadline = System.nanoTime() + HarnessConfig.TIMEOUT.toNanos();
-        AssertionError lastFailure = null;
-        List<Message> lastMessages = List.of();
-        while (System.nanoTime() < deadline) {
+        // Once every message is terminal its content can't change, so a failure then is final.
+        awaitAsserted(() -> {
             List<Message> messages = fetchMessages(channelId, messageIds);
-            lastMessages = messages;
-            if (!messages.contains(null)) {
-                try {
-                    assertAll(messages, assertions);
-                    return;
-                } catch (AssertionError e) {
-                    lastFailure = e;
-                    if (messages.stream().allMatch(Harness::isTerminal)) {
-                        break;
-                    }
-                }
+            if (messages.contains(null)) {
+                throw new AssertionError("waiting for message(s) " + messageIds + " for fixture " + base
+                        + "\n\n" + describe(messages));
             }
-            Thread.sleep(500);
-        }
-
-        if (lastFailure != null) {
-            throw new AssertionError(base + " failed: " + lastFailure.getMessage()
-                    + "\n\n" + describe(lastMessages), lastFailure);
-        }
-        throw new AssertionError("Timed out after " + HarnessConfig.TIMEOUT.toSeconds() + "s waiting for message(s) "
-                + messageIds + " for fixture " + base + "\n\n" + describe(lastMessages));
+            try {
+                assertAll(messages, assertions);
+            } catch (AssertionError e) {
+                String message = base + " failed: " + e.getMessage() + "\n\n" + describe(messages);
+                if (messages.stream().allMatch(Harness::isTerminal)) {
+                    throw new FinalAssertionError(message, e);
+                }
+                throw new AssertionError(message, e);
+            }
+        });
     }
 
     /**
